@@ -34,8 +34,12 @@
   --foreground: #171717;
 }
 
+html {
+  background-color: var(--foreground);
+}
+
 body {
-  background: var(--background);
+  background: var(--foreground);
   color: var(--foreground);
   font-family: Switzer, sans-serif;
 }
