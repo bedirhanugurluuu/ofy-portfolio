@@ -5,12 +5,14 @@ import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 export default function AboutBanner() {
   return (
     <section className="relative w-full overflow-hidden px-4 mb-20">
-        <div className="relative">
+        <div className="aspect-[0.6363636364/1] md:aspect-[2.32/1] " style={{ position: 'relative' }}>
             <Image
                 src="/images/about-banner.png"
                 alt="About Banner"
+                fill
+                sizes="100vw"
                 loading="lazy"
-                className="aspect-[0.6363636364/1] md:aspect-[2.32/1] relative"
+                className="relative"
                 style={{ objectFit: "cover" }}
             />
 
