@@ -61,6 +61,7 @@ export default function FromTheJournal() {
                 src={card.image}
                 alt={card.title}
                 fill
+                loading="lazy"
                 className="object-cover"
               />
             </div>

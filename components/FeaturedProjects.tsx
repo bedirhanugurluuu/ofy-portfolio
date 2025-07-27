@@ -35,6 +35,7 @@ const FeaturedProjects = () => {
                     alt="Project 1"
                     width={800}
                     height={500}
+                    loading="lazy"
                     className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
                 />
                 <div className="absolute bottom-4 left-4 text-white font-regular">
