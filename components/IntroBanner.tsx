@@ -89,6 +89,7 @@ export default function IntroBanner() {
           fill
           priority
           className="object-cover"
+          onLoadingComplete={() => setFirstImageLoaded(true)}
         />
         {index === 0 && !overlayGone && (
           <div

@@ -47,9 +47,9 @@ export default function Footer() {
                     <div>
                         <h4 className="text-white opacity-40 font-medium mb-2">LOCATION</h4>
                         <p className="text-white font-medium">
-                            123 Design Street<br />
-                            New York, NY 10001<br />
-                            USA
+                            İstanbul Bahçelievler<br />
+                            Test Sokak, 10001<br />
+                            Türkiye
                         </p>
                     </div>
 
@@ -88,7 +88,7 @@ export default function Footer() {
 
                 {/* Bottom Text */}
                 <div className="text-white font-medium opacity-40 text-xs text-center" style={{ letterSpacing: 0 }}>
-                    © 2025 YourCompany. Tüm hakları saklıdır.
+                    © 2025 Ömer Faruk Yılmaz. Tüm hakları saklıdır.
                 </div>
             </div>
         </footer>
