@@ -8,15 +8,12 @@ import FromTheJournal from '@/components/FromTheJournal';
 
 export default function Home() {
   return (
-    <Layout>
-      <div>
-        <IntroBanner />
-        <FeaturedProjects />
-        <ServicesSlider />
-        <AboutBanner />
-        <FromTheJournal />
-      </div>
-    </Layout>
-
+    <div>
+      <IntroBanner />
+      <FeaturedProjects />
+      <ServicesSlider />
+      <AboutBanner />
+      <FromTheJournal />
+    </div>
   )
 }

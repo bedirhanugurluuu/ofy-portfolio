@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
+import { usePathname } from "next/navigation";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 
 const navItems = [
@@ -15,6 +16,7 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,12 +26,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const forceBlackTextPages = ["/about", "/blog", "/careers"];
+  const isDarkText = pathname ? forceBlackTextPages.includes(pathname) : false;
+
   return (
     <>
       <header
         className={clsx(
           "fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300",
-          scrolled || menuOpen ? "bg-white text-black" : "bg-transparent text-white"
+          scrolled || menuOpen || isDarkText
+            ? "bg-white text-black"
+            : "bg-transparent text-white"
         )}
       >
         <Link href="/" className="flex items-center space-x-1 z-50">
