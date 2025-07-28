@@ -98,7 +98,7 @@ export default function About() {
                 style={{ width: "0%" }}
               />
             </div>
-            <div className="flex align-start justify-between h-full">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-0 align-start justify-between h-full">
               <span
                 ref={visionTitleRef}
                 className="lg:w-1/2 text-sm font-medium uppercase"
