@@ -1,31 +1,40 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 
-const images = [
-  "/images/small1.jpg",
-  "/images/small2.jpg",
-  "/images/small3.jpg", // SON: bu büyüyecek
-];
+type Banner = {
+  id: number;
+  image: string;
+  title_line1: string;
+  title_line2: string;
+  button_text: string;
+  button_link: string;
+};
 
 export default function IntroBanner() {
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
   const [overlayGone, setOverlayGone] = useState(false);
   const [readyToStart, setReadyToStart] = useState(false);
 
-  // Overlay animasyonu kontrolü
+  useEffect(() => {
+    fetch("http://localhost:5000/api/intro-banners")
+      .then((res) => res.json())
+      .then((data) => setBanners(data))
+      .catch(() => setBanners([]));
+  }, []);
+
   useEffect(() => {
     if (index === 0) {
       const timer1 = setTimeout(() => setFirstImageLoaded(true), 50);
       const timer2 = setTimeout(() => {
         setOverlayGone(true);
-        setReadyToStart(true);  // Overlay kaybolunca resimler başlasın
-      }, 800); // overlay yukarı kayma animasyon süresi + biraz ekstra
+        setReadyToStart(true);
+      }, 800);
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
@@ -36,18 +45,17 @@ export default function IntroBanner() {
     }
   }, [index]);
 
-  // Resim değiştirme sadece readyToStart true ise başlar
   useEffect(() => {
-    if (!readyToStart) return; // hazır değilse çalışmaz
+    if (!readyToStart) return;
 
-    if (index < images.length - 1) {
+    if (index < banners.length - 1) {
       const t = setTimeout(() => setIndex((p) => p + 1), 550);
       return () => clearTimeout(t);
     } else {
       const t = setTimeout(() => setExpanded(true), 500);
       return () => clearTimeout(t);
     }
-  }, [index, readyToStart]);
+  }, [index, readyToStart, banners.length]);
 
   useEffect(() => {
     if (!expanded) {
@@ -61,8 +69,13 @@ export default function IntroBanner() {
     };
   }, [expanded]);
 
+  if (banners.length === 0) return <div
+  className="relative w-full min-h-screen overflow-hidden" />;
+
+  const currentBanner = banners[index];
+
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <div
         className="absolute ease-out"
         style={{
@@ -84,7 +97,7 @@ export default function IntroBanner() {
         }}
       >
         <Image
-          src={images[index]}
+          src={"http://localhost:5000" + currentBanner.image}
           alt="banner"
           fill
           priority
@@ -106,20 +119,20 @@ export default function IntroBanner() {
         <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
           <div className="overflow-hidden banner-title">
             <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
-              Redefining creativity for the
+              {currentBanner.title_line1}
             </h1>
           </div>
           <div className="overflow-hidden">
             <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
-              future with flawless execution.
+              {currentBanner.title_line2}
             </p>
           </div>
           <div className="overflow-hidden">
             <Link
-              href="/works/grid-view"
+              href={currentBanner.button_link}
               className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
             >
-              VIEW PROJECTS
+              {currentBanner.button_text}
               <ButtonWithHoverArrow />
             </Link>
           </div>

@@ -1,121 +1,55 @@
 "use client";
-import { useEffect, useRef } from "react";
-import SplitType from "split-type";
+import AnimatedText from "@/components/AnimatedText";
 import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 export default function About() {
-  const imageRef = useRef<HTMLDivElement>(null);
-  const introTextRef = useRef<HTMLParagraphElement>(null);
-  const visionTitleRef = useRef<HTMLHeadingElement>(null);  // Our Vision başlığı için
-  const visionTextRef = useRef<HTMLParagraphElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (
-      !introTextRef.current ||
-      !visionTitleRef.current ||
-      !visionTextRef.current ||
-      !lineRef.current
-    )
-      return;
+    if (!lineRef.current) return;
 
-    const splitIntro = new SplitType(introTextRef.current, { types: "lines" });
-    const splitVisionTitle = new SplitType(visionTitleRef.current, { types: "lines" });
-    const splitVisionText = new SplitType(visionTextRef.current, { types: "lines" });
-
-    const tl = gsap.timeline();
-
-    // İlk paragraf animasyonu
-    tl.from(splitIntro.lines, {
-      y: 30,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.3,
+    gsap.to(lineRef.current, {
+      width: "100%",
+      duration: 1,
       ease: "power2.out",
+      delay: 1.5,
     });
-
-    // Our Vision başlığı animasyonu
-    tl.from(
-      splitVisionTitle.lines,
-      {
-        y: 30,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.3,
-        ease: "power2.out",
-      },
-      "+=0.1"
-    );
-
-    // Alt paragraf animasyonu
-    tl.from(
-      splitVisionText.lines,
-      {
-        y: 30,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.3,
-        ease: "power2.out",
-      },
-      "+=0.1"
-    );
-
-    // Çizgi animasyonu
-    tl.to(
-      lineRef.current,
-      {
-        width: "100%",
-        duration: 1,
-        ease: "power2.out",
-      },
-      "+=0.1"
-    );
-
-    return () => {
-      splitIntro.revert();
-      splitVisionTitle.revert();
-      splitVisionText.revert();
-      tl.kill();
-    };
   }, []);
-
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-screen bg-white px-5 py-50 gap-8">
       <div className="w-full lg:w-1/2 flex flex-col gap-12 relative">
         <div>
-          <p ref={introTextRef} className="text-3xl font-medium max-w-xl">
+          <AnimatedText as="p" className="text-3xl font-medium max-w-xl" delay={0}>
             A collective of visionaries shaping tomorrow, where creativity and
             innovation intersect. Our studio is built on the belief that bold
             ideas and meticulous execution drive meaningful design.
-          </p>
+          </AnimatedText>
         </div>
         <div className="sticky top-150">
           <div className="relative py-4">
             <div className="relative mb-2">
-              <div
-                ref={lineRef}
-                className="h-[1px] bg-[rgba(0,0,0,0.1)]"
-                style={{ width: "0%" }}
-              />
+      <div ref={lineRef} className="h-[1px] bg-[rgba(0,0,0,0.1)] w-0" />
             </div>
             <div className="flex flex-col md:flex-row gap-3 md:gap-0 align-start justify-between h-full">
-              <span
-                ref={visionTitleRef}
+              <AnimatedText
+                as="span"
                 className="lg:w-1/2 text-sm font-medium uppercase"
-                style={{ letterSpacing: 0 }}
+                delay={0.5}
               >
                 Our Vision
-              </span>
+              </AnimatedText>
               <div className="lg:w-1/2">
-                <p
-                  ref={visionTextRef}
+                <AnimatedText
+                  as="p"
                   className="opacity-60 text-sm"
-                  style={{ whiteSpace: "pre-line" }}
+                  delay={1}
+                  // style={{ whiteSpace: "pre-line" }} // istersen ekle
                 >
                   We craft innovative design strategies for forward thinking
                   brands, combining aesthetics with purpose to create impactful
                   solutions.
-                </p>
+                </AnimatedText>
               </div>
             </div>
           </div>
@@ -123,7 +57,7 @@ export default function About() {
       </div>
 
       {/* Sağ Kısım: Görsel */}
-      <div className="w-full aspect-[.75/1] lg:w-1/2" ref={imageRef}>
+      <div className="w-full aspect-[.75/1] lg:w-1/2">
         <img
           src="/images/sample-about.png"
           alt="About Visual"
