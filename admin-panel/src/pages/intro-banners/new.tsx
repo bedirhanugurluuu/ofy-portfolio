@@ -1,7 +1,9 @@
-// pages/intro-banners/new.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BannerForm from "../../components/intro-banners/BannerForm";
+import { api } from '../../utils/api';  // axiosInstance yolunu kendine göre ayarla
+import Swal from "sweetalert2";
+import { useBreadcrumb } from "../../contexts/BreadcrumbContext";
 
 interface Banner {
   imageFile: File | null;
@@ -12,46 +14,60 @@ interface Banner {
   button_link: string;
 }
 
+interface IntroBanner {
+  id: number;
+  image: string;           // Mevcut görsel URL'si
+  title_line1: string;
+  title_line2: string;
+  button_text: string;
+  button_link: string;
+  order_index: number;
+}
+
 export default function NewIntroBannerPage() {
   const [banner, setBanner] = useState<Banner>({
-    imageFile: null,     // Dosya objesi
-    order_index: 1,      // Sıra indeksi
+    imageFile: null,
+    order_index: 1,
     title_line1: "",
     title_line2: "",
     button_text: "",
     button_link: "",
   });
 
-  const [bannersCount, setBannersCount] = useState(0);
   const navigate = useNavigate();
-  const [csrfToken, setCsrfToken] = useState("");
+  const [banners, setBanners] = useState<IntroBanner[]>([]);
+  const { setBreadcrumbs } = useBreadcrumb();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/csrf-token", {
-      credentials: "include",
+    // Breadcrumb'ı ayarla
+    setBreadcrumbs([
+      { name: "Dashboard", to: "/admin/dashboard" },
+      { name: "Intro Banners", to: "/admin/intro-banners" },
+      { name: "New Banner" }
+    ]);
+  }, [setBreadcrumbs]);
+
+  function findFirstEmptyIndex(banners: IntroBanner[]): number {
+    const max = 3; // Maks banner sayısı
+    const usedIndexes = banners.map(b => b.order_index);
+    for (let i = 1; i <= max; i++) {
+      if (!usedIndexes.includes(i)) return i;
+    }
+    return max + 1; // Tüm indexler doluysa (teorik olarak olmamalı)
+  }
+
+  useEffect(() => {
+    axiosInstance.get<IntroBanner[]>("/api/intro-banners")
+    .then(res => {
+      setBanners(res.data);
     })
-      .then(res => res.json())
-      .then(data => setCsrfToken(data.csrfToken));
+    .catch(() => setBanners([]));
   }, []);
 
   useEffect(() => {
-    if (!csrfToken) return;
-
-    fetch("http://localhost:5000/api/intro-banners", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "X-CSRF-Token": csrfToken,
-      },
-    })
-      .then(res => res.json())
-      .then(data => setBannersCount(data.length))
-      .catch(() => setBannersCount(0));
-  }, [csrfToken]);
-
-  useEffect(() => {
-    setBanner(prev => ({ ...prev, order_index: bannersCount + 1 }));
-  }, [bannersCount]);
+    const nextIndex = findFirstEmptyIndex(banners);
+    setBanner(prev => ({ ...prev, order_index: nextIndex }));
+  }, [banners]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -69,7 +85,11 @@ export default function NewIntroBannerPage() {
 
   const handleSubmit = () => {
     if (!banner.imageFile) {
-      alert("Lütfen bir görsel seçin!");
+      Swal.fire({
+        icon: "warning",
+        title: "Uyarı",
+        text: "Lütfen bir görsel seçin!",
+      });
       return;
     }
 
@@ -79,7 +99,11 @@ export default function NewIntroBannerPage() {
         !banner.button_text.trim() ||
         !banner.button_link.trim()
       ) {
-        alert("Lütfen 3. banner için tüm alanları doldurun!");
+        Swal.fire({
+          icon: "warning",
+          title: "Uyarı",
+          text: "Lütfen 3. banner için tüm alanları doldurun!",
+        });
         return;
       }
     }
@@ -95,23 +119,28 @@ export default function NewIntroBannerPage() {
       formData.append("button_link", banner.button_link);
     }
 
-    fetch("http://localhost:5000/api/intro-banners", {
-      method: "POST",
-      credentials: "include",
+    axiosInstance.post("/api/intro-banners", formData, {
       headers: {
-        "X-CSRF-Token": csrfToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: formData,
     })
-      .then(res => {
-        if (!res.ok) throw new Error("Ekleme başarısız");
-        return res.json();
+    .then(() => {
+      Swal.fire({
+        icon: "success",
+        title: "Başarılı",
+        text: "Banner başarıyla eklendi",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/admin/intro-banners");
+    })
+    .catch(err =>
+      Swal.fire({
+        icon: "error",
+        title: "Hata",
+        text: err.message,
       })
-      .then(() => {
-        alert("Banner başarıyla eklendi");
-        navigate("/admin/intro-banners");
-      })
-      .catch(err => alert(err.message));
+    );
   };
 
   return (

@@ -8,6 +8,7 @@ interface AnimatedTextProps {
   as?: React.ElementType;
   className?: string;
   delay?: number;
+  preserveDisplay?: boolean;
 }
 
 export default function AnimatedText({
@@ -15,6 +16,7 @@ export default function AnimatedText({
   as: Tag = "p",
   className = "",
   delay = 0,
+  preserveDisplay = false,
 }: AnimatedTextProps) {
   const textRef = useRef<HTMLElement | null>(null);
 
@@ -39,8 +41,11 @@ export default function AnimatedText({
     };
   }, [delay]);
 
+  // If preserveDisplay is true, don't apply any display styles that might interfere with flex
+  const elementStyle = preserveDisplay ? { display: 'contents' } : {};
+
   return (
-    <Tag ref={textRef as any} className={className}>
+    <Tag ref={textRef as any} className={className} style={elementStyle}>
       {children}
     </Tag>
   );

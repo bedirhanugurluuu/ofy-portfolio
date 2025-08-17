@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 
 interface AuthContextType {
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -24,17 +26,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
+        const res = await axios.get<any>("/api/me");
+        setUser(res.data.user);
+      } catch (error: any) {
+        // Token geçersizse localStorage'dan sil
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          localStorage.removeItem("token");
           setUser(null);
         } else {
-          const data = await res.json();
-          setUser(data.user);
+          console.error("Auth check error:", error);
         }
-      } catch {
-        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -44,40 +45,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    const res = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || "Giriş başarısız");
-    }
-
-    const data = await res.json();
-    localStorage.setItem("token", data.token);
+    const res = await axios.post<any>("/api/login", { username, password });
+    localStorage.setItem("token", res.data.token);
 
     // Token sonrası kullanıcıyı tekrar al
-    const meRes = await fetch("http://localhost:5000/api/me", {
-      headers: { Authorization: `Bearer ${data.token}` },
-    });
-
-    if (meRes.ok) {
-      const meData = await meRes.json();
-      console.log("meData:", meData);
-      console.log("meData.user:", meData.user);
-      setUser(meData.user);
-    }
+    const meRes = await axios.get<any>("/api/me");
+    setUser(meRes.data.user);
   };
 
-
   const logout = async () => {
-    await fetch("http://localhost:5000/api/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    setUser(null);
+    try {
+      await axios.post("/api/logout");
+    } catch (error) {
+      // Logout hatası olsa bile kullanıcıyı çıkış yap
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
+      navigate("/admin/login");
+    }
   };
 
   return (

@@ -4,28 +4,37 @@
 import { useEffect, useState } from "react";
 import ProjectList from "../../components/projects/ProjectList";
 import { Link } from 'react-router-dom';
-import axios from "../../utils/axiosInstance";
+import { api } from "../../utils/api";
 import { Project } from "../../types/Project";
+import { useBreadcrumb } from "../../contexts/BreadcrumbContext";
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { setBreadcrumbs, setIsLoading } = useBreadcrumb();
 
     useEffect(() => {
-        axios
-            .get<Project[]>("/api/projects")
+        // Breadcrumb'ı hemen ayarla
+        setBreadcrumbs([
+            { name: "Dashboard", to: "/admin/dashboard" },
+            { name: "Projects" }
+        ]);
+
+        // Kısa loading göster
+        setIsLoading(true);
+
+        // API çağrısını yap - çok hızlı
+        api.getProjects()
             .then((res) => {
                 setProjects(res.data as Project[]);
-                setLoading(false);
+                // Hemen loading'i kapat
+                setTimeout(() => setIsLoading(false), 100);
             })
             .catch((err) => {
-                console.error("Axios error:", err);
+                console.error("API error:", err);
                 setProjects([]);
-                setLoading(false);
+                setIsLoading(false);
             });
-    }, []);
-
-    if (loading) return <p>Loading projects...</p>;
+    }, [setBreadcrumbs, setIsLoading]);
 
     return (
     <div className="p-4">

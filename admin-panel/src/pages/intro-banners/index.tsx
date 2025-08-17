@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BannerList from "../../components/intro-banners/BannerList";
+import { api } from "../../utils/api";
+import { useBreadcrumb } from "../../contexts/BreadcrumbContext";
+import Swal from "sweetalert2";
 
 interface Banner {
   id: number;
@@ -15,53 +18,51 @@ interface Banner {
 
 export default function IntroBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [csrfToken, setCsrfToken] = useState("");
+  const { setBreadcrumbs, setIsLoading } = useBreadcrumb();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/intro-banners")
-      .then((res) => {
-        if (!res.ok) throw new Error("Veri alınamadı");
-        return res.json();
+    // Breadcrumb'ı hemen ayarla
+    setBreadcrumbs([
+      { name: "Dashboard", to: "/admin/dashboard" },
+      { name: "Intro Banners" }
+    ]);
+
+    // Kısa loading göster
+    setIsLoading(true);
+
+    // API çağrısını yap - çok hızlı
+    api.getIntroBanners()
+      .then(res => {
+        setBanners(res.data as Banner[]);
+        // Hemen loading'i kapat
+        setTimeout(() => setIsLoading(false), 100);
       })
-      .then((data) => {
-        setBanners(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      .catch(err => {
         setError(err.message);
-        setLoading(false);
+        setIsLoading(false);
       });
-  }, []);
+  }, [setBreadcrumbs, setIsLoading]);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/csrf-token", {
-      credentials: "include",
-    })
-      .then(res => res.json())
-      .then(data => setCsrfToken(data.csrfToken));
-  }, []);
+
 
   const handleDelete = (id: number) => {
     if (!confirm("Silmek istediğine emin misin?")) return;
 
-    fetch(`http://localhost:5000/api/intro-banners/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "X-CSRF-Token": csrfToken,
-      },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Silme başarısız");
+    api.deleteIntroBanner(id)
+      .then(() => {
         setBanners(prev => prev.filter(b => b.id !== id));
       })
-      .catch(err => alert(err.message));
+      .catch((err: any) => {
+        Swal.fire({
+          icon: "error",
+          title: "Hata!",
+          text: err.message,
+        });
+      });
   };
 
-  if (loading) return <p>Yükleniyor...</p>;
   if (error) return <p>Hata: {error}</p>;
 
   return (

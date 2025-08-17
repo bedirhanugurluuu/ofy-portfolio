@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
+import axiosInstance from "../utils/axiosInstance";
 
 type Banner = {
   id: number;
@@ -13,20 +14,27 @@ type Banner = {
   button_link: string;
 };
 
-export default function IntroBanner() {
-  const [banners, setBanners] = useState<Banner[]>([]);
+interface IntroBannerProps {
+  initialBanners?: Banner[];
+}
+
+export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
+  const [banners, setBanners] = useState<Banner[]>(initialBanners);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
   const [overlayGone, setOverlayGone] = useState(false);
   const [readyToStart, setReadyToStart] = useState(false);
 
+  // Eğer initialBanners boşsa, client-side'da fetch et
   useEffect(() => {
-    fetch("http://localhost:5000/api/intro-banners")
-      .then((res) => res.json())
-      .then((data) => setBanners(data))
-      .catch(() => setBanners([]));
-  }, []);
+    if (initialBanners.length === 0) {
+      axiosInstance
+        .get<Banner[]>("/api/intro-banners")
+        .then((res) => setBanners(res.data))
+        .catch(() => setBanners([]));
+    }
+  }, [initialBanners.length]);
 
   useEffect(() => {
     if (index === 0) {
@@ -69,8 +77,8 @@ export default function IntroBanner() {
     };
   }, [expanded]);
 
-  if (banners.length === 0) return <div
-  className="relative w-full min-h-screen overflow-hidden" />;
+  if (banners.length === 0)
+    return <div className="relative w-full min-h-screen overflow-hidden" />;
 
   const currentBanner = banners[index];
 
@@ -97,7 +105,7 @@ export default function IntroBanner() {
         }}
       >
         <Image
-          src={"http://localhost:5000" + currentBanner.image}
+          src={process.env.NEXT_PUBLIC_API_BASE_URL + currentBanner.image}
           alt="banner"
           fill
           priority

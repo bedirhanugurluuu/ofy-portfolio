@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BannerForm from "../../components/intro-banners/BannerForm";
+import { api } from '../../utils/api';
+import Swal from "sweetalert2";
+import { useBreadcrumb } from "../../contexts/BreadcrumbContext";
 
 interface Banner {
   id: number;
@@ -15,38 +18,36 @@ interface Banner {
 export default function EditIntroBannerPage() {
   const { id } = useParams<{ id: string }>();
   const [banner, setBanner] = useState<Partial<Banner>>({});
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [csrfToken, setCsrfToken] = useState("");
   const navigate = useNavigate();
+  const { setBreadcrumbs, setIsLoading } = useBreadcrumb();
 
-  // CSRF token al
   useEffect(() => {
-    fetch("http://localhost:5000/api/csrf-token", {
-      credentials: "include",
-    })
-      .then(res => res.json())
-      .then(data => setCsrfToken(data.csrfToken));
-  }, []);
+    // Breadcrumb'ı ayarla
+    setBreadcrumbs([
+      { name: "Dashboard", to: "/admin/dashboard" },
+      { name: "Intro Banners", to: "/admin/intro-banners" },
+      { name: "Edit Banner" }
+    ]);
+  }, [setBreadcrumbs]);
+
+
 
   // Banner verisini çek
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:5000/api/intro-banners/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Banner bulunamadı");
-        return res.json();
+    setIsLoading(true);
+    axiosInstance.get<Banner>(`/api/intro-banners/${id}`)
+      .then(res => {
+        setBanner(res.data);
+        setIsLoading(false);
       })
-      .then((data) => {
-        setBanner(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      .catch(err => {
         setError(err.message);
-        setLoading(false);
+        setIsLoading(false);
       });
-  }, [id]);
+  }, [id, setIsLoading]);
 
   // Yeni seçilen dosya için state
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -101,27 +102,29 @@ export default function EditIntroBannerPage() {
     formData.append("button_text", banner.button_text || "");
     formData.append("button_link", banner.button_link || "");
 
-    fetch(`http://localhost:5000/api/intro-banners/${id}`, {
-      method: "PUT",
-      credentials: "include",
+    axiosInstance.put(`/api/intro-banners/${id}`, formData, {
       headers: {
-        "X-CSRF-Token": csrfToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: formData,
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Güncelleme başarısız");
-        return res.json();
-      })
-      .then(() => {
-        alert("Banner başarıyla güncellendi");
-        navigate("/admin/intro-banners");
-      })
-      .catch((err) => alert(err.message));
+    .then(() => {
+      Swal.fire({
+        icon: "success",
+        title: "Başarılı!",
+        text: "Banner başarıyla güncellendi",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/admin/intro-banners");
+    })
+    .catch(err => {
+      Swal.fire({
+        icon: "error",
+        title: "Hata!",
+        text: err.message,
+      });
+    });
   };
-
-  if (loading) return <p>Yükleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
 
   return (
     <div className="p-6 max-w-xl mx-auto">

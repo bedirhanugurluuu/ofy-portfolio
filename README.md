@@ -1,40 +1,192 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [``](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# 🎨 Portfolio Website - Merkezi API Sistemi
 
-## Getting Started
+Modern portfolio website with centralized API management system, ready for Vercel deployment.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Frontend (Next.js)
+- **Modern Design**: Clean, responsive portfolio design
+- **Animations**: GSAP animations and smooth transitions
+- **Dynamic Content**: CMS-like content management
+- **SEO Optimized**: Static generation with Next.js
+
+### Admin Panel (React + Vite)
+- **Centralized API System**: Single source of truth for all API calls
+- **CRUD Operations**: Full content management
+- **File Uploads**: Image and media management
+- **TypeScript**: Full type safety
+
+### Backend (Next.js API Routes)
+- **Serverless Functions**: Vercel-ready API routes
+- **Database Integration**: MySQL with connection pooling
+- **File Handling**: Image uploads and management
+- **CORS Support**: Cross-origin request handling
+
+## 🏗️ Architecture
+
+```
+portfolio-ofy/
+├── pages/                    # Next.js pages
+│   ├── api/                  # API routes (serverless functions)
+│   └── *.tsx                 # Frontend pages
+├── components/               # React components
+├── admin-panel/              # Admin panel (React + Vite)
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── api.ts        # Centralized API config
+│   │   ├── utils/
+│   │   │   └── api.ts        # API client and functions
+│   │   └── pages/            # Admin pages
+│   └── package.json
+├── backend/                  # Legacy Express backend (for reference)
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Centralized API System
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Benefits:
+- ✅ **Single Configuration**: All API URLs managed in one place
+- ✅ **Environment Auto-Detection**: Development/Production switching
+- ✅ **Type Safety**: Full TypeScript support
+- ✅ **Error Handling**: Centralized error management
+- ✅ **Authentication**: Automatic token management
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Usage:
+```typescript
+import { api } from '../utils/api';
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+// All API calls go through centralized system
+const projects = await api.getProjects();
+const newProject = await api.createProject(data);
+const updatedProject = await api.updateProject(id, data);
+await api.deleteProject(id);
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Quick Start
 
-## Learn More
+### 1. Install Dependencies
+```bash
+npm install
+cd admin-panel && npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Environment Setup
+```bash
+# Copy environment examples
+cp env.example .env.local
+cp admin-panel/env.example admin-panel/.env
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### 3. Database Setup
+```bash
+# Run SQL scripts for database tables
+# See DEPLOYMENT.md for details
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Development
+```bash
+# Frontend
+npm run dev
 
-## Deploy on Vercel
+# Admin Panel (in admin-panel directory)
+npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Backend (legacy, optional)
+cd backend && npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## 🌐 Deployment
+
+### Vercel Deployment
+1. **Database**: Set up MySQL database (PlanetScale, Railway, etc.)
+2. **Environment Variables**: Configure in Vercel dashboard
+3. **Deploy**: Push to GitHub, Vercel auto-deploys
+
+### Admin Panel Deployment
+- Deploy as separate Vercel project
+- Point to main API endpoints
+
+See `DEPLOYMENT.md` for detailed instructions.
+
+## 📁 Project Structure
+
+### Frontend Pages
+- **Home**: Landing page with hero section
+- **About**: Company information with slider
+- **Projects**: Portfolio showcase
+- **Blog**: News and articles
+- **Contact**: Contact information and form
+
+### Admin Panel Sections
+- **Dashboard**: Overview and navigation
+- **About Management**: Company content
+- **Projects**: Portfolio management
+- **News**: Blog post management
+- **Awards**: Recognition management
+- **Slider**: Hero section management
+- **What We Do**: Services section
+- **Contact**: Contact information
+
+### API Endpoints
+- `/api/about` - About page content
+- `/api/projects` - Project management
+- `/api/news` - News/blog management
+- `/api/awards` - Awards management
+- `/api/slider` - Slider management
+- `/api/what-we-do` - Services content
+- `/api/contact` - Contact information
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js 15**: React framework
+- **TypeScript**: Type safety
+- **Tailwind CSS**: Styling
+- **GSAP**: Animations
+- **Framer Motion**: UI animations
+
+### Admin Panel
+- **React 19**: UI library
+- **Vite**: Build tool
+- **TypeScript**: Type safety
+- **Tailwind CSS**: Styling
+- **React Router**: Navigation
+
+### Backend
+- **Next.js API Routes**: Serverless functions
+- **MySQL**: Database
+- **Formidable**: File uploads
+- **CORS**: Cross-origin support
+
+## 📝 Environment Variables
+
+### Main Project
+```bash
+DATABASE_HOST=your-database-host
+DATABASE_USER=your-database-user
+DATABASE_PASSWORD=your-database-password
+DATABASE_NAME=your-database-name
+NEXT_PUBLIC_API_BASE_URL=https://your-domain.vercel.app/api
+```
+
+### Admin Panel
+```bash
+VITE_API_BASE_URL=https://your-domain.vercel.app/api
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch
+3. Make changes
+4. Test thoroughly
+5. Submit pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For deployment issues, see `DEPLOYMENT.md`.
+For API system questions, check the centralized config files.

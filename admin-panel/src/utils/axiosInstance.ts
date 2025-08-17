@@ -1,4 +1,6 @@
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
+
+type AxiosRequestConfig = Parameters<typeof axios.request>[0];
 
 let csrfToken: string | null = null;
 
@@ -11,10 +13,8 @@ const instance = axios.create({
   withCredentials: true,
 });
 
-instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  if (!config.headers) {
-    config.headers = new axios.AxiosHeaders();
-  }
+instance.interceptors.request.use((config: AxiosRequestConfig) => {
+  config.headers = config.headers ?? {};
 
   const token = localStorage.getItem("token");
   if (token) {

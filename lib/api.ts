@@ -1,0 +1,224 @@
+export interface Project {
+  id: number;
+  title: string;
+  subtitle: string;
+  slug: string;
+  video_url?: string | null;
+  banner_media?: string | null;
+  thumbnail_media?: string | null;
+  description: string;
+  external_link?: string;
+  gallery_images: string[];
+  client_name?: string;
+  year?: number;
+  role?: string;
+  is_featured?: boolean;
+  featured_order?: number;
+}
+
+export interface IntroBanner {
+  id: number;
+  image: string;
+  title_line1: string;
+  title_line2: string;
+  button_text: string;
+  button_link: string;
+  order_index: number;
+}
+
+export interface AboutContent {
+  id?: number;
+  title: string;
+  subtitle: string;
+  main_text: string;
+  vision_title: string;
+  vision_text: string;
+  image_path?: string;
+  approach_title: string;
+  approach_subtitle: string;
+  brand_strategy_title: string;
+  brand_strategy_text: string;
+  visual_design_title: string;
+  visual_design_text: string;
+  launch_title: string;
+  launch_text: string;
+  insights_title?: string;
+  insights_subtitle?: string;
+  insight_1_title?: string;
+  insight_1_text?: string;
+  insight_1_project_id?: number;
+  insight_2_title?: string;
+  insight_2_text?: string;
+  insight_2_project_id?: number;
+  insight_3_title?: string;
+  insight_3_text?: string;
+  insight_3_project_id?: number;
+  insight_4_title?: string;
+  insight_4_text?: string;
+  insight_4_project_id?: number;
+  clients_title?: string;
+  clients_list?: string;
+  industries_title?: string;
+  industries_list?: string;
+}
+
+export interface News {
+  id: number;
+  title: string;
+  category_text: string;
+  photographer: string;
+  subtitle: string;
+  slug: string;
+  content?: string;
+  image_path?: string;
+  aspect_ratio?: string;
+  is_featured?: boolean;
+  featured_order?: number;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+import axios from "axios";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+
+// Görsel URL'lerini backend base URL ile birleştiren utility fonksiyonu
+export const normalizeImageUrl = (imagePath: string): string => {
+  if (!imagePath) return "";
+  let p = imagePath.trim();
+  if (!p) return "";
+
+  // http veya data URL ise direkt döndür
+  if (/^(https?:)?\/\//i.test(p) || p.startsWith("data:")) return p;
+
+  // Windows backslash -> forward slash
+  p = p.replace(/\\/g, "/");
+
+  // Başta tekrarlı uploads öneklerini tekilleştir (uploads/ ... bir veya daha fazla tekrar)
+  p = p.replace(/^\/?(?:uploads\/)+/, "/uploads/");
+
+  // Eğer hala /uploads/ ile başlamıyorsa ekle
+  if (!p.startsWith("/uploads/")) {
+    // Baştaki / işaretlerini kırpıp /uploads/ ekle
+    p = "/uploads/" + p.replace(/^\/+/, "");
+  }
+
+  return `${API_BASE_URL}${p}`;
+};
+
+export async function fetchProjects(): Promise<Project[]> {
+  const res = await axios.get<Project[]>(`${API_BASE_URL}/api/projects`);
+  return res.data;
+}
+
+export async function fetchProjectBySlug(slug: string): Promise<Project> {
+  const res = await axios.get<Project>(`${API_BASE_URL}/api/projects/${slug}`);
+  return res.data;
+}
+
+export async function fetchIntroBanners(): Promise<IntroBanner[]> {
+  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/api/intro-banners`);
+  return res.data;
+}
+
+export async function fetchAbout(): Promise<AboutContent> {
+  const res = await axios.get<AboutContent>(`${API_BASE_URL}/api/about`);
+  return res.data;
+}
+
+export async function fetchNews(): Promise<News[]> {
+  const res = await axios.get<News[]>(`${API_BASE_URL}/api/news`);
+  return res.data;
+}
+
+export async function fetchFeaturedNews(): Promise<News[]> {
+  const res = await axios.get<News[]>(`${API_BASE_URL}/api/news/featured`);
+  return res.data;
+}
+
+export async function fetchNewsBySlug(slug: string): Promise<News> {
+  const res = await axios.get<News>(`${API_BASE_URL}/api/news/slug/${slug}`);
+  return res.data;
+}
+
+export interface AboutGalleryImage {
+  id: number;
+  image_path: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function fetchAboutGallery(): Promise<AboutGalleryImage[]> {
+  const res = await axios.get<AboutGalleryImage[]>(`${API_BASE_URL}/api/about-gallery`);
+  return res.data;
+}
+
+export interface Award {
+  id: number;
+  title: string;
+  subtitle: string;
+  halo: string;
+  link: string;
+  date: string;
+}
+
+export async function fetchAwards(): Promise<Award[]> {
+  const res = await axios.get<Award[]>(`${API_BASE_URL}/api/awards`);
+  return res.data;
+}
+
+export interface SliderItem {
+  id: number;
+  title: string;
+  subtitle: string;
+  sub_subtitle: string;
+  image_path: string;
+  order_index: number;
+}
+
+export async function fetchSlider(): Promise<SliderItem[]> {
+  const res = await axios.get<SliderItem[]>(`${API_BASE_URL}/api/slider`);
+  return res.data;
+}
+
+export interface WhatWeDoContent {
+  id: number;
+  title: string;
+  subtitle: string;
+  service_1_title: string;
+  service_1_items: string;
+  service_2_title: string;
+  service_2_items: string;
+  service_3_title: string;
+  service_3_items: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function fetchWhatWeDo(): Promise<WhatWeDoContent> {
+  const res = await axios.get<WhatWeDoContent>(`${API_BASE_URL}/api/what-we-do`);
+  return res.data;
+}
+
+export interface ContactContent {
+  id: number;
+  title: string;
+  phone: string;
+  email: string;
+  instagram: string;
+  linkedin: string;
+  address_line1: string;
+  address_line2: string;
+  studio_hours_weekdays: string;
+  studio_hours_weekend: string;
+  image_path?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function fetchContact(): Promise<ContactContent> {
+  const res = await axios.get<ContactContent>(`${API_BASE_URL}/api/contact`);
+  return res.data;
+}

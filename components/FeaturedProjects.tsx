@@ -3,47 +3,47 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import axiosInstance from '@/utils/axiosInstance';
 
 interface Project {
   id: number;
   title: string;
   subtitle: string;
   slug: string;
-  thumbnail_image: string;
+  thumbnail_media?: string | null;
   video_url?: string | null;
-  featured_order: number;
+  featured_order?: number;
 }
 
-const backendUrl = "http://localhost:5000";
+interface FeaturedProjectsProps {
+  initialProjects?: Project[];
+}
+
+const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 const normalizeImagePath = (path: string) => {
-  // Windows tarzı backslashleri slash yap, başa / koy
+  if (!path) return "";
   return backendUrl + "/" + path.replace(/\\/g, "/").replace(/^\/+/, "");
 };
 
-const FeaturedProjects = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
 
+  // Eğer initialProjects boşsa, client-side'da fetch et
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/projects/featured");
-        const data = await res.json();
-
-        if (data.error) {
-          console.log("Backend hatası:", data.error);
+    if (initialProjects.length === 0) {
+      const fetchProjects = async () => {
+        try {
+          const res = await axiosInstance.get<Project[]>("/api/projects/featured");
+          setProjects(res.data);
+        } catch (err) {
+          console.error("Veri alınamadı", err);
           setProjects([]);
-        } else {
-          setProjects(data);
         }
-      } catch (err) {
-        console.error("Veri alınamadı", err);
-        setProjects([]);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+      };
+      fetchProjects();
+    }
+  }, [initialProjects.length]);
 
   if (projects.length === 0) return null;
 
@@ -74,7 +74,11 @@ const FeaturedProjects = () => {
         {/* First Row */}
         <div className="flex flex-col md:flex-row gap-5">
           {projects.slice(0, 2).map((project, index) => {
-            const imgSrc = normalizeImagePath(project.thumbnail_image);
+            const isVideoFile = (filePath: string | undefined) => {
+              if (!filePath) return false;
+              return filePath.toLowerCase().endsWith(".mp4");
+            };
+            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
 
             return (
               <Link
@@ -85,7 +89,7 @@ const FeaturedProjects = () => {
                 } bg-gray-100 overflow-hidden group relative`}
                 style={{ aspectRatio: index === 0 ? "3/2" : "1" }}
               >
-                {project.video_url ? (
+                {isVideoFile(mediaPath) ? (
                   <video
                     autoPlay
                     loop
@@ -93,11 +97,11 @@ const FeaturedProjects = () => {
                     playsInline
                     className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
                   >
-                    <source src={project.video_url} type="video/mp4" />
+                    <source src={mediaPath} type="video/mp4" />
                   </video>
                 ) : (
                   <Image
-                    src={imgSrc}
+                    src={mediaPath}
                     alt={project.title}
                     width={800}
                     height={500}
@@ -118,7 +122,11 @@ const FeaturedProjects = () => {
         {/* Second Row */}
         <div className="flex flex-col md:flex-row gap-5">
           {projects.slice(2, 4).map((project, index) => {
-            const imgSrc = normalizeImagePath(project.thumbnail_image);
+            const isVideoFile = (filePath: string | undefined) => {
+              if (!filePath) return false;
+              return filePath.toLowerCase().endsWith(".mp4");
+            };
+            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
 
             return (
               <Link
@@ -129,13 +137,25 @@ const FeaturedProjects = () => {
                 } bg-gray-100 overflow-hidden group relative`}
                 style={{ aspectRatio: index === 0 ? "1" : "3/2" }}
               >
-                <Image
-                  src={imgSrc}
-                  alt={project.title}
-                  width={800}
-                  height={500}
-                  className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
-                />
+                {isVideoFile(mediaPath) ? (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
+                  >
+                    <source src={mediaPath} type="video/mp4" />
+                  </video>
+                ) : (
+                  <Image
+                    src={mediaPath}
+                    alt={project.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute bottom-4 left-4 text-white font-regular">
                   <h3 className="text-sm font-bold">{project.title}</h3>
                   <p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">

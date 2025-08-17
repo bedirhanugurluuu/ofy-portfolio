@@ -4,16 +4,16 @@ import { ArrowRight } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="bg-black text-white relative md:sticky bottom-0 px-4 pt-25 pb-8" style={{ zIndex: '1' }}>
+        <footer className="bg-black text-white relative lg:sticky bottom-0 px-4 pt-25 pb-8" style={{ zIndex: '1' }}>
             <div className="mx-auto">
                 {/* CTA */}
                 <div className="mb-11">
-                    <p className="text-white opacity-50 text-3xl max-w-[260px] md:max-w-none md:text-4xl font-medium mb-2">
+                    <p className="text-white opacity-50 text-3xl max-w-[260px] lg:max-w-none lg:text-4xl font-medium mb-2">
                         Interested in working with us?
                     </p>
                     <a
                         href="#"
-                        className="text-white text-3xl md:text-4xl transition font-medium relative inline-block group hover:opacity-50"
+                        className="text-white text-3xl lg:text-4xl transition font-medium relative inline-block group hover:opacity-50"
                     >
                         <span className="block text-white group">
                             Get in touch
@@ -25,7 +25,7 @@ export default function Footer() {
                 <div className="border-t border-gray-white opacity-20 mb-5" />
 
                 {/* Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-5 md:gap-10 text-sm mb-20 md:mb-55">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 lg:gap-10 text-sm mb-20 lg:mb-55">
                     {/* Sitemap */}
                     <div>
                         <h4 className="text-white opacity-40 font-medium mb-2">SITEMAP</h4>

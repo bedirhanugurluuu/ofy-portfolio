@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 
 const navItems = [
-  { href: "/works/grid-view", label: "WORK" },
+  { href: "/projects", label: "WORK" },
   { href: "/about", label: "ABOUT" },
   { href: "/blog", label: "NEWS" },
   { href: "/careers", label: "CAREERS" },
@@ -26,8 +26,21 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const forceBlackTextPages = ["/about", "/blog", "/careers"];
-  const isDarkText = pathname ? forceBlackTextPages.includes(pathname) : false;
+    useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const forceBlackTextPages = ["/about", "/blog", "/careers", "/projects", "/contact"];
+  const isDarkText = pathname ?
+    forceBlackTextPages.includes(pathname) || pathname.startsWith("/blog/") :
+    false;
 
   return (
     <>
@@ -82,14 +95,14 @@ export default function Header() {
             <span
               className={clsx(
                 "absolute right-0 w-full bg-current transition-all duration-300",
-                "h-[1px]", // <-- çizgiyi incelttik
+                "h-[1px]",
                 menuOpen ? "rotate-45 top-2.5" : "top-1"
               )}
             />
             <span
               className={clsx(
                 "absolute right-0 w-full bg-current transition-all duration-300",
-                "h-[1px]", // <-- çizgiyi incelttik
+                "h-[1px]",
                 menuOpen ? "-rotate-45 top-2.5" : "top-3.5"
               )}
             />

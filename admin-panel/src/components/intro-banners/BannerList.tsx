@@ -1,6 +1,6 @@
-// components/intro-banners/BannerList.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl, getFallbackImageUrl } from "../../utils/imageUtils";
 
 interface Banner {
   id: number;
@@ -21,35 +21,50 @@ export default function BannerList({ banners, onDelete }: Props) {
   const navigate = useNavigate();
 
   return (
-    <ul className="space-y-4">
-      {banners.map((b) => (
-        <li
-          key={b.id}
-          className="p-4 border rounded shadow-sm flex justify-between items-center"
-        >
-          <div>
-            <p className="font-bold">
-              {b.order_index}. {b.title_line1} / {b.title_line2}
-            </p>
-            <small className="text-gray-600">
-              {b.button_text} → {b.button_link}
-            </small>
-          </div>
-          <div className="space-x-2">
-            <button
-              className="bg-yellow-500 text-white px-3 py-1 rounded"
-              onClick={() => navigate(`/admin/intro-banners/edit/${b.id}`)}
-            >
-              Düzenle
-            </button>
-            <button
-              className="bg-red-600 text-white px-3 py-1 rounded"
-              onClick={() => onDelete(b.id)}
-            >
-              Sil
-            </button>
-          </div>
-        </li>
+    <ul className="space-y-6">
+      {banners
+        .slice()
+        .sort((a, b) => a.order_index - b.order_index)
+        .map((b) => (
+          <li
+            key={b.id}
+            className="card bg-base-100 shadow hover:shadow-lg transition cursor-pointer flex flex-col md:flex-row justify-between items-center p-4"
+          >
+            <div className="flex items-center space-x-4 w-full md:w-auto">
+              <img 
+                src={getImageUrl(b.image)} 
+                alt={b.title_line1} 
+                className="w-20 h-14 object-cover rounded"
+                onError={(e) => {
+                  e.currentTarget.src = getFallbackImageUrl();
+                }}
+              />
+
+              <div>
+                <p className="font-bold text-lg">
+                  {b.order_index}. {b.title_line1} / {b.title_line2}
+                </p>
+                <small className="text-gray-500 block">
+                  {b.button_text} → <a href={b.button_link} target="_blank" rel="noreferrer" className="text-primary underline">{b.button_link}</a>
+                </small>
+              </div>
+            </div>
+
+            <div className="flex space-x-3 mt-4 md:mt-0">
+              <button
+                className="btn btn-warning btn-sm"
+                onClick={() => navigate(`/admin/intro-banners/edit/${b.id}`)}
+              >
+                Düzenle
+              </button>
+              <button
+                className="btn btn-error btn-sm"
+                onClick={() => onDelete(b.id)}
+              >
+                Sil
+              </button>
+            </div>
+          </li>
       ))}
     </ul>
   );

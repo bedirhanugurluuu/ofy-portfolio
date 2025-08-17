@@ -1,4 +1,5 @@
 import React from "react";
+import { getImageUrl, getFallbackImageUrl } from "../../utils/imageUtils";
 
 interface Banner {
   id?: number;
@@ -34,7 +35,14 @@ export default function BannerForm({
         <input type="file" accept="image/*" onChange={onFileChange} />
         {/* Eğer URL görüntülemek istersen opsiyonel: */}
         {banner.image && !banner.image.startsWith("blob:") && (
-          <img src={banner.image} alt="Mevcut Görsel" className="mt-2 max-h-40" />
+          <img 
+            src={getImageUrl(banner.image)} 
+            alt="Mevcut Görsel" 
+            className="mt-2 max-h-40 object-cover rounded"
+            onError={(e) => {
+              e.currentTarget.src = getFallbackImageUrl();
+            }}
+          />
         )}
       </div>
 

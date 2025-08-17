@@ -52,7 +52,7 @@ app.use('/uploads', express.static('uploads'));
 const csrfProtection = csurf();
 
 app.use((req, res, next) => {
-  if (req.path === "/api/login" || req.path === "/api/logout" || req.path === "/api/csrf-token" || req.path === "/api/me") {
+  if (req.path === "/api/login" || req.path === "/api/logout" || req.path === "/api/csrf-token" || req.path === "/api/me" || req.path.startsWith("/api/about") || req.path.startsWith("/api/news") || req.path.startsWith("/api/awards") || req.path.startsWith("/api/slider") || req.path.startsWith("/api/what-we-do") || req.path.startsWith("/api/contact")) {
     next();
   } else {
     csrfProtection(req, res, next);
@@ -107,6 +107,40 @@ app.use("/api", authRouter);
 // Routes
 const introBannersRouter = require("./routes/introBanners");
 app.use("/api/intro-banners", introBannersRouter);
+
+const aboutRouter = require("./routes/about");
+app.use("/api/about", aboutRouter);
+
+const aboutGalleryRouter = require("./routes/aboutGallery");
+app.use("/api/about-gallery", aboutGalleryRouter);
+
+// Awards route - CSRF koruması olmadan
+const awardsRouter = require('./routes/awards');
+app.use("/api/awards", (req, res, next) => {
+  // CSRF koruması olmadan direkt geç
+  next();
+}, awardsRouter);
+
+const sliderRouter = require('./routes/slider');
+app.use("/api/slider", (req, res, next) => {
+  // CSRF koruması olmadan direkt geç
+  next();
+}, sliderRouter);
+
+const whatWeDoRouter = require('./routes/whatWeDo');
+app.use("/api/what-we-do", (req, res, next) => {
+  // CSRF koruması olmadan direkt geç
+  next();
+}, whatWeDoRouter);
+
+const contactRouter = require('./routes/contact');
+app.use("/api/contact", (req, res, next) => {
+  // CSRF koruması olmadan direkt geç
+  next();
+}, contactRouter);
+
+const newsRouter = require("./routes/news");
+app.use("/api/news", newsRouter);
 
 // Kullanıcı sorgulama fonksiyonu
 async function getUserByUsername(username) {
