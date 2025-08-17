@@ -108,37 +108,37 @@ export const normalizeImageUrl = (imagePath: string): string => {
 };
 
 export async function fetchProjects(): Promise<Project[]> {
-  const res = await axios.get<Project[]>(`${API_BASE_URL}/api/projects`);
+  const res = await axios.get<Project[]>(`${API_BASE_URL}/projects`);
   return res.data;
 }
 
 export async function fetchProjectBySlug(slug: string): Promise<Project> {
-  const res = await axios.get<Project>(`${API_BASE_URL}/api/projects/${slug}`);
+  const res = await axios.get<Project>(`${API_BASE_URL}/projects/${slug}`);
   return res.data;
 }
 
 export async function fetchIntroBanners(): Promise<IntroBanner[]> {
-  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/api/intro-banners`);
+  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/intro-banners`);
   return res.data;
 }
 
 export async function fetchAbout(): Promise<AboutContent> {
-  const res = await axios.get<AboutContent>(`${API_BASE_URL}/api/about`);
+  const res = await axios.get<AboutContent>(`${API_BASE_URL}/about`);
   return res.data;
 }
 
 export async function fetchNews(): Promise<News[]> {
-  const res = await axios.get<News[]>(`${API_BASE_URL}/api/news`);
+  const res = await axios.get<News[]>(`${API_BASE_URL}/news`);
   return res.data;
 }
 
 export async function fetchFeaturedNews(): Promise<News[]> {
-  const res = await axios.get<News[]>(`${API_BASE_URL}/api/news/featured`);
+  const res = await axios.get<News[]>(`${API_BASE_URL}/news/featured`);
   return res.data;
 }
 
 export async function fetchNewsBySlug(slug: string): Promise<News> {
-  const res = await axios.get<News>(`${API_BASE_URL}/api/news/slug/${slug}`);
+  const res = await axios.get<News>(`${API_BASE_URL}/news/slug/${slug}`);
   return res.data;
 }
 
@@ -151,7 +151,7 @@ export interface AboutGalleryImage {
 }
 
 export async function fetchAboutGallery(): Promise<AboutGalleryImage[]> {
-  const res = await axios.get<AboutGalleryImage[]>(`${API_BASE_URL}/api/about-gallery`);
+  const res = await axios.get<AboutGalleryImage[]>(`${API_BASE_URL}/about-gallery`);
   return res.data;
 }
 
@@ -165,7 +165,7 @@ export interface Award {
 }
 
 export async function fetchAwards(): Promise<Award[]> {
-  const res = await axios.get<Award[]>(`${API_BASE_URL}/api/awards`);
+  const res = await axios.get<Award[]>(`${API_BASE_URL}/awards`);
   return res.data;
 }
 
@@ -179,7 +179,7 @@ export interface SliderItem {
 }
 
 export async function fetchSlider(): Promise<SliderItem[]> {
-  const res = await axios.get<SliderItem[]>(`${API_BASE_URL}/api/slider`);
+  const res = await axios.get<SliderItem[]>(`${API_BASE_URL}/slider`);
   return res.data;
 }
 
@@ -198,7 +198,7 @@ export interface WhatWeDoContent {
 }
 
 export async function fetchWhatWeDo(): Promise<WhatWeDoContent> {
-  const res = await axios.get<WhatWeDoContent>(`${API_BASE_URL}/api/what-we-do`);
+  const res = await axios.get<WhatWeDoContent>(`${API_BASE_URL}/what-we-do`);
   return res.data;
 }
 
@@ -219,6 +219,6 @@ export interface ContactContent {
 }
 
 export async function fetchContact(): Promise<ContactContent> {
-  const res = await axios.get<ContactContent>(`${API_BASE_URL}/api/contact`);
+  const res = await axios.get<ContactContent>(`${API_BASE_URL}/contact`);
   return res.data;
 }
