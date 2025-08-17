@@ -38,9 +38,9 @@ export default function EditIntroBannerPage() {
     if (!id) return;
 
     setIsLoading(true);
-    api.getIntroBanner(parseInt(id))
+    api.getIntroBanner(parseInt(id!))
       .then(res => {
-        setBanner(res.data);
+        setBanner(res.data as Banner);
         setIsLoading(false);
       })
       .catch(err => {
@@ -102,7 +102,7 @@ export default function EditIntroBannerPage() {
     formData.append("button_text", banner.button_text || "");
     formData.append("button_link", banner.button_link || "");
 
-    api.updateIntroBanner(parseInt(id), formData)
+    api.updateIntroBanner(parseInt(id!), formData)
     .then(() => {
       Swal.fire({
         icon: "success",
