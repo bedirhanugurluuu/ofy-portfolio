@@ -12,6 +12,8 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000", // Next.js
+  "http://localhost:3001", // Next.js (alternatif port)
+  "http://localhost:3002", // Admin Panel
   "http://localhost:5173", // Vite / Panel
 ];
 

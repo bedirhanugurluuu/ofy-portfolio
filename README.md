@@ -64,26 +64,47 @@ await api.deleteProject(id);
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 🎯 Environment Switch Scripts
+
+We've created convenient PowerShell scripts to switch between environments:
+
+**For Local Development:**
+```powershell
+.\switch-to-local.ps1
+```
+
+**For Vercel Production:**
+```powershell
+.\switch-to-vercel.ps1
+```
+
+**Quick Deploy to Vercel:**
+```powershell
+.\quick-deploy.ps1
+```
+
+### 📋 Manual Setup
+
+#### 1. Install Dependencies
 ```bash
 npm install
 cd admin-panel && npm install
 ```
 
-### 2. Environment Setup
+#### 2. Environment Setup
 ```bash
 # Copy environment examples
 cp env.example .env.local
 cp admin-panel/env.example admin-panel/.env
 ```
 
-### 3. Database Setup
+#### 3. Database Setup
 ```bash
 # Run SQL scripts for database tables
 # See DEPLOYMENT.md for details
 ```
 
-### 4. Development
+#### 4. Development
 ```bash
 # Frontend
 npm run dev
