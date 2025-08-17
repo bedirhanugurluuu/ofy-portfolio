@@ -28,7 +28,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
     return null;
   }
 
-  console.log('SliderSection: Rendering with', { currentItem, imageUrl: normalizeImageUrl(currentItem.image_path) });
+  console.log('SliderSection: Rendering with', { currentItem, imageUrl: normalizeImageUrl(currentItem.image_path || '') });
 
   return (
     <section className="w-full px-5 py-20">
@@ -36,7 +36,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
         {/* Full-width image with aspect ratio */}
         <div className="relative w-full" style={{ aspectRatio: '2.230769230769231 / 1' }}>
           <Image
-            src={normalizeImageUrl(currentItem.image_path)}
+            src={normalizeImageUrl(currentItem.image_path || '')}
             alt={currentItem.title}
             fill
             className="object-cover"
@@ -89,7 +89,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                      : 'opacity-20 group-hover:opacity-100'
                  }`}>
                   <Image
-                     src={normalizeImageUrl(item.image_path)}
+                     src={normalizeImageUrl(item.image_path || '')}
                      alt={`Slide ${index + 1}`}
                      width={134}
                      height={90}

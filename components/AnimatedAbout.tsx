@@ -20,8 +20,10 @@ interface AnimatedAboutProps {
 
 export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent }: AnimatedAboutProps) {
   const [content, setContent] = useState<AboutContent>(initialContent || {
+    id: 1,
     title: "About Us",
     subtitle: "A collective of visionaries shaping tomorrow",
+    content: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
     main_text: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.",
     vision_title: "Our Vision",
     vision_text: "We craft innovative design strategies for forward thinking brands, combining aesthetics with purpose to create impactful solutions.",
@@ -51,7 +53,9 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     clients_title: "Clients",
     clients_list: "Nike\nElectronic Arts\nZapier\nBrownkind\nTonal\nMountain Hardwear\nAppfire\nTAE\n22 System\nArticle One Eyewear\nBetter World\nGucci\nSalt & Stone\nAudi\nLululemon\nPuma",
     industries_title: "Industries",
-    industries_list: "Travel\nSports & Fitness\nMedia & Entertainment\nBeauty\nGaming\nFood & Beverage\nCyber\nEnergy\nBanking & Finance\nHealth & Wellness\nApparel & Lifestyle\nHome Goods\nEmerging Technology\nHospitality\nAutomotive"
+    industries_list: "Travel\nSports & Fitness\nMedia & Entertainment\nBeauty\nGaming\nFood & Beverage\nCyber\nEnergy\nBanking & Finance\nHealth & Wellness\nApparel & Lifestyle\nHome Goods\nEmerging Technology\nHospitality\nAutomotive",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   });
 
   const [projects, setProjects] = useState<Project[]>([]);

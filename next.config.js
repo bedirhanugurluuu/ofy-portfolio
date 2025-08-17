@@ -12,12 +12,23 @@ const nextConfig = {
     ],
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Ignore admin-panel directory during build
+    // Completely exclude admin-panel from build
     config.watchOptions = {
       ...config.watchOptions,
       ignored: /admin-panel/,
     };
+    
+    // Exclude admin-panel from module resolution
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'admin-panel': false,
+    };
+    
     return config;
+  },
+  // Exclude admin-panel from build
+  experimental: {
+    excludeDefaultMomentLocales: false,
   },
 };
 

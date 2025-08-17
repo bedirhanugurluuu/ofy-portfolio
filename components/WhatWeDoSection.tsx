@@ -9,9 +9,9 @@ interface WhatWeDoSectionProps {
 
 export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
   // Service items'ları parse et
-  const service1Items = content.service_1_items.split('\n').filter(item => item.trim());
-  const service2Items = content.service_2_items.split('\n').filter(item => item.trim());
-  const service3Items = content.service_3_items.split('\n').filter(item => item.trim());
+  const service1Items = content.service_1_items.split('\n').filter((item: string) => item.trim());
+  const service2Items = content.service_2_items.split('\n').filter((item: string) => item.trim());
+  const service3Items = content.service_3_items.split('\n').filter((item: string) => item.trim());
 
   return (
     <section className="w-full px-5 py-20 bg-white">
@@ -36,7 +36,7 @@ export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
                         {content.service_1_title}
                     </h3>
                     <ul>
-                        {service1Items.map((item, index) => (
+                        {service1Items.map((item: string, index: number) => (
                             <li key={index} className="text-sm font-medium">
                                 {item}
                             </li>
@@ -50,7 +50,7 @@ export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
                         {content.service_2_title}
                     </h3>
                     <ul>
-                        {service2Items.map((item, index) => (
+                        {service2Items.map((item: string, index: number) => (
                             <li key={index} className="text-sm font-medium">
                                 {item}
                             </li>
@@ -64,7 +64,7 @@ export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
                         {content.service_3_title}
                     </h3>
                     <ul>
-                        {service3Items.map((item, index) => (
+                        {service3Items.map((item: string, index: number) => (
                             <li key={index} className="text-sm font-medium">
                                 {item}
                             </li>

@@ -1,19 +1,21 @@
 ﻿import axios from "axios";
 
 // TypeScript interfaces
-interface Project {
+export interface Project {
   id: number;
   title: string;
   subtitle: string;
   description: string;
   image_path?: string;
+  thumbnail_media?: string;
+  role?: string;
   slug: string;
   featured?: boolean;
   created_at: string;
   updated_at: string;
 }
 
-interface IntroBanner {
+export interface IntroBanner {
   id: number;
   title: string;
   subtitle: string;
@@ -23,17 +25,46 @@ interface IntroBanner {
   updated_at: string;
 }
 
-interface AboutContent {
+export interface AboutContent {
   id: number;
   title: string;
   subtitle: string;
   content: string;
   image_path?: string;
+  main_text: string;
+  vision_title: string;
+  vision_text: string;
+  approach_title: string;
+  approach_subtitle: string;
+  brand_strategy_title: string;
+  brand_strategy_text: string;
+  visual_design_title: string;
+  visual_design_text: string;
+  launch_title: string;
+  launch_text: string;
+  insights_title: string;
+  insights_subtitle: string;
+  insight_1_title: string;
+  insight_1_text: string;
+  insight_1_project_id: number;
+  insight_2_title: string;
+  insight_2_text: string;
+  insight_2_project_id: number;
+  insight_3_title: string;
+  insight_3_text: string;
+  insight_3_project_id: number;
+  insight_4_title: string;
+  insight_4_text: string;
+  insight_4_project_id: number;
+  clients_title: string;
+  clients_list: string;
+  industries_title: string;
+  industries_list: string;
   created_at: string;
   updated_at: string;
 }
 
-interface News {
+export interface News {
   id: number;
   title: string;
   subtitle: string;
@@ -48,7 +79,7 @@ interface News {
   updated_at: string;
 }
 
-interface AboutGalleryImage {
+export interface AboutGalleryImage {
   id: number;
   image_path: string;
   order_index: number;
@@ -56,7 +87,7 @@ interface AboutGalleryImage {
   updated_at: string;
 }
 
-interface Award {
+export interface Award {
   id: number;
   title: string;
   description: string;
@@ -66,17 +97,18 @@ interface Award {
   updated_at: string;
 }
 
-interface SliderItem {
+export interface SliderItem {
   id: number;
   title: string;
   subtitle: string;
+  sub_subtitle?: string;
   image_path?: string;
   order_index: number;
   created_at: string;
   updated_at: string;
 }
 
-interface WhatWeDoContent {
+export interface WhatWeDoContent {
   id: number;
   title: string;
   subtitle: string;
@@ -90,14 +122,15 @@ interface WhatWeDoContent {
   updated_at: string;
 }
 
-interface ContactContent {
+export interface ContactContent {
   id: number;
+  title: string;
   phone: string;
   email: string;
   instagram: string;
   linkedin: string;
-  address_line_1: string;
-  address_line_2: string;
+  address_line1: string;
+  address_line2: string;
   studio_hours_weekdays: string;
   studio_hours_weekend: string;
   image_path?: string;
