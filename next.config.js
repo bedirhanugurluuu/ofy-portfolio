@@ -26,10 +26,7 @@ const nextConfig = {
     
     return config;
   },
-  // Exclude admin-panel from build
-  experimental: {
-    excludeDefaultMomentLocales: false,
-  },
+
 };
 
 module.exports = nextConfig;

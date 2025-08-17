@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import axiosInstance from '@/utils/axiosInstance';
+import { fetchProjects } from '@/lib/api';
 
 interface Project {
   id: number;
@@ -32,16 +32,16 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
   // Eğer initialProjects boşsa, client-side'da fetch et
   useEffect(() => {
     if (initialProjects.length === 0) {
-      const fetchProjects = async () => {
+      const fetchFeaturedProjects = async () => {
         try {
-          const res = await axiosInstance.get<Project[]>("/api/projects/featured");
-          setProjects(res.data);
+          const data = await fetchProjects();
+          setProjects(data);
         } catch (err) {
           console.error("Veri alınamadı", err);
           setProjects([]);
         }
       };
-      fetchProjects();
+      fetchFeaturedProjects();
     }
   }, [initialProjects.length]);
 

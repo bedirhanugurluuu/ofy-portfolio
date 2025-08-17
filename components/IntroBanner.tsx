@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import axiosInstance from "../utils/axiosInstance";
+import { fetchIntroBanners } from "@/lib/api";
 
 type Banner = {
   id: number;
@@ -29,9 +29,8 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
   // Eğer initialBanners boşsa, client-side'da fetch et
   useEffect(() => {
     if (initialBanners.length === 0) {
-      axiosInstance
-        .get<Banner[]>("/api/intro-banners")
-        .then((res) => setBanners(res.data))
+      fetchIntroBanners()
+        .then((data) => setBanners(data))
         .catch(() => setBanners([]));
     }
   }, [initialBanners.length]);
