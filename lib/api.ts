@@ -200,6 +200,11 @@ export async function fetchProjects(): Promise<Project[]> {
   return res.data;
 }
 
+export async function fetchIntroBanners(): Promise<IntroBanner[]> {
+  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/intro-banners`);
+  return res.data;
+}
+
 export async function fetchProjectBySlug(slug: string): Promise<Project> {
   const res = await axios.get<Project>(`${API_BASE_URL}/projects/${slug}`);
   return res.data;
