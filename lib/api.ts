@@ -8,9 +8,16 @@ export interface Project {
   description: string;
   image_path?: string;
   thumbnail_media?: string;
+  banner_media?: string;
+  video_url?: string;
   role?: string;
   slug: string;
   featured?: boolean;
+  is_featured?: boolean;
+  featured_order?: number;
+  client_name?: string;
+  year?: number;
+  external_link?: string;
   created_at: string;
   updated_at: string;
 }

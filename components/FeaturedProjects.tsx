@@ -68,7 +68,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
               if (!filePath) return false;
               return filePath.toLowerCase().endsWith(".mp4");
             };
-            const mediaPath = normalizeImagePath(project.image_path || "");
+            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
 
             return (
               <Link
@@ -116,7 +116,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
               if (!filePath) return false;
               return filePath.toLowerCase().endsWith(".mp4");
             };
-            const mediaPath = normalizeImagePath(project.image_path || "");
+            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
 
             return (
               <Link

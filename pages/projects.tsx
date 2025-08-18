@@ -12,11 +12,16 @@ interface Project {
   title: string;
   subtitle: string;
   slug: string;
-  client_name: string;
-  year: number;
-  role: string;
-  thumbnail_media: string;
-  banner_media: string;
+  client_name?: string;
+  year?: number;
+  role?: string;
+  thumbnail_media?: string;
+  banner_media?: string;
+  description?: string;
+  is_featured?: boolean;
+  featured_order?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 type Props = {
