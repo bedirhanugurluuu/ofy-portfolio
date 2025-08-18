@@ -27,7 +27,7 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
 
   const getProjectById = (id?: number): Project | null => {
     if (!id) return null;
-    return projects.find(project => project.id === id) || null;
+    return projects.find(project => project.id === id.toString()) || null;
   };
 
   if (!mounted) return null;

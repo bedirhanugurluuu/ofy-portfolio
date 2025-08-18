@@ -66,7 +66,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                       className="text-sm font-medium animate-[slideUpMenu_0.8s_ease-out_forwards]"
                       style={{ color: '#FFFFFF66' }}
                     >
-                      {currentItem.sub_subtitle}
+                      {currentItem.subtitle}
                     </p>
                  </div>
              </div>

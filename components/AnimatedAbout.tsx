@@ -24,6 +24,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     title: "About Us",
     subtitle: "A collective of visionaries shaping tomorrow",
     content: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
+    description: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
     main_text: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.",
     vision_title: "Our Vision",
     vision_text: "We craft innovative design strategies for forward thinking brands, combining aesthetics with purpose to create impactful solutions.",

@@ -18,7 +18,7 @@ export default function FromTheJournal() {
         // Fallback to static data if API fails
         setFeaturedNews([
           {
-            id: 1,
+            id: "1",
             title: "The Art of Minimalism",
             category_text: "DESIGN",
             photographer: "Anna Surokin",
@@ -26,12 +26,13 @@ export default function FromTheJournal() {
             slug: "sustainable-design",
             content: "The Art of Minimalism: Creating Impactful Designs with Less",
             image_path: "/images/journal1.jpg",
+            featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
           {
-            id: 2,
+            id: "2",
             title: "Art Direction from scratch",
             category_text: "ART DIRECTION",
             photographer: "Anna Surokin",
@@ -39,12 +40,13 @@ export default function FromTheJournal() {
             slug: "urban-inspiration",
             content: "Art Direction from scratch: Creating a unique art direction for a brand",
             image_path: "/images/journal2.jpg",
+            featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
           {
-            id: 3,
+            id: "3",
             title: "Material Matters",
             category_text: "DESIGN",
             photographer: "Anna Surokin",
@@ -52,6 +54,7 @@ export default function FromTheJournal() {
             slug: "material-matters",
             content: "We launched a new project redefining sustainable branding",
             image_path: "/images/journal3.jpg",
+            featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

@@ -97,7 +97,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         }}
       >
         <Image
-          src={`http://localhost:5000${currentBanner.image || currentBanner.image_path || ''}`}
+          src={`http://localhost:5000${currentBanner.image_path || ''}`}
           alt="banner"
           fill
           priority

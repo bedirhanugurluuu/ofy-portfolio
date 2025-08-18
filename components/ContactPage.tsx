@@ -31,7 +31,7 @@ export default function ContactPage({ content }: ContactPageProps) {
           {/* Title */}
           <div className="mb-45 px-5 max-w-[420px]">
             <AnimatedText className="text-3xl md:text-4xl font-medium text-gray-900 max-w-4xl">
-              {content.title}
+              Contact
             </AnimatedText>
           </div>
 

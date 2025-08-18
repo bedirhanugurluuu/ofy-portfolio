@@ -305,7 +305,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     // Get related articles (excluding current article)
     const allNews = await fetchNews();
     const relatedArticles = allNews
-      .filter(n => n.id !== article.id)
+      .filter(n => n.id !== article?.id)
       .slice(0, 3);
 
     return {

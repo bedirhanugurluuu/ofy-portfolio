@@ -75,6 +75,9 @@ export interface News {
   subtitle: string;
   content: string;
   image_path?: string;
+  category_text?: string;
+  photographer?: string;
+  published_at?: string;
   slug: string;
   featured: boolean;
   created_at: string;
