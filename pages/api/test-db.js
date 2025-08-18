@@ -5,6 +5,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  // Debug: Log environment variables
+  console.log('Environment variables check:', {
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD ? '***SET***' : 'NOT SET',
+    database: process.env.DATABASE_NAME,
+    port: process.env.DATABASE_PORT,
+  });
+
   try {
     // Database connection
     const connection = await mysql.createConnection({
