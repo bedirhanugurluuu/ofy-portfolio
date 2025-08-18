@@ -27,11 +27,28 @@ export default async function handler(req, res) {
     // Test query
     const [rows] = await connection.execute('SELECT 1 as test');
     
+    // Get table list
+    const [tables] = await connection.execute('SHOW TABLES');
+    
+    // Test specific tables
+    let tableTests = {};
+    for (const tableRow of tables) {
+      const tableName = Object.values(tableRow)[0];
+      try {
+        const [countResult] = await connection.execute(`SELECT COUNT(*) as count FROM ${tableName}`);
+        tableTests[tableName] = countResult[0].count;
+      } catch (err) {
+        tableTests[tableName] = `Error: ${err.message}`;
+      }
+    }
+    
     await connection.end();
 
     res.status(200).json({ 
       message: 'Database connection successful',
       test: rows[0],
+      tables: tables.map(row => Object.values(row)[0]),
+      tableTests,
       env: {
         host: process.env.DATABASE_HOST ? 'Set' : 'Not set',
         user: process.env.DATABASE_USER ? 'Set' : 'Not set',
