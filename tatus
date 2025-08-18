@@ -1,0 +1,47 @@
+[33mdc4d4d8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Add Netlify configuration
+[33md9656aa[m Fix image URLs and add uploads files for Vercel deployment
+[33m04e5740[m Fix API issues: projects detail page, intro banners, and news featured
+[33mf959b55[m Add missing fetchIntroBanners function
+[33m729f781[m Add SSR API functions and convert pages back to SSR
+[33mf2a84f9[m Convert projects page to client-side rendering
+[33mb42308e[m Fix TypeScript errors in projects page
+[33m8fc8f90[m Fix Project interface and component property mapping
+[33m736e3a1[m Add debug logging to API routes
+[33mfbfca56[m Add table list and count to test-db API
+[33m721f81f[m Add debug logging to test-db API
+[33m1c5dce2[m Fix pages/projects/[slug].tsx - use correct Project interface and remove unsupported properties
+[33m8b102e6[m Fix pages/projects/[slug].tsx - use correct Project interface and remove unsupported properties
+[33mc0a982c[m Fix pages/index.tsx - use correct Project interface properties (featured instead of is_featured)
+[33m598f8c1[m Fix FromTheJournal TypeScript errors - add missing content property and remove aspect_ratio
+[33m0865db0[m Fix TypeScript errors in IntroBanner and FeaturedProjects components
+[33m8ddb88b[m Fix AwardsSection TypeScript errors - use correct Award interface properties
+[33m17a69ac[m Initial commit for admin pane2l
+[33m56ae915[m Admin panel moved to temp-admin-panel to fix build issues
+[33ma543db4[m Fix: Remove invalid next.config.js option and replace axiosInstance with centralized API3
+[33m93bbd96[m Fix: Remove invalid next.config.js option and replace axiosInstance with centralized API
+[33mc4d5c83[m Fix: Remove invalid next.config.js option and replace axiosInstance with centralized API
+[33maa5fcbd[m Fix: Add missing interface properties and handle undefined image paths
+[33m737477d[m Remove problematic vercel.json file
+[33ma5fb491[m Fix: Template literal syntax and add TypeScript interfaces
+[33m95f9c02[m Fix: Remove problematic vercel.json from main project
+[33mb94f7c3[m Remove vercel.json and update next.config.js to ignore admin-panel2
+[33mb1f8b27[m Deploy to Vercel - 2025-08-18 00:54:10
+[33m169df82[m Remove vercel.json and update next.config.js to ignore admin-panel
+[33m39df084[m Fix API URLs and add missing API routes
+[33m7ce8217[m Add missing API routes: projects, intro-banners, awards, slider, news
+[33m78c23cc[m Remove admin panel from main project - separate deployment needed
+[33m54dc63b[m Remove problematic API files for initial deployment - keep only working about, contact, what-we-do
+[33m5953dbb[m Fix about.js API route for Next.js format
+[33m364bb19[m Ready for Vercel deployment - centralized API system and database setup
+[33m6230f27[m admin panel ve backend
+[33m2c6d930[m loading
+[33m27f8692[m about sayfası mobile
+[33mc88784f[m about sayfası
+[33m5b71ea4[m background
+[33m2105712[m background
+[33md2fa6a3[m about banner
+[33mdb515d1[m lazy eklenmesi
+[33meaaede3[m confilct çözüldü: README.md
+[33m16ed013[m[33m ([m[1;31morigin/master[m[33m)[m İlk commit
+[33m48e3dd4[m Initial commit
+[33mb6f31d1[m Initial commit from Create Next App

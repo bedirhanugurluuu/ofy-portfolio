@@ -1,16 +1,10 @@
-import mysql from 'mysql2/promise';
+import { createClient } from '@supabase/supabase-js';
 
-// Database connection
-const pool = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  port: process.env.DATABASE_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export default async function handler(req, res) {
   // CORS headers
@@ -25,9 +19,17 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const [rows] = await pool.execute('SELECT * FROM what_we_do LIMIT 1');
+      const { data, error } = await supabase
+        .from('what_we_do')
+        .select('*')
+        .limit(1)
+        .single();
       
-      if (rows.length === 0) {
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      if (!data) {
         return res.json({
           id: null,
           title: 'What We Do',
@@ -41,7 +43,7 @@ export default async function handler(req, res) {
         });
       }
       
-      res.json(rows[0]);
+      res.json(data);
     } catch (error) {
       console.error('Error fetching what we do content:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -59,22 +61,47 @@ export default async function handler(req, res) {
         service_3_items
       } = req.body;
 
-      const [existingRows] = await pool.execute('SELECT id FROM what_we_do LIMIT 1');
+      // Check if record exists
+      const { data: existingData } = await supabase
+        .from('what_we_do')
+        .select('id')
+        .limit(1)
+        .single();
       
-      if (existingRows.length === 0) {
-        await pool.execute(`
-          INSERT INTO what_we_do (
-            title, subtitle, service_1_title, service_1_items,
-            service_2_title, service_2_items, service_3_title, service_3_items
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `, [title, subtitle, service_1_title, service_1_items, service_2_title, service_2_items, service_3_title, service_3_items]);
+      if (!existingData) {
+        // Insert new record
+        const { error: insertError } = await supabase
+          .from('what_we_do')
+          .insert([{
+            title,
+            subtitle,
+            service_1_title,
+            service_1_items,
+            service_2_title,
+            service_2_items,
+            service_3_title,
+            service_3_items
+          }]);
+        
+        if (insertError) throw insertError;
       } else {
-        await pool.execute(`
-          UPDATE what_we_do SET 
-            title = ?, subtitle = ?, service_1_title = ?, service_1_items = ?,
-            service_2_title = ?, service_2_items = ?, service_3_title = ?, service_3_items = ?
-          WHERE id = ?
-        `, [title, subtitle, service_1_title, service_1_items, service_2_title, service_2_items, service_3_title, service_3_items, existingRows[0].id]);
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from('what_we_do')
+          .update({
+            title,
+            subtitle,
+            service_1_title,
+            service_1_items,
+            service_2_title,
+            service_2_items,
+            service_3_title,
+            service_3_items,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingData.id);
+        
+        if (updateError) throw updateError;
       }
 
       res.json({ message: 'What We Do content updated successfully' });

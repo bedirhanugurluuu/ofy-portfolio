@@ -9,11 +9,9 @@ interface FeaturedProjectsProps {
   initialProjects?: Project[];
 }
 
-const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
 const normalizeImagePath = (path: string) => {
   if (!path) return "";
-  return backendUrl + "/" + path.replace(/\\/g, "/").replace(/^\/+/, "");
+  return `http://localhost:5000/${path.replace(/\\/g, "/").replace(/^\/+/, "")}`;
 };
 
 const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {

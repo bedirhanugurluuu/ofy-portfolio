@@ -1,19 +1,13 @@
-import mysql from 'mysql2/promise';
+import { createClient } from '@supabase/supabase-js';
 import formidable from 'formidable';
 import fs from 'fs/promises';
 import path from 'path';
 
-// Database connection
-const pool = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  port: process.env.DATABASE_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 // Disable body parsing, we'll handle it manually
 export const config = {
@@ -35,9 +29,17 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const [rows] = await pool.execute('SELECT * FROM contact LIMIT 1');
+      const { data, error } = await supabase
+        .from('contact')
+        .select('*')
+        .limit(1)
+        .single();
       
-      if (rows.length === 0) {
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      if (!data) {
         return res.json({
           id: null,
           title: "Let's connect and bring your ideas to life",
@@ -53,7 +55,7 @@ export default async function handler(req, res) {
         });
       }
       
-      res.json(rows[0]);
+      res.json(data);
     } catch (error) {
       console.error('Error fetching contact content:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -61,7 +63,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'PUT') {
     try {
       const form = formidable({
-        uploadDir: './public/uploads',
+        uploadDir: '/tmp', // Temporary directory
         keepExtensions: true,
         maxFiles: 1,
         maxFileSize: 5 * 1024 * 1024, // 5MB
@@ -87,54 +89,92 @@ export default async function handler(req, res) {
       } = fields;
 
       // Check if record exists
-      const [existingRows] = await pool.execute('SELECT id, image_path FROM contact LIMIT 1');
+      const { data: existingData } = await supabase
+        .from('contact')
+        .select('id, image_path')
+        .limit(1)
+        .single();
       
-      let imagePath = null;
+      let imageUrl = null;
       if (files.image) {
         const file = files.image[0];
-        const fileName = `contact-${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalFilename)}`;
-        const newPath = path.join('./public/uploads', fileName);
         
-        // Move file to uploads directory
-        await fs.rename(file.filepath, newPath);
-        imagePath = fileName;
+        // Delete old image if exists
+        if (existingData?.image_path) {
+          const oldFileName = existingData.image_path.split('/').pop();
+          await supabase.storage
+            .from('contact')
+            .remove([oldFileName]);
+        }
+
+        // Upload new image to Supabase Storage
+        const fileBuffer = await fs.readFile(file.filepath);
+        const fileName = path.basename(file.filepath);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('contact')
+          .upload(fileName, fileBuffer, {
+            contentType: file.mimetype,
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('contact')
+          .getPublicUrl(fileName);
+        
+        imageUrl = urlData.publicUrl;
+
+        // Clean up temp file
+        await fs.unlink(file.filepath);
       }
       
-      if (existingRows.length === 0) {
+      if (!existingData) {
         // Insert new record
-        await pool.execute(`
-          INSERT INTO contact (
-            title, phone, email, instagram, linkedin,
-            address_line1, address_line2,
-            studio_hours_weekdays, studio_hours_weekend, image_path
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [title, phone, email, instagram, linkedin, address_line1, address_line2, studio_hours_weekdays, studio_hours_weekend, imagePath]);
+        const { error: insertError } = await supabase
+          .from('contact')
+          .insert([{
+            title,
+            phone,
+            email,
+            instagram,
+            linkedin,
+            address_line1,
+            address_line2,
+            studio_hours_weekdays,
+            studio_hours_weekend,
+            image_path: imageUrl
+          }]);
+        
+        if (insertError) throw insertError;
       } else {
-        // Delete old image if new one is uploaded
-        if (files.image && existingRows[0].image_path) {
-          try {
-            await fs.unlink(path.join('./public/uploads', existingRows[0].image_path));
-          } catch (error) {
-            console.error('Error deleting old image:', error);
-          }
+        // Update existing record
+        const updateData = {
+          title,
+          phone,
+          email,
+          instagram,
+          linkedin,
+          address_line1,
+          address_line2,
+          studio_hours_weekdays,
+          studio_hours_weekend,
+          updated_at: new Date().toISOString()
+        };
+        
+        if (imageUrl) {
+          updateData.image_path = imageUrl;
         }
         
-        // Update existing record
-        const updateFields = files.image 
-          ? `title = ?, phone = ?, email = ?, instagram = ?, linkedin = ?,
-             address_line1 = ?, address_line2 = ?,
-             studio_hours_weekdays = ?, studio_hours_weekend = ?, image_path = ?`
-          : `title = ?, phone = ?, email = ?, instagram = ?, linkedin = ?,
-             address_line1 = ?, address_line2 = ?,
-             studio_hours_weekdays = ?, studio_hours_weekend = ?`;
+        const { error: updateError } = await supabase
+          .from('contact')
+          .update(updateData)
+          .eq('id', existingData.id);
         
-        const updateValues = files.image 
-          ? [title, phone, email, instagram, linkedin, address_line1, address_line2, studio_hours_weekdays, studio_hours_weekend, imagePath, existingRows[0].id]
-          : [title, phone, email, instagram, linkedin, address_line1, address_line2, studio_hours_weekdays, studio_hours_weekend, existingRows[0].id];
-        
-        await pool.execute(`
-          UPDATE contact SET ${updateFields} WHERE id = ?
-        `, updateValues);
+        if (updateError) throw updateError;
       }
 
       res.json({ message: 'Contact content updated successfully' });

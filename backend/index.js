@@ -54,7 +54,7 @@ app.use('/uploads', express.static('uploads'));
 const csrfProtection = csurf();
 
 app.use((req, res, next) => {
-  if (req.path === "/api/login" || req.path === "/api/logout" || req.path === "/api/csrf-token" || req.path === "/api/me" || req.path.startsWith("/api/about") || req.path.startsWith("/api/news") || req.path.startsWith("/api/awards") || req.path.startsWith("/api/slider") || req.path.startsWith("/api/what-we-do") || req.path.startsWith("/api/contact")) {
+  if (req.path === "/api/login" || req.path === "/api/logout" || req.path === "/api/csrf-token" || req.path === "/api/me" || req.path.startsWith("/api/about") || req.path.startsWith("/api/news") || req.path.startsWith("/api/awards") || req.path.startsWith("/api/slider") || req.path.startsWith("/api/what-we-do") || req.path.startsWith("/api/contact") || req.path.startsWith("/api/projects") || req.path.startsWith("/api/intro-banners")) {
     next();
   } else {
     csrfProtection(req, res, next);
@@ -90,18 +90,6 @@ app.use("/api/projects", (req, res, next) => {
   console.log("Projects route called:", req.method, req.originalUrl);
   next();
 }, projectRoutes);
-
-app.get('/api/projects/:id', async (req, res) => {
-  const id = req.params.id;
-  try {
-    const [rows] = await pool.query('SELECT * FROM projects WHERE slug = ?', [id]);
-    if (rows.length === 0) return res.status(404).json({ error: 'Project not found' });
-    res.json(rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Sunucu hatası' });
-  }
-});
 
 const authRouter = require("./routes/auth");
 app.use("/api", authRouter);
@@ -200,7 +188,7 @@ if (!JWT_SECRET) {
   process.exit(1); // Sunucuyu durdurabilirsin
 }
 
-app.use("/api/projects", verifyToken, projectRoutes);
+
 
 // Logout endpoint
 app.post("/api/logout", (req, res) => {

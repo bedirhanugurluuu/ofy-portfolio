@@ -1,33 +1,81 @@
-import mysql from 'mysql2/promise';
+import { createClient } from '@supabase/supabase-js';
 
-// Database connection
-const pool = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  port: process.env.DATABASE_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export default async function handler(req, res) {
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   if (req.method === 'GET') {
     try {
-      const [rows] = await pool.query("SELECT * FROM about_gallery ORDER BY order_index ASC");
-      res.json(rows);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Sunucu hatası" });
+      const { data, error } = await supabase
+        .from('about_gallery')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } else if (req.method === 'POST') {
+    try {
+      const { data, error } = await supabase
+        .from('about_gallery')
+        .insert([req.body])
+        .select()
+        .single();
+
+      if (error) throw error;
+      res.json({ success: true, id: data.id });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } else if (req.method === 'PUT') {
+    try {
+      const { id } = req.query;
+      const { data, error } = await supabase
+        .from('about_gallery')
+        .update({
+          ...req.body,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      res.json({ success: true, data });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { id } = req.query;
+      const { error } = await supabase
+        .from('about_gallery')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   } else {
     res.status(405).json({ error: 'Method not allowed' });

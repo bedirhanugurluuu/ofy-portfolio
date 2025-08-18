@@ -69,8 +69,8 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
   // Eğer initialContent boşsa, client-side'da fetch et
   useEffect(() => {
     if (!initialContent) {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-      fetch(`${API_BASE_URL}/api/about`)
+      const API_BASE_URL = "http://localhost:5000/api";
+      fetch(`${API_BASE_URL}/about`)
         .then(res => res.json())
         .then(data => setContent(data))
         .catch(() => {

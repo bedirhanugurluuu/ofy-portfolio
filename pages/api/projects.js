@@ -1,19 +1,13 @@
-import mysql from 'mysql2/promise';
+import { createClient } from '@supabase/supabase-js';
 import formidable from 'formidable';
 import fs from 'fs/promises';
 import path from 'path';
 
-// Database connection
-const pool = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  port: process.env.DATABASE_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export const config = {
   api: {
@@ -32,8 +26,13 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const [rows] = await pool.query("SELECT * FROM projects ORDER BY created_at DESC");
-      res.json(rows);
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      res.json(data);
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Sunucu hatası" });
@@ -41,7 +40,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'POST') {
     try {
       const form = formidable({
-        uploadDir: path.join(process.cwd(), 'public', 'uploads'),
+        uploadDir: '/tmp', // Temporary directory
         keepExtensions: true,
         filename: (name, ext, part) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -52,14 +51,52 @@ export default async function handler(req, res) {
       const [fields, files] = await form.parse(req);
       
       const imageFile = files.image?.[0];
-      const imagePath = imageFile ? "/uploads/" + path.basename(imageFile.filepath) : null;
+      let imageUrl = null;
 
-      const [result] = await pool.query(
-        "INSERT INTO projects (title, description, image_path, created_at) VALUES (?, ?, ?, NOW())",
-        [fields.title?.[0] || '', fields.description?.[0] || '', imagePath]
-      );
+      // Upload image to Supabase Storage
+      if (imageFile) {
+        const fileBuffer = await fs.promises.readFile(imageFile.filepath);
+        const fileName = path.basename(imageFile.filepath);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('projects')
+          .upload(fileName, fileBuffer, {
+            contentType: imageFile.mimetype,
+            cacheControl: '3600',
+            upsert: false
+          });
 
-      res.json({ success: true, id: result.insertId });
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('projects')
+          .getPublicUrl(fileName);
+        
+        imageUrl = urlData.publicUrl;
+
+        // Clean up temp file
+        await fs.promises.unlink(imageFile.filepath);
+      }
+
+      const { data, error } = await supabase
+        .from('projects')
+        .insert([{
+          title: fields.title?.[0] || '',
+          description: fields.description?.[0] || '',
+          image_path: imageUrl,
+          subtitle: fields.subtitle?.[0] || '',
+          category: fields.category?.[0] || '',
+          client: fields.client?.[0] || '',
+          year: parseInt(fields.year?.[0]) || new Date().getFullYear(),
+          slug: fields.slug?.[0] || '',
+          featured: fields.featured?.[0] === 'true'
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      res.json({ success: true, id: data.id });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Sunucu hatası" });
@@ -67,7 +104,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'PUT') {
     try {
       const form = formidable({
-        uploadDir: path.join(process.cwd(), 'public', 'uploads'),
+        uploadDir: '/tmp',
         keepExtensions: true,
         filename: (name, ext, part) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -79,32 +116,71 @@ export default async function handler(req, res) {
       const { id } = req.query;
       
       const imageFile = files.image?.[0];
-      const imagePath = imageFile ? "/uploads/" + path.basename(imageFile.filepath) : null;
+      let imageUrl = null;
 
-      // Eski resmi sil
-      if (imagePath) {
-        const [currentProject] = await pool.query("SELECT image_path FROM projects WHERE id = ?", [id]);
-        if (currentProject.length > 0 && currentProject[0].image_path) {
-          const fullOldPath = path.join(process.cwd(), 'public', currentProject[0].image_path);
-          try {
-            await fs.unlink(fullOldPath);
-          } catch (err) {
-            if (err.code !== 'ENOENT') {
-              console.error("Eski resim silinemedi:", err);
-            }
-          }
+      // Upload new image to Supabase Storage
+      if (imageFile) {
+        // Delete old image if exists
+        const { data: currentProject } = await supabase
+          .from('projects')
+          .select('image_path')
+          .eq('id', id)
+          .single();
+        
+        if (currentProject?.image_path) {
+          const oldFileName = currentProject.image_path.split('/').pop();
+          await supabase.storage
+            .from('projects')
+            .remove([oldFileName]);
         }
+
+        // Upload new image
+        const fileBuffer = await fs.promises.readFile(imageFile.filepath);
+        const fileName = path.basename(imageFile.filepath);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('projects')
+          .upload(fileName, fileBuffer, {
+            contentType: imageFile.mimetype,
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('projects')
+          .getPublicUrl(fileName);
+        
+        imageUrl = urlData.publicUrl;
+
+        // Clean up temp file
+        await fs.promises.unlink(imageFile.filepath);
       }
 
-      const updateQuery = imagePath 
-        ? "UPDATE projects SET title = ?, description = ?, image_path = ? WHERE id = ?"
-        : "UPDATE projects SET title = ?, description = ? WHERE id = ?";
-      
-      const updateParams = imagePath 
-        ? [fields.title?.[0] || '', fields.description?.[0] || '', imagePath, id]
-        : [fields.title?.[0] || '', fields.description?.[0] || '', id];
+      const updateData = {
+        title: fields.title?.[0] || '',
+        description: fields.description?.[0] || '',
+        subtitle: fields.subtitle?.[0] || '',
+        category: fields.category?.[0] || '',
+        client: fields.client?.[0] || '',
+        year: parseInt(fields.year?.[0]) || new Date().getFullYear(),
+        slug: fields.slug?.[0] || '',
+        featured: fields.featured?.[0] === 'true',
+        updated_at: new Date().toISOString()
+      };
 
-      await pool.query(updateQuery, updateParams);
+      if (imageUrl) {
+        updateData.image_path = imageUrl;
+      }
+
+      const { error } = await supabase
+        .from('projects')
+        .update(updateData)
+        .eq('id', id);
+
+      if (error) throw error;
       res.json({ success: true });
     } catch (err) {
       console.error(err);
@@ -114,20 +190,26 @@ export default async function handler(req, res) {
     try {
       const { id } = req.query;
       
-      // Resmi sil
-      const [project] = await pool.query("SELECT image_path FROM projects WHERE id = ?", [id]);
-      if (project.length > 0 && project[0].image_path) {
-        const fullPath = path.join(process.cwd(), 'public', project[0].image_path);
-        try {
-          await fs.unlink(fullPath);
-        } catch (err) {
-          if (err.code !== 'ENOENT') {
-            console.error("Resim silinemedi:", err);
-          }
-        }
+      // Delete image from storage
+      const { data: project } = await supabase
+        .from('projects')
+        .select('image_path')
+        .eq('id', id)
+        .single();
+      
+      if (project?.image_path) {
+        const fileName = project.image_path.split('/').pop();
+        await supabase.storage
+          .from('projects')
+          .remove([fileName]);
       }
 
-      await pool.query("DELETE FROM projects WHERE id = ?", [id]);
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
       res.json({ success: true });
     } catch (err) {
       console.error(err);

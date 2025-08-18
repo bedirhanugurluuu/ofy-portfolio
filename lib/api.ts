@@ -1,93 +1,58 @@
-﻿import axios from "axios";
+﻿import { supabase } from './supabase';
 
 // TypeScript interfaces
 export interface Project {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
   description: string;
+  category: string;
+  client: string;
+  year: number;
   image_path?: string;
-  thumbnail_media?: string;
-  banner_media?: string;
-  video_url?: string;
-  role?: string;
+  video_path?: string;
   slug: string;
-  featured?: boolean;
-  is_featured?: boolean;
-  featured_order?: number;
-  client_name?: string;
-  year?: number;
-  external_link?: string;
+  featured: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface IntroBanner {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
-  image_path?: string;
+  image_path: string;
   order_index: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface AboutContent {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
-  content: string;
+  description: string;
   image_path?: string;
-  main_text: string;
-  vision_title: string;
-  vision_text: string;
-  approach_title: string;
-  approach_subtitle: string;
-  brand_strategy_title: string;
-  brand_strategy_text: string;
-  visual_design_title: string;
-  visual_design_text: string;
-  launch_title: string;
-  launch_text: string;
-  insights_title: string;
-  insights_subtitle: string;
-  insight_1_title: string;
-  insight_1_text: string;
-  insight_1_project_id: number;
-  insight_2_title: string;
-  insight_2_text: string;
-  insight_2_project_id: number;
-  insight_3_title: string;
-  insight_3_text: string;
-  insight_3_project_id: number;
-  insight_4_title: string;
-  insight_4_text: string;
-  insight_4_project_id: number;
-  clients_title: string;
-  clients_list: string;
-  industries_title: string;
-  industries_list: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface News {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
   content: string;
   image_path?: string;
   slug: string;
-  category_text: string;
-  photographer: string;
-  is_featured?: boolean;
+  featured: boolean;
   published_at: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface AboutGalleryImage {
-  id: number;
+  id: string; // UUID for Supabase
+  title: string;
   image_path: string;
   order_index: number;
   created_at: string;
@@ -95,28 +60,27 @@ export interface AboutGalleryImage {
 }
 
 export interface Award {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   description: string;
+  year: number;
   image_path?: string;
-  year: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface SliderItem {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
-  sub_subtitle?: string;
-  image_path?: string;
+  image_path: string;
   order_index: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface WhatWeDoContent {
-  id: number;
+  id: string; // UUID for Supabase
   title: string;
   subtitle: string;
   service_1_title: string;
@@ -130,8 +94,7 @@ export interface WhatWeDoContent {
 }
 
 export interface ContactContent {
-  id: number;
-  title: string;
+  id: string; // UUID for Supabase
   phone: string;
   email: string;
   instagram: string;
@@ -145,125 +108,193 @@ export interface ContactContent {
   updated_at: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-
-// Server-side API base URL (for SSR)
-const getServerApiBaseUrl = () => {
-  if (typeof window === 'undefined') {
-    // Server-side: Use absolute URL
-    return process.env.NEXT_PUBLIC_API_BASE_URL || "https://ofy-portfolio-h97t.vercel.app/api";
-  }
-  // Client-side: Use relative URL
-  return "/api";
-};
-
-// Görsel URL'lerini backend base URL ile birleştiren utility fonksiyonu
+// Görsel URL'lerini normalize eden utility fonksiyonu
 export const normalizeImageUrl = (imagePath: string): string => {
   if (!imagePath) return "";
   let p = imagePath.trim();
   if (!p) return "";
 
-  // http veya data URL ise direkt döndür
+  // http veya data URL ise direkt döndür (Supabase Storage URL'leri dahil)
   if (/^(https?:)?\/\//i.test(p) || p.startsWith("data:")) return p;
 
-  // Windows backslash -> forward slash
-  p = p.replace(/\\/g, "/");
-
-  // Başta tekrarlı uploads öneklerini tekilleştir (uploads/ ... bir veya daha fazla tekrar)
-  p = p.replace(/^\/?(?:uploads\/)+/, "/uploads/");
-
-  // Eğer hala /uploads/ ile başlamıyorsa ekle
-  if (!p.startsWith("/uploads/")) {
-    // Baştaki / işaretlerini kırpıp /uploads/ ekle
-    p = "/uploads/" + p.replace(/^\/+/, "");
+  // Eğer local uploads path ise, Supabase Storage URL'ine dönüştür
+  if (p.startsWith("/uploads/")) {
+    // Bu durumda eski local dosyalar için fallback
+    return `http://localhost:3000${p}`;
   }
 
-  // Vercel'de dosyalar public/uploads altında, /api/uploads değil
-  if (typeof window !== 'undefined') {
-    // Client-side: /uploads/ kullan
-    return p;
-  } else {
-    // Server-side: Absolute URL kullan
-    return `https://ofy-portfolio-h97t.vercel.app${p}`;
-  }
+  // Diğer durumlar için Supabase Storage URL formatı
+  return p;
 };
 
-// Server-side API functions (for SSR)
-export async function fetchProjectsSSR(): Promise<Project[]> {
-  const baseUrl = getServerApiBaseUrl();
-  const res = await axios.get<Project[]>(`${baseUrl}/projects`);
-  return res.data;
-}
-
-export async function fetchIntroBannersSSR(): Promise<IntroBanner[]> {
-  const baseUrl = getServerApiBaseUrl();
-  const res = await axios.get<IntroBanner[]>(`${baseUrl}/intro-banners`);
-  return res.data;
-}
-
-// Client-side API functions
+// Supabase API functions
 export async function fetchProjects(): Promise<Project[]> {
-  const res = await axios.get<Project[]>(`${API_BASE_URL}/projects`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchProjectsSSR(): Promise<Project[]> {
+  return fetchProjects();
 }
 
 export async function fetchIntroBanners(): Promise<IntroBanner[]> {
-  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/intro-banners`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('intro_banners')
+    .select('*')
+    .order('order_index', { ascending: true });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchIntroBannersSSR(): Promise<IntroBanner[]> {
+  return fetchIntroBanners();
 }
 
 export async function fetchProjectBySlug(slug: string): Promise<Project> {
-  const res = await axios.get<Project>(`${API_BASE_URL}/projects/${slug}`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  if (error) throw error;
+  return data;
 }
 
 export async function fetchProjectBySlugSSR(slug: string): Promise<Project> {
-  const baseUrl = getServerApiBaseUrl();
-  const res = await axios.get<Project>(`${baseUrl}/projects/${slug}`);
-  return res.data;
+  return fetchProjectBySlug(slug);
 }
 
 export async function fetchAbout(): Promise<AboutContent> {
-  const res = await axios.get<AboutContent>(`${API_BASE_URL}/about`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('about')
+    .select('*')
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') throw error;
+  return data || {
+    id: '',
+    title: 'About Us',
+    subtitle: 'We are a creative studio',
+    description: 'Default description',
+    image_path: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
 }
 
 export async function fetchNews(): Promise<News[]> {
-  const res = await axios.get<News[]>(`${API_BASE_URL}/news`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('news')
+    .select('*')
+    .order('published_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
 }
 
 export async function fetchFeaturedNews(): Promise<News[]> {
-  const res = await axios.get<News[]>(`${API_BASE_URL}/news/featured`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('news')
+    .select('*')
+    .eq('featured', true)
+    .order('published_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
 }
 
 export async function fetchNewsBySlug(slug: string): Promise<News> {
-  const res = await axios.get<News>(`${API_BASE_URL}/news/slug/${slug}`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('news')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  if (error) throw error;
+  return data;
 }
 
 export async function fetchAboutGallery(): Promise<AboutGalleryImage[]> {
-  const res = await axios.get<AboutGalleryImage[]>(`${API_BASE_URL}/about-gallery`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('about_gallery')
+    .select('*')
+    .order('order_index', { ascending: true });
+  
+  if (error) throw error;
+  return data || [];
 }
 
 export async function fetchAwards(): Promise<Award[]> {
-  const res = await axios.get<Award[]>(`${API_BASE_URL}/awards`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('awards')
+    .select('*')
+    .order('year', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
 }
 
 export async function fetchSlider(): Promise<SliderItem[]> {
-  const res = await axios.get<SliderItem[]>(`${API_BASE_URL}/slider`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('slider')
+    .select('*')
+    .order('order_index', { ascending: true });
+  
+  if (error) throw error;
+  return data || [];
 }
 
 export async function fetchWhatWeDo(): Promise<WhatWeDoContent> {
-  const res = await axios.get<WhatWeDoContent>(`${API_BASE_URL}/what-we-do`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('what_we_do')
+    .select('*')
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') throw error;
+  return data || {
+    id: '',
+    title: 'What We Do',
+    subtitle: 'We create digital experiences that matter',
+    service_1_title: 'Brand Strategy',
+    service_1_items: 'Brand Audit\nResearch\nAudience\nCompetitive Analysis\nPositioning\nTone of Voice\nSocial Media',
+    service_2_title: 'Digital Design',
+    service_2_items: 'UI/UX Design\nWeb Design\nMobile Design\nBrand Identity\nPrint Design\nPackaging\nIllustration',
+    service_3_title: 'Development',
+    service_3_items: 'Frontend Development\nBackend Development\nE-commerce\nCMS Integration\nAPI Development\nPerformance Optimization\nMaintenance',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
 }
 
 export async function fetchContact(): Promise<ContactContent> {
-  const res = await axios.get<ContactContent>(`${API_BASE_URL}/contact`);
-  return res.data;
+  const { data, error } = await supabase
+    .from('contact')
+    .select('*')
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') throw error;
+  return data || {
+    id: '',
+    phone: '+45 123 456 789',
+    email: 'hello@lucastudio.com',
+    instagram: 'https://instagram.com/lucastudio',
+    linkedin: 'https://linkedin.com/company/lucastudio',
+    address_line1: '12 Nyhavn Street',
+    address_line2: 'Copenhagen, Denmark, 1051',
+    studio_hours_weekdays: 'Monday to Friday: 9:00 AM – 6:00 PM',
+    studio_hours_weekend: 'Saturday & Sunday: Closed',
+    image_path: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
 }

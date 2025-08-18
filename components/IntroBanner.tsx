@@ -97,7 +97,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         }}
       >
         <Image
-          src={process.env.NEXT_PUBLIC_API_BASE_URL + (currentBanner.image_path || '')}
+          src={`http://localhost:5000${currentBanner.image || currentBanner.image_path || ''}`}
           alt="banner"
           fill
           priority
