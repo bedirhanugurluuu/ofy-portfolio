@@ -147,16 +147,33 @@ export const normalizeImageUrl = (imagePath: string): string => {
 
   let p = imagePath.trim();
 
-  // http veya data URL ise direkt döndür (Supabase Storage URL'leri dahil)
-  if (/^(https?:)?\/\//i.test(p) || p.startsWith("data:")) return p;
+  // Eğer zaten tam URL ise (http/https ile başlıyorsa) direkt döndür
+  if (p.startsWith("http://") || p.startsWith("https://")) {
+    return p;
+  }
+
+  // Eğer data URL ise direkt döndür
+  if (p.startsWith("data:")) {
+    return p;
+  }
+
+  // Eğer Supabase Storage URL formatında ise direkt döndür
+  if (p.includes("supabase.co/storage/v1/object/public/")) {
+    return p;
+  }
 
   // Eğer local uploads path ise, Supabase Storage URL'ine dönüştür
   if (p.startsWith("/uploads/")) {
-    // Bu durumda eski local dosyalar için fallback
-    return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}${p}`;
+    const fileName = p.replace("/uploads/", "");
+    return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${fileName}`;
   }
 
-  // Diğer durumlar için Supabase Storage URL formatı
+  // Eğer sadece dosya adı ise, Supabase Storage URL'ine dönüştür
+  if (!p.includes("/") && !p.includes("\\")) {
+    return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${p}`;
+  }
+
+  // Diğer durumlar için fallback
   return p;
 };
 
