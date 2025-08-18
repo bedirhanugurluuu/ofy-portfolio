@@ -1,0 +1,10 @@
+temp-admin-panel/
+temp-api-backup/
+scripts/
+database_setup.sql
+env.example
+env.production.example
+*.md
+.git/
+node_modules/
+.next/

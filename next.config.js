@@ -12,16 +12,16 @@ const nextConfig = {
     ],
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Completely exclude admin-panel from build
+    // Completely exclude temp-admin-panel from build
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: /admin-panel/,
+      ignored: /temp-admin-panel/,
     };
     
-    // Exclude admin-panel from module resolution
+    // Exclude temp-admin-panel from module resolution
     config.resolve.alias = {
       ...config.resolve.alias,
-      'admin-panel': false,
+      'temp-admin-panel': false,
     };
     
     return config;
