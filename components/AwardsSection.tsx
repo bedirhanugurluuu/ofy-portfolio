@@ -33,21 +33,18 @@ export default function AwardsSection({ awards }: AwardsSectionProps) {
                 {/* Hover background effect */}
                 <div className="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
 
-                {/* Content */}
-                <div className="relative z-10 flex space-y-2">
-                  <h3 className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
-                    {award.title}
-                  </h3>
-                  <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
-                    {award.subtitle}
-                  </p>
-                  <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
-                    {award.description}
-                  </p>
-                  <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4 flex justify-end">
-                    {award.year}
-                  </p>
-                </div>
+                                 {/* Content */}
+                 <div className="relative z-10 flex space-y-2">
+                   <h3 className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/2">
+                     {award.title}
+                   </h3>
+                   <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
+                     {award.description}
+                   </p>
+                   <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4 flex justify-end">
+                     {award.year}
+                   </p>
+                 </div>
               </a>
             ))}
           </div>
