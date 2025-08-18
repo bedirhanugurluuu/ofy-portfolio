@@ -210,6 +210,12 @@ export async function fetchProjectBySlug(slug: string): Promise<Project> {
   return res.data;
 }
 
+export async function fetchProjectBySlugSSR(slug: string): Promise<Project> {
+  const baseUrl = getServerApiBaseUrl();
+  const res = await axios.get<Project>(`${baseUrl}/projects/${slug}`);
+  return res.data;
+}
+
 export async function fetchAbout(): Promise<AboutContent> {
   const res = await axios.get<AboutContent>(`${API_BASE_URL}/about`);
   return res.data;

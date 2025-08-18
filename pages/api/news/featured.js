@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         port: process.env.DATABASE_PORT
       });
       
-      const [rows] = await pool.query("SELECT * FROM news WHERE is_featured = 1 ORDER BY created_at DESC LIMIT 3");
+      const [rows] = await pool.query("SELECT * FROM news WHERE is_featured = 1 ORDER BY featured_order ASC LIMIT 3");
       console.log('Query executed successfully, rows count:', rows.length);
       res.json(rows);
     } catch (err) {

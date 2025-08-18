@@ -4,7 +4,7 @@ import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { fetchProjectBySlug, fetchProjects, normalizeImageUrl, Project } from "@/lib/api";
+import { fetchProjectBySlugSSR, fetchProjectsSSR, normalizeImageUrl, Project } from "@/lib/api";
 
 interface ProjectDetailProps {
   project: Project | null;
@@ -153,8 +153,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const slug = context.params?.slug as string;
 
   try {
-    const project = await fetchProjectBySlug(slug);
-    const allProjects = await fetchProjects();
+    const project = await fetchProjectBySlugSSR(slug);
+    const allProjects = await fetchProjectsSSR();
     const moreProjects = allProjects.filter((p: Project) => p.slug !== slug).slice(0, 3);
 
     return {

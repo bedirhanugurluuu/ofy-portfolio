@@ -40,7 +40,7 @@ export default async function handler(req, res) {
         port: process.env.DATABASE_PORT
       });
       
-      const [rows] = await pool.query("SELECT * FROM intro_banners ORDER BY created_at DESC");
+      const [rows] = await pool.query("SELECT * FROM intro_banners ORDER BY order_index ASC");
       console.log('Query executed successfully, rows count:', rows.length);
       res.json(rows);
     } catch (err) {
