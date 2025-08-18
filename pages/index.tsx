@@ -33,8 +33,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
     // Featured projeleri filtrele
     const featuredProjects = allProjects
-      .filter((project: Project) => project.is_featured)
-      .sort((a: Project, b: Project) => (a.featured_order || 0) - (b.featured_order || 0))
+      .filter((project: Project) => project.featured)
       .slice(0, 4);
 
     return {
