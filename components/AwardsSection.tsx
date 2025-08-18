@@ -25,7 +25,7 @@ export default function AwardsSection({ awards }: AwardsSectionProps) {
             {awards.map((award) => (
               <a
                 key={award.id}
-                href={award.link}
+                href={award.description || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative overflow-hidden border-t border-gray-300 pt-2 pb-2 min-w-[200px] transition-all duration-500 ease-in-out"
@@ -42,10 +42,10 @@ export default function AwardsSection({ awards }: AwardsSectionProps) {
                     {award.subtitle}
                   </p>
                   <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
-                    {award.halo}
+                    {award.description}
                   </p>
                   <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4 flex justify-end">
-                    {award.date}
+                    {award.year}
                   </p>
                 </div>
               </a>
