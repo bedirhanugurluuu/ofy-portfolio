@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchIntroBanners } from "@/lib/api";
+import { fetchIntroBanners, normalizeImageUrl } from "@/lib/api";
 
 import { IntroBanner as IntroBannerType } from "@/lib/api";
 
@@ -97,7 +97,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         }}
       >
         <Image
-          src={`http://localhost:5000${currentBanner.image_path || ''}`}
+          src={normalizeImageUrl(currentBanner.image || '')}
           alt="banner"
           fill
           priority

@@ -23,7 +23,7 @@ export interface IntroBanner {
   id: string;
   title: string;
   subtitle: string;
-  image_path: string;
+  image: string; // intro_banners tablosunda alan adı 'image'
   order_index: number;
   created_at: string;
   updated_at: string;
@@ -162,25 +162,15 @@ export const normalizeImageUrl = (imagePath: string): string => {
     return p;
   }
 
-  // Eğer sadece dosya adı ise, tabloya göre bucket belirle
+  // Eğer local path ise (/uploads/ ile başlıyorsa) Supabase URL'ine dönüştür
+  if (p.startsWith("/uploads/")) {
+    const fileName = p.replace("/uploads/", "");
+    return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${fileName}`;
+  }
+
+  // Eğer sadece dosya adı ise, uploads bucket'ına yönlendir
   if (!p.includes("/") && !p.includes("\\")) {
-    // Dosya adına göre bucket belirle
-    if (p.includes("journal")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/news/${p}`;
-    } else if (p.includes("sample-about")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/about/${p}`;
-    } else if (p.includes("slider-")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/slider/${p}`;
-    } else if (p.includes("introbanner-")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/intro-banners/${p}`;
-    } else if (p.includes("about-gallery-")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/about-gallery/${p}`;
-    } else if (p.includes("contact-")) {
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/contact/${p}`;
-    } else {
-      // Diğer tüm dosyalar projects bucket'ında
-      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/projects/${p}`;
-    }
+    return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${p}`;
   }
 
   // Diğer durumlar için fallback
