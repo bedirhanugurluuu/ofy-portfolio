@@ -178,7 +178,14 @@ export const normalizeImageUrl = (imagePath: string): string => {
     p = "/uploads/" + p.replace(/^\/+/, "");
   }
 
-  return `${API_BASE_URL}${p}`;
+  // Vercel'de dosyalar public/uploads altında, /api/uploads değil
+  if (typeof window !== 'undefined') {
+    // Client-side: /uploads/ kullan
+    return p;
+  } else {
+    // Server-side: Absolute URL kullan
+    return `https://ofy-portfolio-h97t.vercel.app${p}`;
+  }
 };
 
 // Server-side API functions (for SSR)

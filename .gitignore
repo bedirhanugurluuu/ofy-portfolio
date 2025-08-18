@@ -43,5 +43,5 @@ next-env.d.ts
 # admin panel (separate project)
 /admin-panel
 
-# uploads
-/public/uploads
+# uploads (keep for Vercel deployment)
+# /public/uploads
