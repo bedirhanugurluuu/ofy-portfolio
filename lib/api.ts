@@ -11,6 +11,8 @@ export interface Project {
   year: number;
   image_path?: string;
   video_path?: string;
+  thumbnail_media?: string;
+  role?: string;
   slug: string;
   featured: boolean;
   created_at: string;
@@ -31,8 +33,38 @@ export interface AboutContent {
   id: string;
   title: string;
   subtitle: string;
+  content: string;
   description: string;
+  main_text: string;
+  vision_title: string;
+  vision_text: string;
   image_path?: string;
+  approach_title: string;
+  approach_subtitle: string;
+  brand_strategy_title: string;
+  brand_strategy_text: string;
+  visual_design_title: string;
+  visual_design_text: string;
+  launch_title: string;
+  launch_text: string;
+  insights_title: string;
+  insights_subtitle: string;
+  insight_1_title: string;
+  insight_1_text: string;
+  insight_1_project_id: number;
+  insight_2_title: string;
+  insight_2_text: string;
+  insight_2_project_id: number;
+  insight_3_title: string;
+  insight_3_text: string;
+  insight_3_project_id: number;
+  insight_4_title: string;
+  insight_4_text: string;
+  insight_4_project_id: number;
+  clients_title: string;
+  clients_list: string;
+  industries_title: string;
+  industries_list: string;
   created_at: string;
   updated_at: string;
 }
@@ -285,4 +317,17 @@ export async function fetchContact(): Promise<ContactContent | null> {
 
 export async function fetchContactContent(): Promise<ContactContent | null> {
   return fetchContact();
+}
+
+// SSR versions for getServerSideProps
+export async function fetchProjectBySlugSSR(slug: string): Promise<Project | null> {
+  return fetchProjectBySlug(slug);
+}
+
+export async function fetchNewsBySlugSSR(slug: string): Promise<News | null> {
+  return fetchNewsBySlug(slug);
+}
+
+export async function fetchNewsSSR(): Promise<News[]> {
+  return fetchNews();
 }

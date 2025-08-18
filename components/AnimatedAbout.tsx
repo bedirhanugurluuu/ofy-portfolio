@@ -20,7 +20,7 @@ interface AnimatedAboutProps {
 
 export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent }: AnimatedAboutProps) {
   const [content, setContent] = useState<AboutContent>(initialContent || {
-    id: 1,
+    id: "1",
     title: "About Us",
     subtitle: "A collective of visionaries shaping tomorrow",
     content: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
