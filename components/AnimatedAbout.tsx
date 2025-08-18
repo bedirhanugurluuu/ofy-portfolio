@@ -28,7 +28,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     main_text: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.",
     vision_title: "Our Vision",
     vision_text: "We craft innovative design strategies for forward thinking brands, combining aesthetics with purpose to create impactful solutions.",
-    image_path: "/images/sample-about.png",
+    image_path: "",
     approach_title: "approach",
     approach_subtitle: "The epitome of forward-thinking design, where bold concepts meet refined execution.",
     brand_strategy_title: "Brand Strategy",
@@ -186,7 +186,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
         {/* Sağ Kısım: Görsel */}
         <div className="w-full aspect-[.75/1] lg:w-1/2">
           <img
-                            src={normalizeImageUrl(content.image_path || '')}
+            src={normalizeImageUrl(content.image_path || '')}
             alt="About Visual"
             className="w-full h-full object-cover"
           />

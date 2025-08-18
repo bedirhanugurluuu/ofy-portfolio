@@ -46,7 +46,7 @@ export const getStaticProps: GetStaticProps = async () => {
           title: "About Us",
           subtitle: "A collective of visionaries shaping tomorrow",
           description: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.",
-          image_path: "/images/sample-about.png",
+          image_path: "",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         },
