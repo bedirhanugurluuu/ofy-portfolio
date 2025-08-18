@@ -147,6 +147,16 @@ export interface ContactContent {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
+// Server-side API base URL (for SSR)
+const getServerApiBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    // Server-side: Use absolute URL
+    return process.env.NEXT_PUBLIC_API_BASE_URL || "https://ofy-portfolio-h97t.vercel.app/api";
+  }
+  // Client-side: Use relative URL
+  return "/api";
+};
+
 // Görsel URL'lerini backend base URL ile birleştiren utility fonksiyonu
 export const normalizeImageUrl = (imagePath: string): string => {
   if (!imagePath) return "";
@@ -171,6 +181,20 @@ export const normalizeImageUrl = (imagePath: string): string => {
   return `${API_BASE_URL}${p}`;
 };
 
+// Server-side API functions (for SSR)
+export async function fetchProjectsSSR(): Promise<Project[]> {
+  const baseUrl = getServerApiBaseUrl();
+  const res = await axios.get<Project[]>(`${baseUrl}/projects`);
+  return res.data;
+}
+
+export async function fetchIntroBannersSSR(): Promise<IntroBanner[]> {
+  const baseUrl = getServerApiBaseUrl();
+  const res = await axios.get<IntroBanner[]>(`${baseUrl}/intro-banners`);
+  return res.data;
+}
+
+// Client-side API functions
 export async function fetchProjects(): Promise<Project[]> {
   const res = await axios.get<Project[]>(`${API_BASE_URL}/projects`);
   return res.data;
@@ -178,11 +202,6 @@ export async function fetchProjects(): Promise<Project[]> {
 
 export async function fetchProjectBySlug(slug: string): Promise<Project> {
   const res = await axios.get<Project>(`${API_BASE_URL}/projects/${slug}`);
-  return res.data;
-}
-
-export async function fetchIntroBanners(): Promise<IntroBanner[]> {
-  const res = await axios.get<IntroBanner[]>(`${API_BASE_URL}/intro-banners`);
   return res.data;
 }
 

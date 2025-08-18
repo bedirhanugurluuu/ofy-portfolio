@@ -4,7 +4,7 @@ import ServicesSlider from '@/components/ServicesSlider';
 import AboutBanner from '@/components/AboutBanner';
 import FromTheJournal from '@/components/FromTheJournal';
 import { GetStaticProps } from 'next';
-import { fetchProjects, fetchIntroBanners, Project, IntroBanner as IntroBannerType } from '@/lib/api';
+import { fetchProjectsSSR, fetchIntroBannersSSR, Project, IntroBanner as IntroBannerType } from '@/lib/api';
 
 interface HomeProps {
   featuredProjects: Project[];
@@ -27,8 +27,8 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     // Paralel olarak verileri çek
     const [allProjects, introBanners] = await Promise.all([
-      fetchProjects(),
-      fetchIntroBanners()
+      fetchProjectsSSR(),
+      fetchIntroBannersSSR()
     ]);
 
     // Featured projeleri filtrele

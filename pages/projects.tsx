@@ -2,9 +2,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { fetchProjects, normalizeImageUrl } from "@/lib/api";
-import React, { useEffect, useState } from "react";
+import { fetchProjectsSSR, normalizeImageUrl } from "@/lib/api";
+import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { GetServerSideProps } from "next";
 
 interface Project {
   id: number;
@@ -23,32 +24,15 @@ interface Project {
   updated_at: string;
 }
 
-export default function ProjectsPage() {
+type Props = {
+  projects: Project[];
+};
+
+export default function ProjectsPage({ projects }: Props) {
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
   const [hoveredThumbnail, setHoveredThumbnail] = React.useState<string | null>(null);
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
-
-  // Client-side data fetching
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchProjects();
-        console.log('Projects loaded:', data);
-        setProjects(data);
-      } catch (error) {
-        console.error('Error loading projects:', error);
-        setProjects([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProjects();
-  }, []);
 
   const normalizeMedia = (path: string) => {
     if (!path) return { type: "unknown", url: "" };
@@ -60,14 +44,6 @@ export default function ProjectsPage() {
 
   const hoveredMedia = hoveredThumbnail ? normalizeMedia(hoveredThumbnail) : null;
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-
-  if (loading) {
-    return (
-      <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10 flex items-center justify-center">
-        <div className="text-lg">Loading projects...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">
@@ -229,3 +205,25 @@ export default function ProjectsPage() {
     </div>
   );
 }
+
+// SSR ile veri çekmek için:
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    console.log('SSR: Fetching projects...');
+    const projects = await fetchProjectsSSR();
+    console.log('SSR: Projects loaded:', projects.length);
+
+    return {
+      props: {
+        projects,
+      },
+    };
+  } catch (error) {
+    console.error("SSR: Projeler alınamadı:", error);
+    return {
+      props: {
+        projects: [],
+      },
+    };
+  }
+};
