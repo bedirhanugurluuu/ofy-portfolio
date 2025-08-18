@@ -37,6 +37,7 @@ export default function FromTheJournal() {
             photographer: "Anna Surokin",
             subtitle: "Art Direction from scratch: Creating a unique art direction for a brand",
             slug: "urban-inspiration",
+            content: "Art Direction from scratch: Creating a unique art direction for a brand",
             image_path: "/images/journal2.jpg",
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
@@ -49,6 +50,7 @@ export default function FromTheJournal() {
             photographer: "Anna Surokin",
             subtitle: "We launched a new project redefining sustainable branding",
             slug: "material-matters",
+            content: "We launched a new project redefining sustainable branding",
             image_path: "/images/journal3.jpg",
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
@@ -104,7 +106,7 @@ export default function FromTheJournal() {
               key={article.id}
               className="group block"
             >
-              <div className={`relative ${article.aspect_ratio || 'aspect-square'} w-full overflow-hidden rounded-lg`}>
+              <div className="relative aspect-square w-full overflow-hidden rounded-lg">
                 {article.image_path ? (
                   <Image
                     src={normalizeImageUrl(article.image_path)}
