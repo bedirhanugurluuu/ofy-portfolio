@@ -12,6 +12,7 @@ export interface Project {
   image_path?: string;
   video_path?: string;
   thumbnail_media?: string;
+  banner_media?: string;
   role?: string;
   slug: string;
   featured: boolean;
@@ -95,9 +96,12 @@ export interface AboutGalleryImage {
 export interface Award {
   id: string;
   title: string;
-  description: string;
+  link: string;
+  date: string;
+  subtitle: string;
+  halo: string;
   image_path?: string;
-  year: number;
+  year?: number;
   created_at: string;
   updated_at: string;
 }
@@ -105,7 +109,8 @@ export interface Award {
 export interface SliderItem {
   id: string;
   title: string;
-  subtitle: string;
+  description: string;
+  author: string;
   image_path: string;
   order_index: number;
   created_at: string;
@@ -214,6 +219,17 @@ export async function fetchProjectBySlug(slug: string): Promise<Project | null> 
   return data;
 }
 
+export async function fetchProjectGallery(projectId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('project_gallery')
+    .select('image_path')
+    .eq('project_id', projectId)
+    .order('order_index', { ascending: true });
+
+  if (error) throw error;
+  return data?.map(item => item.image_path) || [];
+}
+
 export async function fetchIntroBanners(): Promise<IntroBanner[]> {
   const { data, error } = await supabase
     .from('intro_banners')
@@ -297,7 +313,7 @@ export async function fetchAwards(): Promise<Award[]> {
 
 export async function fetchSlider(): Promise<SliderItem[]> {
   const { data, error } = await supabase
-    .from('slider')
+    .from('about_slider')
     .select('*')
     .order('order_index', { ascending: true });
 

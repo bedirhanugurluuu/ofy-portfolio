@@ -11,7 +11,7 @@ interface FeaturedProjectsProps {
 
 const normalizeImagePath = (path: string) => {
   if (!path) return "";
-  return `http://localhost:5000/${path.replace(/\\/g, "/").replace(/^\/+/, "")}`;
+  return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${path.replace(/\\/g, "/").replace(/^\/+/, "")}`;
 };
 
 const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {

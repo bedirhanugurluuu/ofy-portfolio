@@ -4,14 +4,15 @@ import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { fetchProjectBySlugSSR, fetchProjectsSSR, normalizeImageUrl, Project } from "@/lib/api";
+import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project } from "@/lib/api";
 
 interface ProjectDetailProps {
   project: Project | null;
   moreProjects: Project[];
+  galleryImages: string[];
 }
 
-export default function ProjectDetail({ project, moreProjects }: ProjectDetailProps) {
+export default function ProjectDetail({ project, moreProjects, galleryImages }: ProjectDetailProps) {
   if (!project) return <p>Project not found.</p>;
 
   return (
@@ -20,7 +21,7 @@ export default function ProjectDetail({ project, moreProjects }: ProjectDetailPr
       <section className="relative w-full h-screen">
         {project.image_path && (
           <Image
-            src={normalizeImageUrl(project.image_path)}
+            src={normalizeImageUrl(project.banner_media || project.image_path)}
             alt="Banner"
             fill
             style={{ objectFit: "cover" }}
@@ -70,12 +71,105 @@ export default function ProjectDetail({ project, moreProjects }: ProjectDetailPr
                 ))}
             </div>
           </div>
-
-
         </section>
       )}
 
-
+      {/* Gallery Images Section */}
+      {galleryImages && galleryImages.length > 0 && (
+        <section className="px-5 pb-20">
+          <div className="flex flex-col gap-5">
+            {(() => {
+              const rows = [];
+              for (let i = 0; i < galleryImages.length; i += 3) {
+                // İlk resim (tek başına)
+                if (i < galleryImages.length) {
+                  const image = galleryImages[i];
+                  const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
+                  
+                  rows.push(
+                    <div key={i} className="w-full relative aspect-[16/9]">
+                      {isVideo ? (
+                        <video
+                          src={normalizeImageUrl(image)}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full object-cover"
+                        />
+                        ) : (
+                          <Image
+                            src={normalizeImageUrl(image)}
+                            alt={`Gallery image ${i + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="100vw"
+                          />
+                        )}
+                    </div>
+                  );
+                }
+                
+                // Sonraki 2 resim (yan yana)
+                if (i + 1 < galleryImages.length) {
+                  const secondImage = galleryImages[i + 1];
+                  const thirdImage = galleryImages[i + 2];
+                  const isSecondVideo = secondImage.toLowerCase().endsWith('.mp4') || secondImage.toLowerCase().endsWith('.webm');
+                  const isThirdVideo = thirdImage && (thirdImage.toLowerCase().endsWith('.mp4') || thirdImage.toLowerCase().endsWith('.webm'));
+                  
+                  rows.push(
+                    <div key={`${i}-pair`} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="relative aspect-[3/4]">
+                        {isSecondVideo ? (
+                          <video
+                            src={normalizeImageUrl(secondImage)}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full object-cover h-full"
+                          />
+                        ) : (
+                          <Image
+                            src={normalizeImageUrl(secondImage)}
+                            alt={`Gallery image ${i + 2}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        )}
+                      </div>
+                      {thirdImage && (
+                        <div className="relative aspect-[3/4]">
+                          {isThirdVideo ? (
+                            <video
+                              src={normalizeImageUrl(thirdImage)}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-full object-cover h-full"
+                            />
+                          ) : (
+                            <Image
+                              src={normalizeImageUrl(thirdImage)}
+                              alt={`Gallery image ${i + 3}`}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, 50vw"
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              }
+              return rows;
+            })()}
+          </div>
+        </section>
+      )}
 
       {/* More Projects Section */}
       {moreProjects.length > 0 && (
@@ -156,11 +250,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const project = await fetchProjectBySlugSSR(slug);
     const allProjects = await fetchProjectsSSR();
     const moreProjects = allProjects.filter((p: Project) => p.slug !== slug).slice(0, 3);
+    
+    // Gallery images'ı fetch et
+    const galleryImages = project ? await fetchProjectGallery(project.id) : [];
 
     return {
       props: {
         project,
         moreProjects,
+        galleryImages,
       },
     };
   } catch (error) {

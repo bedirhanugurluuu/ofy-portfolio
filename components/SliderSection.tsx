@@ -59,14 +59,14 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                  <AnimatedText
                    className="text-xl md:text-2xl font-medium mb-9 max-w-[400px]"
                  >
-                   {currentItem.subtitle}
+                   {currentItem.description}
                  </AnimatedText>
                  <div className="overflow-hidden">
                     <p
                       className="text-sm font-medium animate-[slideUpMenu_0.8s_ease-out_forwards]"
                       style={{ color: '#FFFFFF66' }}
                     >
-                      {currentItem.subtitle}
+                      {currentItem.author}
                     </p>
                  </div>
              </div>

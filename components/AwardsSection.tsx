@@ -25,24 +25,23 @@ export default function AwardsSection({ awards }: AwardsSectionProps) {
             {awards.map((award) => (
               <a
                 key={award.id}
-                href={award.description || "#"}
+                href={award.link || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative overflow-hidden border-t border-gray-300 pt-2 pb-2 min-w-[200px] transition-all duration-500 ease-in-out"
               >
                 {/* Hover background effect */}
                 <div className="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
-
-                                 {/* Content */}
+                {/* Content */}
                  <div className="relative z-10 flex space-y-2">
                    <h3 className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/2">
                      {award.title}
                    </h3>
                    <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4">
-                     {award.description}
+                     {award.subtitle}
                    </p>
                    <p className="text-sm font-medium mb-0 group-hover:text-white transition-colors duration-500 w-1/4 flex justify-end">
-                     {award.year}
+                     {award.date}
                    </p>
                  </div>
               </a>

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnimatedText from "@/components/AnimatedText";
 import gsap from "gsap";
-import { AboutContent, Project, AboutGalleryImage, Award, SliderItem, WhatWeDoContent, fetchProjects, fetchAboutGallery } from "@/lib/api";
+import { AboutContent, Project, AboutGalleryImage, Award, SliderItem, WhatWeDoContent, fetchProjects, fetchAboutGallery, normalizeImageUrl } from "@/lib/api";
 import InsightsSection from "@/components/InsightsSection";
 import ClientsIndustriesSection from "@/components/ClientsIndustriesSection";
 import AboutGallery from "@/components/AboutGallery";
@@ -186,7 +186,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
         {/* Sağ Kısım: Görsel */}
         <div className="w-full aspect-[.75/1] lg:w-1/2">
           <img
-            src={content.image_path?.startsWith('http') ? content.image_path : `http://localhost:5000${content.image_path}`}
+                            src={normalizeImageUrl(content.image_path || '')}
             alt="About Visual"
             className="w-full h-full object-cover"
           />
