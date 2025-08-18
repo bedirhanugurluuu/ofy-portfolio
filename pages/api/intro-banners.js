@@ -32,11 +32,26 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      console.log('Intro banners GET request started');
+      console.log('Database config:', {
+        host: process.env.DATABASE_HOST,
+        user: process.env.DATABASE_USER,
+        database: process.env.DATABASE_NAME,
+        port: process.env.DATABASE_PORT
+      });
+      
       const [rows] = await pool.query("SELECT * FROM intro_banners ORDER BY created_at DESC");
+      console.log('Query executed successfully, rows count:', rows.length);
       res.json(rows);
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Sunucu hatası" });
+      console.error('Intro banners GET error:', err);
+      console.error('Error details:', {
+        message: err.message,
+        code: err.code,
+        sqlState: err.sqlState,
+        sqlMessage: err.sqlMessage
+      });
+      res.status(500).json({ error: "Sunucu hatası", details: err.message });
     }
   } else if (req.method === 'POST') {
     try {
@@ -115,9 +130,9 @@ export default async function handler(req, res) {
       const { id } = req.query;
       
       // Resmi sil
-      const [banner] = await pool.query("SELECT image_path FROM intro_banners WHERE id = ?", [id]);
-      if (banner.length > 0 && banner[0].image_path) {
-        const fullPath = path.join(process.cwd(), 'public', banner[0].image_path);
+      const [currentBanner] = await pool.query("SELECT image_path FROM intro_banners WHERE id = ?", [id]);
+      if (currentBanner.length > 0 && currentBanner[0].image_path) {
+        const fullPath = path.join(process.cwd(), 'public', currentBanner[0].image_path);
         try {
           await fs.unlink(fullPath);
         } catch (err) {
@@ -126,7 +141,7 @@ export default async function handler(req, res) {
           }
         }
       }
-
+      
       await pool.query("DELETE FROM intro_banners WHERE id = ?", [id]);
       res.json({ success: true });
     } catch (err) {

@@ -23,11 +23,26 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const [rows] = await pool.query("SELECT * FROM news WHERE featured = 1 ORDER BY created_at DESC LIMIT 3");
+      console.log('News featured GET request started');
+      console.log('Database config:', {
+        host: process.env.DATABASE_HOST,
+        user: process.env.DATABASE_USER,
+        database: process.env.DATABASE_NAME,
+        port: process.env.DATABASE_PORT
+      });
+      
+      const [rows] = await pool.query("SELECT * FROM news WHERE is_featured = 1 ORDER BY created_at DESC LIMIT 3");
+      console.log('Query executed successfully, rows count:', rows.length);
       res.json(rows);
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Sunucu hatası" });
+      console.error('News featured GET error:', err);
+      console.error('Error details:', {
+        message: err.message,
+        code: err.code,
+        sqlState: err.sqlState,
+        sqlMessage: err.sqlMessage
+      });
+      res.status(500).json({ error: "Sunucu hatası", details: err.message });
     }
   } else {
     res.status(405).json({ error: 'Method not allowed' });
