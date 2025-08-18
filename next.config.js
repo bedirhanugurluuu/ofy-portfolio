@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', 'api.siteniz.com', 'cdn.siteniz.com'],
+    domains: ['lsxafginsylkeuyzuiau.supabase.co'],
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '5000',
-        pathname: '/uploads/**',
+        protocol: 'https',
+        hostname: 'lsxafginsylkeuyzuiau.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },
