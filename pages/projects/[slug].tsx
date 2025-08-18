@@ -4,23 +4,7 @@ import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { fetchProjectBySlug, fetchProjects, normalizeImageUrl } from "@/lib/api";
-
-interface Project {
-  id: number;
-  title: string;
-  subtitle: string;
-  slug: string;
-  video_url?: string | null;
-  banner_media?: string | null;
-  thumbnail_media?: string | null;
-  description: string;
-  external_link?: string;
-  gallery_images: string[];
-  client_name?: string;
-  year?: number;
-  role?: string;
-}
+import { fetchProjectBySlug, fetchProjects, normalizeImageUrl, Project } from "@/lib/api";
 
 interface ProjectDetailProps {
   project: Project | null;
@@ -34,26 +18,15 @@ export default function ProjectDetail({ project, moreProjects }: ProjectDetailPr
     <div className="w-full">
       {/* Banner or Video Section */}
       <section className="relative w-full h-screen">
-        {project.video_url ? (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src={project.video_url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : project.banner_media ? (
+        {project.image_path && (
           <Image
-            src={normalizeImageUrl(project.banner_media)}
+            src={normalizeImageUrl(project.image_path)}
             alt="Banner"
             fill
             style={{ objectFit: "cover" }}
             priority
           />
-        ) : null}
+        )}
 
         {/* SEO h1 (gizli) */}
         <h1 className="sr-only">{project.title}</h1>
@@ -69,18 +42,8 @@ export default function ProjectDetail({ project, moreProjects }: ProjectDetailPr
 
         {/* Metadata — En altta, yan yana */}
         <div className="absolute bottom-5 left-5 text-white text-sm flex flex-wrap gap-3 md:gap-8" style={{ letterSpacing: 0 }}>
-          {project.client_name && (
-            <AnimatedText as="div" className="font-semibold" delay={0.7}>
-              CLIENT <span className="pl-2 opacity-40">{project.client_name}</span>
-            </AnimatedText>
-          )}
-          {project.year && (
-            <AnimatedText as="div" className="font-semibold" delay={0.9}>
-              YEAR <span className="pl-2 opacity-40">{project.year}</span>
-            </AnimatedText>
-          )}
           {project.role && (
-            <AnimatedText as="div" className="font-semibold" delay={1.1}>
+            <AnimatedText as="div" className="font-semibold" delay={0.7}>
               ROLE <span className="pl-2 opacity-40">{project.role}</span>
             </AnimatedText>
           )}
@@ -108,121 +71,11 @@ export default function ProjectDetail({ project, moreProjects }: ProjectDetailPr
             </div>
           </div>
 
-          {/* Sağ: External Link */}
-          {project.external_link && (
-            <div className="sm:w-1/3">
-              <a
-                href={project.external_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium flex group gap-1 justify-end"
-              >
-                <span className="">
-                  VIEW LIVE SITE
-                </span>
-                <ButtonWithHoverArrow />
-              </a>
-            </div>
-          )}
+
         </section>
       )}
 
-      {/* Gallery Section */}
-      {project.gallery_images && project.gallery_images.length > 0 && (
-        <section className="px-5 pb-20">
-          <div className="flex flex-col gap-5">
-            {(() => {
-              const rows = [];
-              for (let i = 0; i < project.gallery_images.length; i += 3) {
-                // İlk resim (tek başına)
-                if (i < project.gallery_images.length) {
-                  const image = project.gallery_images[i];
-                  const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
-                  
-                  rows.push(
-                    <div key={i} className="w-full relative aspect-[16/9]">
-                      {isVideo ? (
-                        <video
-                          src={normalizeImageUrl(image)}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className="w-full object-cover"
-                        />
-                        ) : (
-                          <Image
-                            src={normalizeImageUrl(image)}
-                            alt={`Gallery image ${i + 1}`}
-                            fill
-                            className="object-cover"
-                            sizes="100vw"
-                          />
-                        )}
-                    </div>
-                  );
-                }
-                
-                // Sonraki 2 resim (yan yana)
-                if (i + 1 < project.gallery_images.length) {
-                  const secondImage = project.gallery_images[i + 1];
-                  const thirdImage = project.gallery_images[i + 2];
-                  const isSecondVideo = secondImage.toLowerCase().endsWith('.mp4') || secondImage.toLowerCase().endsWith('.webm');
-                  const isThirdVideo = thirdImage && (thirdImage.toLowerCase().endsWith('.mp4') || thirdImage.toLowerCase().endsWith('.webm'));
-                  
-                  rows.push(
-                    <div key={`${i}-pair`} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="relative aspect-[3/4]">
-                        {isSecondVideo ? (
-                          <video
-                            src={normalizeImageUrl(secondImage)}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full object-cover h-full"
-                          />
-                        ) : (
-                          <Image
-                            src={normalizeImageUrl(secondImage)}
-                            alt={`Gallery image ${i + 2}`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
-                        )}
-                      </div>
-                      {thirdImage && (
-                        <div className="relative aspect-[3/4]">
-                          {isThirdVideo ? (
-                            <video
-                              src={normalizeImageUrl(thirdImage)}
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                              className="w-full object-cover h-full"
-                            />
-                          ) : (
-                            <Image
-                              src={normalizeImageUrl(thirdImage)}
-                              alt={`Gallery image ${i + 3}`}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-              }
-              return rows;
-            })()}
-          </div>
-        </section>
-      )}
+
 
       {/* More Projects Section */}
       {moreProjects.length > 0 && (
