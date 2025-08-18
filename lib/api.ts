@@ -176,7 +176,7 @@ export async function fetchIntroBannersSSR(): Promise<IntroBanner[]> {
   return fetchIntroBanners();
 }
 
-export async function fetchAboutContent(): Promise<AboutContent | null> {
+export async function fetchAbout(): Promise<AboutContent | null> {
   const { data, error } = await supabase
     .from('about')
     .select('*')
@@ -185,6 +185,10 @@ export async function fetchAboutContent(): Promise<AboutContent | null> {
 
   if (error && error.code !== 'PGRST116') throw error;
   return data;
+}
+
+export async function fetchAboutContent(): Promise<AboutContent | null> {
+  return fetchAbout();
 }
 
 export async function fetchAboutGallery(): Promise<AboutGalleryImage[]> {
@@ -239,7 +243,7 @@ export async function fetchAwards(): Promise<Award[]> {
   return data || [];
 }
 
-export async function fetchSliderItems(): Promise<SliderItem[]> {
+export async function fetchSlider(): Promise<SliderItem[]> {
   const { data, error } = await supabase
     .from('slider')
     .select('*')
@@ -249,7 +253,11 @@ export async function fetchSliderItems(): Promise<SliderItem[]> {
   return data || [];
 }
 
-export async function fetchWhatWeDoContent(): Promise<WhatWeDoContent | null> {
+export async function fetchSliderItems(): Promise<SliderItem[]> {
+  return fetchSlider();
+}
+
+export async function fetchWhatWeDo(): Promise<WhatWeDoContent | null> {
   const { data, error } = await supabase
     .from('what_we_do')
     .select('*')
@@ -260,7 +268,11 @@ export async function fetchWhatWeDoContent(): Promise<WhatWeDoContent | null> {
   return data;
 }
 
-export async function fetchContactContent(): Promise<ContactContent | null> {
+export async function fetchWhatWeDoContent(): Promise<WhatWeDoContent | null> {
+  return fetchWhatWeDo();
+}
+
+export async function fetchContact(): Promise<ContactContent | null> {
   const { data, error } = await supabase
     .from('contact')
     .select('*')
@@ -269,4 +281,8 @@ export async function fetchContactContent(): Promise<ContactContent | null> {
 
   if (error && error.code !== 'PGRST116') throw error;
   return data;
+}
+
+export async function fetchContactContent(): Promise<ContactContent | null> {
+  return fetchContact();
 }

@@ -26,8 +26,7 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
       props: {
         contactContent: {
-          id: 0,
-          title: "Let's connect and bring your ideas to life",
+          id: '',
           phone: "+45 123 456 789",
           email: "hello@lucastudio.com",
           instagram: "https://instagram.com/lucastudio",
@@ -36,8 +35,9 @@ export const getStaticProps: GetStaticProps = async () => {
           address_line2: "Copenhagen, Denmark, 1051",
           studio_hours_weekdays: "Monday to Friday: 9:00 AM – 6:00 PM",
           studio_hours_weekend: "Saturday & Sunday: Closed",
-          created_at: "",
-          updated_at: ""
+          image_path: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         }
       },
       revalidate: 60
