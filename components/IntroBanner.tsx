@@ -5,21 +5,14 @@ import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 import { fetchIntroBanners } from "@/lib/api";
 
-type Banner = {
-  id: number;
-  image: string;
-  title_line1: string;
-  title_line2: string;
-  button_text: string;
-  button_link: string;
-};
+import { IntroBanner as IntroBannerType } from "@/lib/api";
 
 interface IntroBannerProps {
-  initialBanners?: Banner[];
+  initialBanners?: IntroBannerType[];
 }
 
 export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
-  const [banners, setBanners] = useState<Banner[]>(initialBanners);
+  const [banners, setBanners] = useState<IntroBannerType[]>(initialBanners);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
@@ -104,7 +97,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         }}
       >
         <Image
-          src={process.env.NEXT_PUBLIC_API_BASE_URL + currentBanner.image}
+          src={process.env.NEXT_PUBLIC_API_BASE_URL + (currentBanner.image_path || '')}
           alt="banner"
           fill
           priority
@@ -126,20 +119,20 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
           <div className="overflow-hidden banner-title">
             <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
-              {currentBanner.title_line1}
+              {currentBanner.title}
             </h1>
           </div>
           <div className="overflow-hidden">
             <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
-              {currentBanner.title_line2}
+              {currentBanner.subtitle}
             </p>
           </div>
           <div className="overflow-hidden">
             <Link
-              href={currentBanner.button_link}
+              href="#"
               className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
             >
-              {currentBanner.button_text}
+              Learn More
               <ButtonWithHoverArrow />
             </Link>
           </div>

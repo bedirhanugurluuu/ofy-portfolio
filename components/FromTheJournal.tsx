@@ -2,24 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchFeaturedNews, normalizeImageUrl } from "@/lib/api";
-
-interface News {
-  id: number;
-  title: string;
-  category_text: string;
-  photographer: string;
-  subtitle: string;
-  slug: string;
-  content?: string;
-  image_path?: string;
-  aspect_ratio?: string;
-  is_featured?: boolean;
-  featured_order?: number;
-  published_at: string;
-  created_at: string;
-  updated_at: string;
-}
+import { fetchFeaturedNews, normalizeImageUrl, News } from "@/lib/api";
 
 export default function FromTheJournal() {
   const [featuredNews, setFeaturedNews] = useState<News[]>([]);
@@ -41,8 +24,8 @@ export default function FromTheJournal() {
             photographer: "Anna Surokin",
             subtitle: "The Art of Minimalism: Creating Impactful Designs with Less",
             slug: "sustainable-design",
+            content: "The Art of Minimalism: Creating Impactful Designs with Less",
             image_path: "/images/journal1.jpg",
-            aspect_ratio: "aspect-square",
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -55,7 +38,6 @@ export default function FromTheJournal() {
             subtitle: "Art Direction from scratch: Creating a unique art direction for a brand",
             slug: "urban-inspiration",
             image_path: "/images/journal2.jpg",
-            aspect_ratio: "aspect-[3/2]",
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -68,7 +50,6 @@ export default function FromTheJournal() {
             subtitle: "We launched a new project redefining sustainable branding",
             slug: "material-matters",
             image_path: "/images/journal3.jpg",
-            aspect_ratio: "aspect-square",
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

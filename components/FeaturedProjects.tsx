@@ -3,17 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchProjects } from '@/lib/api';
-
-interface Project {
-  id: number;
-  title: string;
-  subtitle: string;
-  slug: string;
-  thumbnail_media?: string | null;
-  video_url?: string | null;
-  featured_order?: number;
-}
+import { fetchProjects, Project } from '@/lib/api';
 
 interface FeaturedProjectsProps {
   initialProjects?: Project[];
@@ -78,7 +68,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
               if (!filePath) return false;
               return filePath.toLowerCase().endsWith(".mp4");
             };
-            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
+            const mediaPath = normalizeImagePath(project.image_path || "");
 
             return (
               <Link
@@ -126,7 +116,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
               if (!filePath) return false;
               return filePath.toLowerCase().endsWith(".mp4");
             };
-            const mediaPath = normalizeImagePath(project.thumbnail_media || "");
+            const mediaPath = normalizeImagePath(project.image_path || "");
 
             return (
               <Link
