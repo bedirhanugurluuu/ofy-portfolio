@@ -168,8 +168,19 @@ export const normalizeImageUrl = (imagePath: string): string => {
     return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${fileName}`;
   }
 
-  // Eğer sadece dosya adı ise, Supabase Storage URL'ine dönüştür
+  // Eğer local about path ise, Supabase Storage URL'ine dönüştür
+  if (p.startsWith("/about/")) {
+    const fileName = p.replace("/about/", "");
+    return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/about/${fileName}`;
+  }
+
+  // Eğer sadece dosya adı ise, farklı bucket'larda ara
   if (!p.includes("/") && !p.includes("\\")) {
+    // Önce about bucket'ında ara
+    if (p.includes("sample-about") || p.includes("about")) {
+      return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/about/${p}`;
+    }
+    // Diğer dosyalar için uploads bucket'ı
     return `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${p}`;
   }
 
