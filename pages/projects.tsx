@@ -118,7 +118,7 @@ export default function ProjectsPage({ projects }: Props) {
       {viewMode === "grid" && (
         <motion.div layout className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-5">
           {projects.map((project, i) => {
-            const media = normalizeMedia(project.thumbnail_media);
+            const media = normalizeMedia(project.thumbnail_media || "");
 
             return (
               <Link key={project.id} href={`/projects/${project.slug}`} passHref >
@@ -183,7 +183,7 @@ export default function ProjectsPage({ projects }: Props) {
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.05 }}
                     onMouseEnter={(e) => {
-                        setHoveredThumbnail(project.thumbnail_media);
+                                                 setHoveredThumbnail(project.thumbnail_media || null);
                         setMousePos({ x: e.clientX, y: e.clientY });
                     }}
                     onMouseMove={(e) => {
