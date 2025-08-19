@@ -33,8 +33,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
     // Featured projeleri filtrele (yeni Supabase schema'sına göre)
     const featuredProjects = allProjects
-      .filter((project: Project) => project.featured)
-      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+      .filter((project: Project) => project.is_featured)
+      .sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
       .slice(0, 4);
 
     return {
