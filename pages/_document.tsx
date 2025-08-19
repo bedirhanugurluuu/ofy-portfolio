@@ -33,6 +33,15 @@ export default function Document() {
         {/* Preconnect to Critical Origins */}
         <link rel="preconnect" href="https://lsxafginsylkeuyzuiau.supabase.co" />
         
+        {/* Prefetch Critical API Endpoints */}
+        <link rel="prefetch" href="/api/projects/featured" as="fetch" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/api/intro-banners" as="fetch" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/api/about" as="fetch" crossOrigin="anonymous" />
+        
+        {/* Preload Critical Pages */}
+        <link rel="prefetch" href="/about" />
+        <link rel="prefetch" href="/projects" />
+        
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />

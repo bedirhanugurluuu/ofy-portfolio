@@ -34,9 +34,35 @@ self.addEventListener('install', (event) => {
         console.log('Service Worker: Caching static resources');
         return cache.addAll(urlsToCache);
       }),
-      // Cache API responses
-      caches.open(API_CACHE).then((cache) => {
-        console.log('Service Worker: API cache ready');
+      // Aggressively cache API responses on install
+      caches.open(API_CACHE).then(async (cache) => {
+        console.log('Service Worker: Pre-caching critical API data');
+        try {
+          // Pre-cache critical API endpoints
+          const apiEndpoints = [
+            '/api/projects/featured',
+            '/api/intro-banners',
+            '/api/about',
+            '/api/news/featured'
+          ];
+          
+          const cachePromises = apiEndpoints.map(async (endpoint) => {
+            try {
+              const response = await fetch(endpoint);
+              if (response.ok) {
+                await cache.put(endpoint, response);
+                console.log('Service Worker: Pre-cached', endpoint);
+              }
+            } catch (error) {
+              console.log('Service Worker: Failed to pre-cache', endpoint);
+            }
+          });
+          
+          await Promise.all(cachePromises);
+        } catch (error) {
+          console.log('Service Worker: Pre-caching failed', error);
+        }
+        
         return cache;
       })
     ])
