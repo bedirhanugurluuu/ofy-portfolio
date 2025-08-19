@@ -26,7 +26,12 @@ export const getStaticProps: GetStaticProps = async () => {
       fetchWhatWeDo()
     ]);
     
-    console.log('About page getStaticProps:', { sliderItems });
+    console.log('About page getStaticProps:', { 
+      aboutContent: aboutContent ? 'exists' : 'null',
+      awards: awards ? awards.length : 0,
+      sliderItems: sliderItems ? sliderItems.length : 0,
+      whatWeDoContent: whatWeDoContent ? 'exists' : 'null'
+    });
     
     return {
       props: {

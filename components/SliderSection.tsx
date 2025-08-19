@@ -12,6 +12,8 @@ interface SliderSectionProps {
 export default function SliderSection({ sliderItems }: SliderSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
+  console.log('SliderSection received sliderItems:', sliderItems);
+  
 
 
   const currentItem = sliderItems[currentIndex];
@@ -59,14 +61,14 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                  <AnimatedText
                    className="text-xl md:text-2xl font-medium mb-9 max-w-[400px]"
                  >
-                   {currentItem.description}
+                   {currentItem.subtitle}
                  </AnimatedText>
                  <div className="overflow-hidden">
                     <p
                       className="text-sm font-medium animate-[slideUpMenu_0.8s_ease-out_forwards]"
                       style={{ color: '#FFFFFF66' }}
                     >
-                      {currentItem.author}
+                      {currentItem.sub_subtitle}
                     </p>
                  </div>
              </div>

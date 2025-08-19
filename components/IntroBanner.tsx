@@ -117,25 +117,31 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
       </div>
       {expanded && (
         <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
-          <div className="overflow-hidden banner-title">
-            <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
-              {currentBanner.title}
-            </h1>
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
-              {currentBanner.subtitle}
-            </p>
-          </div>
-          <div className="overflow-hidden">
-            <Link
-              href="#"
-              className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
-            >
-              Learn More
-              <ButtonWithHoverArrow />
-            </Link>
-          </div>
+          {currentBanner.title_line1 && (
+            <div className="overflow-hidden banner-title">
+              <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
+                {currentBanner.title_line1}
+              </h1>
+            </div>
+          )}
+          {currentBanner.title_line2 && (
+            <div className="overflow-hidden">
+              <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
+                {currentBanner.title_line2}
+              </p>
+            </div>
+          )}
+          {currentBanner.button_text && currentBanner.button_link && (
+            <div className="overflow-hidden">
+              <Link
+                href={currentBanner.button_link}
+                className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
+              >
+                {currentBanner.button_text}
+                <ButtonWithHoverArrow />
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>

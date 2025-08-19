@@ -19,9 +19,9 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
     <div className="w-full">
       {/* Banner or Video Section */}
       <section className="relative w-full h-screen">
-        {project.image_path && (
+        {project.banner_media && (
           <Image
-            src={normalizeImageUrl(project.banner_media || project.image_path)}
+            src={normalizeImageUrl(project.banner_media)}
             alt="Banner"
             fill
             style={{ objectFit: "cover" }}
@@ -249,7 +249,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const project = await fetchProjectBySlugSSR(slug);
     const allProjects = await fetchProjectsSSR();
-    const moreProjects = allProjects.filter((p: Project) => p.slug !== slug).slice(0, 3);
+    const moreProjects = allProjects.filter((p: Project) => p.slug !== slug && p.is_featured).slice(0, 3);
     
     // Gallery images'ı fetch et
     const galleryImages = project ? await fetchProjectGallery(project.id) : [];

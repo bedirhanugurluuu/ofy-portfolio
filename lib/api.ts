@@ -6,24 +6,26 @@ export interface Project {
   title: string;
   subtitle: string;
   description: string;
-  category: string;
-  client: string;
-  year: number;
-  image_path?: string;
-  video_path?: string;
   thumbnail_media?: string;
   banner_media?: string;
+  video_url?: string;
+  is_featured: boolean;
+  featured_order?: number;
+  client_name?: string;
+  year?: number;
   role?: string;
+  external_link?: string;
   slug: string;
-  featured: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface IntroBanner {
   id: string;
-  title: string;
-  subtitle: string;
+  title_line1: string;
+  title_line2: string;
+  button_text: string;
+  button_link: string;
   image: string; // intro_banners tablosunda alan adı 'image'
   order_index: number;
   created_at: string;
@@ -109,8 +111,8 @@ export interface Award {
 export interface SliderItem {
   id: string;
   title: string;
-  description: string;
-  author: string;
+  subtitle: string;
+  sub_subtitle: string;
   image_path: string;
   order_index: number;
   created_at: string;
@@ -201,8 +203,8 @@ export async function fetchFeaturedProjects(): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('featured', true)
-    .order('created_at', { ascending: false });
+    .eq('is_featured', true)
+    .order('featured_order', { ascending: true });
 
   if (error) throw error;
   return data || [];
@@ -246,7 +248,7 @@ export async function fetchProjectGallery(projectId: string): Promise<string[]> 
     .from('project_gallery')
     .select('image_path')
     .eq('project_id', projectId)
-    .order('order_index', { ascending: true });
+    .order('sort', { ascending: true });
 
   if (error) throw error;
   return data?.map(item => item.image_path) || [];
@@ -268,7 +270,7 @@ export async function fetchIntroBannersSSR(): Promise<IntroBanner[]> {
 
 export async function fetchAbout(): Promise<AboutContent | null> {
   const { data, error } = await supabase
-    .from('about')
+    .from('about_content')
     .select('*')
     .limit(1)
     .single();
@@ -327,7 +329,7 @@ export async function fetchAwards(): Promise<Award[]> {
   const { data, error } = await supabase
     .from('awards')
     .select('*')
-    .order('year', { ascending: false });
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data || [];

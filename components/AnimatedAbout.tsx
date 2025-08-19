@@ -70,8 +70,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
   // Eğer initialContent boşsa, client-side'da fetch et
   useEffect(() => {
     if (!initialContent) {
-      const API_BASE_URL = "http://localhost:5000/api";
-      fetch(`${API_BASE_URL}/about`)
+      fetch('/api/about')
         .then(res => res.json())
         .then(data => setContent(data))
         .catch(() => {
@@ -281,9 +280,9 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
        </div>
 
        {/* Insights Section */}
-       {content.insights_title && (
+       {content.insight_1_title && (
          <InsightsSection
-           title={content.insights_title}
+           title={content.insights_title || "Insights"}
            subtitle={content.insights_subtitle}
            insights={[
              {
@@ -306,7 +305,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
                text: content.insight_4_text || "",
                projectId: content.insight_4_project_id
              }
-           ]}
+           ].filter(insight => insight.title && insight.text)}
            projects={projects}
          />
        )}
@@ -325,7 +324,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
         <AboutGallery images={galleryImages} />
 
         {/* Awards Section */}
-        <AwardsSection awards={awards} />
+        <AwardsSection awards={awards || []} />
 
         {/* Slider Section */}
         <SliderSection sliderItems={sliderItems} />

@@ -7,6 +7,8 @@ interface AwardsSectionProps {
 }
 
 export default function AwardsSection({ awards }: AwardsSectionProps) {
+  console.log('AwardsSection received awards:', awards);
+  
   return (
     <section className="w-full py-20">
       <div className="px-5">

@@ -26,3 +26,4 @@ FROM about_content;
 UPDATE about_content 
 SET main_text = 'A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.'
 WHERE main_text IS NULL OR main_text = '';
+
