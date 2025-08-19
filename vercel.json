@@ -1,15 +1,51 @@
 {
-  "version": 2,
-  "builds": [
+  "headers": [
     {
-      "src": "package.json",
-      "use": "@vercel/next"
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/uploads/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
-  ]
+  ],
+  "functions": {
+    "pages/api/**.js": {
+      "maxDuration": 10
+    }
+  }
 }

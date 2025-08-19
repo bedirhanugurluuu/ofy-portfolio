@@ -3,7 +3,89 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        {/* Font Preloading for Performance */}
+        <link
+          rel="preload"
+          href="/fonts/switzer/Switzer-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          href="/fonts/switzer/Switzer-Medium.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          href="/fonts/switzer/Switzer-Semibold.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+        
+        {/* DNS Prefetch for External Resources */}
+        <link rel="dns-prefetch" href="//lsxafginsylkeuyzuiau.supabase.co" />
+        
+        {/* Preconnect to Critical Origins */}
+        <link rel="preconnect" href="https://lsxafginsylkeuyzuiau.supabase.co" />
+        
+        {/* Meta Tags for Performance */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+        
+        {/* Critical CSS - Above the fold styles */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            /* Critical CSS for initial paint */
+            html, body { margin: 0; padding: 0; }
+            body { 
+              font-family: 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+            }
+            
+            /* Prevent layout shift */
+            .pt-35 { padding-top: 8.75rem; }
+            .pt-50 { padding-top: 12.5rem; }
+            
+            /* Loading skeleton styles */
+            .animate-pulse {
+              animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            @keyframes pulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: .5; }
+            }
+            
+            /* Critical font display */
+            @font-face {
+              font-family: 'Switzer';
+              src: url('/fonts/switzer/Switzer-Regular.woff2') format('woff2');
+              font-weight: 400;
+              font-style: normal;
+              font-display: swap;
+            }
+            @font-face {
+              font-family: 'Switzer';
+              src: url('/fonts/switzer/Switzer-Medium.woff2') format('woff2');
+              font-weight: 500;
+              font-style: normal;
+              font-display: swap;
+            }
+            @font-face {
+              font-family: 'Switzer';
+              src: url('/fonts/switzer/Switzer-Semibold.woff2') format('woff2');
+              font-weight: 600;
+              font-style: normal;
+              font-display: swap;
+            }
+          `
+        }} />
+      </Head>
       <body className="antialiased">
         <Main />
         <NextScript />
