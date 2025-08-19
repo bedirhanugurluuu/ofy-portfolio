@@ -16,9 +16,10 @@ interface AnimatedAboutProps {
   awards?: Award[];
   sliderItems?: SliderItem[];
   whatWeDoContent?: WhatWeDoContent;
+  initialProjects?: Project[];
 }
 
-export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent }: AnimatedAboutProps) {
+export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent, initialProjects = [] }: AnimatedAboutProps) {
   const [content, setContent] = useState<AboutContent>(initialContent || {
     id: "1",
     title: "About Us",
@@ -59,7 +60,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     updated_at: new Date().toISOString()
   });
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [galleryImages, setGalleryImages] = useState<AboutGalleryImage[]>([]);
 
   const lineRef = useRef<HTMLDivElement>(null);
@@ -79,20 +80,31 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     }
   }, [initialContent]);
 
-  // Projects ve Gallery'yi fetch et
+  // Projects ve Gallery'yi fetch et (sadece initialProjects boşsa)
   useEffect(() => {
-    Promise.all([
-      fetchProjects(),
+    if (initialProjects.length === 0) {
+      Promise.all([
+        fetchProjects(),
+        fetchAboutGallery()
+      ])
+        .then(([projectsData, galleryData]) => {
+          setProjects(projectsData);
+          setGalleryImages(galleryData);
+        })
+        .catch(err => {
+          console.error('Error fetching data:', err);
+        });
+    } else {
+      // Sadece gallery'yi fetch et
       fetchAboutGallery()
-    ])
-      .then(([projectsData, galleryData]) => {
-        setProjects(projectsData);
-        setGalleryImages(galleryData);
-      })
-      .catch(err => {
-        console.error('Error fetching data:', err);
-      });
-  }, []);
+        .then((galleryData) => {
+          setGalleryImages(galleryData);
+        })
+        .catch(err => {
+          console.error('Error fetching gallery data:', err);
+        });
+    }
+  }, [initialProjects.length]);
 
   useEffect(() => {
     if (!lineRef.current) return;

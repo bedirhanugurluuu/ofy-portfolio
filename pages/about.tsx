@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { GetStaticProps } from 'next';
-import { fetchAbout, AboutContent, fetchAwards, Award, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent } from '@/lib/api';
+import { fetchAbout, AboutContent, fetchAwards, Award, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent, fetchProjectsSSR, Project } from '@/lib/api';
 
 const AnimatedAbout = dynamic(() => import("@/components/AnimatedAbout"), {
 });
@@ -11,26 +11,29 @@ interface AboutPageProps {
   awards: Award[];
   sliderItems: SliderItem[];
   whatWeDoContent: WhatWeDoContent;
+  projects: Project[];
 }
 
-export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoContent }: AboutPageProps) {
-  return <AnimatedAbout initialContent={aboutContent} awards={awards} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} />;
+export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoContent, projects }: AboutPageProps) {
+  return <AnimatedAbout initialContent={aboutContent} awards={awards} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />;
 }
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const [aboutContent, awards, sliderItems, whatWeDoContent] = await Promise.all([
+    const [aboutContent, awards, sliderItems, whatWeDoContent, projects] = await Promise.all([
       fetchAbout(),
       fetchAwards(),
       fetchSlider(),
-      fetchWhatWeDo()
+      fetchWhatWeDo(),
+      fetchProjectsSSR()
     ]);
     
     console.log('About page getStaticProps:', { 
       aboutContent: aboutContent ? 'exists' : 'null',
       awards: awards ? awards.length : 0,
       sliderItems: sliderItems ? sliderItems.length : 0,
-      whatWeDoContent: whatWeDoContent ? 'exists' : 'null'
+      whatWeDoContent: whatWeDoContent ? 'exists' : 'null',
+      projects: projects ? projects.length : 0
     });
     
     return {
@@ -38,7 +41,8 @@ export const getStaticProps: GetStaticProps = async () => {
         aboutContent,
         awards,
         sliderItems,
-        whatWeDoContent
+        whatWeDoContent,
+        projects
       },
       revalidate: 60 // 1 dakikada bir yenile
     };
