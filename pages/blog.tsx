@@ -59,22 +59,29 @@ export default function BlogPage({ news }: Props) {
               transition={{ delay: i * 0.1 }}
               className="group cursor-pointer"
             >
-              {/* Image */}
-              <div className={`relative ${article.aspect_ratio || 'aspect-square'} w-full overflow-hidden rounded-sm mb-4`}>
-                {article.image_path ? (
-                  <Image
-                    src={normalizeImageUrl(article.image_path)}
-                    alt={article.subtitle}
-                    fill
-                    className="object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
-                  </div>
-                )}
-              </div>
+                             {/* Image */}
+               <div 
+                 className="relative w-full overflow-hidden rounded-sm mb-4"
+                 style={{ 
+                   aspectRatio: article.aspect_ratio === 'aspect-[3/2]' ? '3/2' : 
+                                article.aspect_ratio === 'aspect-square' ? '1/1' : '1/1'
+                 }}
+               >
+                 {/* Debug: {JSON.stringify({ image_path: article.image_path, aspect_ratio: article.aspect_ratio })} */}
+                 {article.image_path ? (
+                   <Image
+                     src={normalizeImageUrl(article.image_path)}
+                     alt={article.subtitle}
+                     fill
+                     className="object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
+                     loading="lazy"
+                   />
+                 ) : (
+                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                     <span className="text-gray-500">No image - {article.id}</span>
+                   </div>
+                 )}
+               </div>
 
               {/* Content */}
               <div className="mt-4 px-1">

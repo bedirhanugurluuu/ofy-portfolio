@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchNewsBySlug, fetchNews, normalizeImageUrl } from "@/lib/api";
-import { GetServerSideProps } from "next";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
 import AnimatedText from "@/components/AnimatedText";
 import { useEffect, useRef } from "react";
@@ -297,15 +297,41 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = async () => {
   try {
-    const slug = params?.slug as string;
+    const allNews = await fetchNews();
+    const paths = allNews.map((article) => ({
+      params: { slug: article.slug },
+    }));
+
+    return {
+      paths,
+      fallback: 'blocking', // Yeni slug'lar için blocking
+    };
+  } catch (error) {
+    console.error("Static paths error:", error);
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+};
+
+export const getStaticProps = async ({ params }: { params: { slug: string } }) => {
+  try {
+    const slug = params.slug;
     const article = await fetchNewsBySlug(slug);
+
+    if (!article) {
+      return {
+        notFound: true,
+      };
+    }
 
     // Get related articles (excluding current article)
     const allNews = await fetchNews();
     const relatedArticles = allNews
-      .filter(n => n.id !== article?.id)
+      .filter(n => n.id !== article.id)
       .slice(0, 3);
 
     return {
@@ -313,9 +339,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         article,
         relatedArticles,
       },
+      revalidate: 60, // 1 dakikada bir yenile
     };
   } catch (error) {
-    console.error("Blog detay SSR alınamadı:", error);
+    console.error("Blog detay static props error:", error);
     return {
       notFound: true,
     };

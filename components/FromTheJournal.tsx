@@ -26,7 +26,7 @@ export default function FromTheJournal() {
             slug: "sustainable-design",
             content: "The Art of Minimalism: Creating Impactful Designs with Less",
             image_path: "/images/journal1.jpg",
-            featured: true,
+            is_featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -40,7 +40,7 @@ export default function FromTheJournal() {
             slug: "urban-inspiration",
             content: "Art Direction from scratch: Creating a unique art direction for a brand",
             image_path: "/images/journal2.jpg",
-            featured: true,
+            is_featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -54,7 +54,7 @@ export default function FromTheJournal() {
             slug: "material-matters",
             content: "We launched a new project redefining sustainable branding",
             image_path: "/images/journal3.jpg",
-            featured: true,
+            is_featured: true,
             published_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -109,7 +109,13 @@ export default function FromTheJournal() {
               key={article.id}
               className="group block"
             >
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+              <div 
+                className="relative w-full overflow-hidden rounded-lg"
+                style={{ 
+                  aspectRatio: article.aspect_ratio === 'aspect-[3/2]' ? '3/2' : 
+                               article.aspect_ratio === 'aspect-square' ? '1/1' : '1/1'
+                }}
+              >
                 {article.image_path ? (
                   <Image
                     src={normalizeImageUrl(article.image_path)}

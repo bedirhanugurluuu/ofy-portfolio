@@ -89,7 +89,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                 href={project.external_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-2 border border-black/20 bg-black/5 backdrop-blur-md px-5 py-2 text-sm hover:bg-black/10 transition-colors"
+                className="group relative inline-flex items-center gap-2 text-sm font-medium uppercase"
               >
                 View Live Site
                 <ButtonWithHoverArrow />

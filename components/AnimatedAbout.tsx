@@ -20,6 +20,7 @@ interface AnimatedAboutProps {
 }
 
 export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent, initialProjects = [] }: AnimatedAboutProps) {
+  const [isLoading, setIsLoading] = useState(!initialContent);
   const [content, setContent] = useState<AboutContent>(initialContent || {
     id: "1",
     title: "About Us",
@@ -71,12 +72,19 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
   // Eğer initialContent boşsa, client-side'da fetch et
   useEffect(() => {
     if (!initialContent) {
+      setIsLoading(true);
       fetch('/api/about')
         .then(res => res.json())
-        .then(data => setContent(data))
+        .then(data => {
+          setContent(data);
+          setIsLoading(false);
+        })
         .catch(() => {
           // Hata durumunda varsayılan içerik kullan
+          setIsLoading(false);
         });
+    } else {
+      setIsLoading(false);
     }
   }, [initialContent]);
 
@@ -149,6 +157,35 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
       delay: 4.5,
     });
   }, []);
+
+  // Loading skeleton
+  if (isLoading) {
+    return (
+      <div className="w-full bg-white min-h-screen">
+        <div className="flex flex-col lg:flex-row w-full min-h-screen px-5 pt-50 pb-28 gap-8">
+          <div className="w-full lg:w-1/2 flex flex-col gap-12 relative">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded mb-4"></div>
+              <div className="h-8 bg-gray-200 rounded mb-4"></div>
+              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            </div>
+            <div className="sticky top-150">
+              <div className="relative py-4">
+                <div className="h-[1px] bg-gray-200 mb-2"></div>
+                <div className="flex flex-col md:flex-row gap-3 md:gap-0">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full aspect-[.75/1] lg:w-1/2">
+            <div className="w-full h-full bg-gray-200 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-white">

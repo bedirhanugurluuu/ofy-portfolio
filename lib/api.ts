@@ -78,11 +78,13 @@ export interface News {
   subtitle: string;
   content: string;
   image_path?: string;
+  aspect_ratio?: string;
   category_text?: string;
   photographer?: string;
   published_at?: string;
   slug: string;
-  featured: boolean;
+  is_featured: boolean;
+  featured_order?: number;
   created_at: string;
   updated_at: string;
 }
@@ -307,8 +309,8 @@ export async function fetchFeaturedNews(): Promise<News[]> {
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .eq('featured', true)
-    .order('created_at', { ascending: false });
+    .eq('is_featured', true)
+    .order('featured_order', { ascending: true });
 
   if (error) throw error;
   return data || [];
