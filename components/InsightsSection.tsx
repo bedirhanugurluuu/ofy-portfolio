@@ -25,6 +25,8 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
     setMounted(true);
   }, []);
 
+  console.log('InsightsSection received projects:', projects?.length || 0, 'insights:', insights?.length || 0);
+
   const getProjectById = (id?: number): Project | null => {
     if (!id) return null;
     console.log('Looking for project with ID:', id, 'Available projects:', projects.map(p => ({ id: p.id, title: p.title })));
