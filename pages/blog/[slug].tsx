@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import AnimatedText from "@/components/AnimatedText";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import SEO from "@/components/SEO";
 
 interface News {
   id: number;
@@ -95,8 +96,49 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
     );
   }
 
+  // Schema for blog post
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": article.subtitle,
+    "description": article.title,
+    "image": article.image_path ? normalizeImageUrl(article.image_path) : null,
+    "author": {
+      "@type": "Organization",
+      "name": "OFY"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "OFY",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+      }
+    },
+    "datePublished": article.published_at,
+    "dateModified": article.updated_at,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://ofy-portfolio.vercel.app/blog/${article.slug}`
+    },
+    "articleSection": article.category_text,
+    "keywords": [article.category_text, "design", "creative", "portfolio"]
+  };
+
   return (
     <>
+      <SEO 
+        title={`${article.subtitle} - OFY Journal`}
+        description={article.title}
+        image={article.image_path ? normalizeImageUrl(article.image_path) : "https://ofy-portfolio.vercel.app/images/blog-og.jpg"}
+        type="article"
+        publishedTime={article.published_at}
+        modifiedTime={article.updated_at}
+        author="OFY Studio"
+        section={article.category_text}
+        tags={[article.category_text, "design", "creative"]}
+        schema={schema}
+      />
       <div className="px-5 pt-35 md:pt-37 pb-10">
 
         <div className="relative h-[1px] mb-2">

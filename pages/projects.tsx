@@ -6,6 +6,7 @@ import { fetchProjectsSSR, normalizeImageUrl } from "@/lib/api";
 import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { GetServerSideProps } from "next";
+import SEO from "@/components/SEO";
 
 interface Project {
   id: number;
@@ -45,8 +46,44 @@ export default function ProjectsPage({ projects }: Props) {
   const hoveredMedia = hoveredThumbnail ? normalizeMedia(hoveredThumbnail) : null;
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
+  // Schema for projects page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Projects - OFY Portfolio",
+    "description": "Explore our creative projects and design work. From brand strategy to visual design, discover how we create compelling stories.",
+    "url": "https://ofy-portfolio.vercel.app/projects",
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": projects.length,
+      "itemListElement": projects.map((project, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "CreativeWork",
+          "name": project.title,
+          "description": project.subtitle,
+          "url": `https://ofy-portfolio.vercel.app/projects/${project.slug}`,
+          "creator": {
+            "@type": "Organization",
+            "name": "OFY"
+          },
+          "dateCreated": project.created_at,
+          "dateModified": project.updated_at
+        }
+      }))
+    }
+  };
+
   return (
-    <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">
+    <>
+      <SEO 
+        title="Projects - OFY Portfolio"
+        description="Explore our creative projects and design work. From brand strategy to visual design, discover how we create compelling stories that leave lasting impressions."
+        image="https://ofy-portfolio.vercel.app/images/projects-og.jpg"
+        schema={schema}
+      />
+      <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">
       {/* Header */}
       <div className="flex justify-between items-end mb-10">
         <h1 className="text-3xl md:text-4xl font-medium">
@@ -202,7 +239,8 @@ export default function ProjectsPage({ projects }: Props) {
             </div>
 
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

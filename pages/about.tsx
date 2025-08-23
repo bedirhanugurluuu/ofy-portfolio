@@ -2,6 +2,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { GetStaticProps } from 'next';
 import { fetchAbout, AboutContent, fetchAwards, Award, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent, fetchProjectsSSR, Project } from '@/lib/api';
+import SEO from '@/components/SEO';
 
 const AnimatedAbout = dynamic(() => import("@/components/AnimatedAbout"), {
 });
@@ -15,7 +16,66 @@ interface AboutPageProps {
 }
 
 export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoContent, projects }: AboutPageProps) {
-  return <AnimatedAbout initialContent={aboutContent} awards={awards} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />;
+  // Schema for about page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About - OFY Portfolio",
+    "description": aboutContent?.description || "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
+    "url": "https://ofy-portfolio.vercel.app/about",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "OFY",
+      "description": aboutContent?.description || "Creative design studio specializing in brand strategy and visual design",
+      "award": awards.map(award => ({
+        "@type": "Award",
+        "name": award.title,
+        "description": award.subtitle
+      })),
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Brand Strategy",
+              "description": "Brand audit, research, positioning, and tone of voice development"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Digital Design",
+              "description": "UI/UX design, web design, brand identity, and illustration"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Development",
+              "description": "Frontend and backend development, e-commerce, and CMS integration"
+            }
+          }
+        ]
+      }
+    }
+  };
+
+  return (
+    <>
+      <SEO 
+        title={`${aboutContent?.title || "About"} - OFY Portfolio`}
+        description={aboutContent?.description || "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design."}
+        image={aboutContent?.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${aboutContent.image_path}` : "https://ofy-portfolio.vercel.app/images/about-og.jpg"}
+        schema={schema}
+      />
+      <AnimatedAbout initialContent={aboutContent} awards={awards} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />
+    </>
+  );
 }
 
 export const getStaticProps: GetStaticProps = async () => {

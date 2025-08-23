@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from('intro_banners')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('order_index', { ascending: true });
       
       if (error) throw error;
       res.json(data);

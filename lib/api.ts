@@ -137,6 +137,7 @@ export interface WhatWeDoContent {
 
 export interface ContactContent {
   id: string;
+  title: string;
   phone: string;
   email: string;
   instagram: string;
@@ -205,7 +206,7 @@ export async function fetchFeaturedProjects(): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('is_featured', true)
+    .eq('featured', true)
     .order('featured_order', { ascending: true });
 
   if (error) throw error;
@@ -309,8 +310,8 @@ export async function fetchFeaturedNews(): Promise<News[]> {
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .eq('is_featured', true)
-    .order('featured_order', { ascending: true });
+    .eq('featured', true)
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data || [];

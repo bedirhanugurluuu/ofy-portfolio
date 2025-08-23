@@ -1,7 +1,7 @@
 {
-  "name": "Portfolio - Creative Design Studio",
-  "short_name": "Portfolio",
-  "description": "A collective of visionaries shaping tomorrow",
+  "name": "OFY - Creative Portfolio & Design Studio",
+  "short_name": "OFY",
+  "description": "OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

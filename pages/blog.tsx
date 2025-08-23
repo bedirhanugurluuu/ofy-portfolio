@@ -4,6 +4,7 @@ import Link from "next/link";
 import { fetchNews, normalizeImageUrl } from "@/lib/api";
 import React from "react";
 import { GetServerSideProps } from "next";
+import SEO from "@/components/SEO";
 
 interface News {
   id: number;
@@ -35,8 +36,46 @@ export default function BlogPage({ news }: Props) {
     });
   };
 
+  // Schema for blog page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Journal - OFY Portfolio",
+    "description": "Insights, thoughts, and stories from our creative journey. Explore our latest articles on design, branding, and digital experiences.",
+    "url": "https://ofy-portfolio.vercel.app/blog",
+    "publisher": {
+      "@type": "Organization",
+      "name": "OFY",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+      }
+    },
+    "blogPost": news.map(article => ({
+      "@type": "BlogPosting",
+      "headline": article.subtitle,
+      "description": article.title,
+      "author": {
+        "@type": "Organization",
+        "name": "OFY"
+      },
+      "datePublished": article.published_at,
+      "dateModified": article.updated_at,
+      "url": `https://ofy-portfolio.vercel.app/blog/${article.slug}`,
+      "image": article.image_path ? normalizeImageUrl(article.image_path) : null,
+      "articleSection": article.category_text
+    }))
+  };
+
   return (
-    <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">
+    <>
+      <SEO 
+        title="Journal - OFY Portfolio"
+        description="Insights, thoughts, and stories from our creative journey. Explore our latest articles on design, branding, and digital experiences."
+        image="https://ofy-portfolio.vercel.app/images/blog-og.jpg"
+        schema={schema}
+      />
+      <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">
       {/* Header */}
       <div className="overflow-hidden">
         <h1 className="text-3xl md:text-4xl font-medium overflow-hidden animate-[slideUpMenu_0.8s_ease-out_forwards]">
@@ -106,7 +145,8 @@ export default function BlogPage({ news }: Props) {
           <p className="text-gray-500">Check back soon for new content.</p>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

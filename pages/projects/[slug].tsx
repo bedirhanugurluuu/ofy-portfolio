@@ -5,6 +5,7 @@ import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project } from "@/lib/api";
+import SEO from "@/components/SEO";
 
 interface ProjectDetailProps {
   project: Project | null;
@@ -15,8 +16,40 @@ interface ProjectDetailProps {
 export default function ProjectDetail({ project, moreProjects, galleryImages }: ProjectDetailProps) {
   if (!project) return <p>Project not found.</p>;
 
+  // Schema for project detail page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": project.title,
+    "description": project.subtitle,
+    "image": project.banner_media ? normalizeImageUrl(project.banner_media) : null,
+    "creator": {
+      "@type": "Organization",
+      "name": "OFY"
+    },
+    "dateCreated": project.created_at,
+    "dateModified": project.updated_at,
+    "url": `https://ofy-portfolio.vercel.app/projects/${project.slug}`,
+    "mainEntity": {
+      "@type": "Project",
+      "name": project.title,
+      "description": project.description || project.subtitle,
+      "client": project.client_name,
+      "year": project.year,
+      "role": project.role,
+      "url": project.external_link
+    }
+  };
+
   return (
-    <div className="w-full">
+    <>
+      <SEO 
+        title={`${project.title} - OFY Portfolio`}
+        description={project.subtitle}
+        image={project.banner_media ? normalizeImageUrl(project.banner_media) : "https://ofy-portfolio.vercel.app/images/project-og.jpg"}
+        schema={schema}
+      />
+      <div className="w-full">
       {/* Banner or Video Section */}
       <section className="relative w-full h-screen">
         {project.banner_media && (
@@ -264,7 +297,8 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

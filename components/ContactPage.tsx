@@ -31,7 +31,7 @@ export default function ContactPage({ content }: ContactPageProps) {
           {/* Title */}
           <div className="mb-45 px-5 max-w-[420px]">
             <AnimatedText className="text-3xl md:text-4xl font-medium text-gray-900 max-w-4xl">
-              Contact
+              {content.title || "Contact"}
             </AnimatedText>
           </div>
 
@@ -115,6 +115,9 @@ export default function ContactPage({ content }: ContactPageProps) {
                  fill
                  className="object-cover"
                  sizes="100vw"
+                 loading="lazy"
+                 placeholder="blur"
+                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                />
              ) : (
                <div className="w-full h-full bg-gray-200 flex items-center justify-center">

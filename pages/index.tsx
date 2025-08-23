@@ -3,6 +3,7 @@ import FeaturedProjects from '@/components/FeaturedProjects';
 import ServicesSlider from '@/components/ServicesSlider';
 import AboutBanner from '@/components/AboutBanner';
 import FromTheJournal from '@/components/FromTheJournal';
+import SEO from '@/components/SEO';
 import { GetStaticProps } from 'next';
 import { fetchProjectsSSR, fetchIntroBannersSSR, Project, IntroBanner as IntroBannerType } from '@/lib/api';
 
@@ -12,14 +13,44 @@ interface HomeProps {
 }
 
 export default function Home({ featuredProjects, introBanners }: HomeProps) {
+  // Schema for homepage
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "OFY - Creative Portfolio & Design Studio",
+    "url": "https://ofy-portfolio.vercel.app",
+    "description": "OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ofy-portfolio.vercel.app/projects?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "OFY",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+      }
+    }
+  };
+
   return (
-    <div>
-      <IntroBanner initialBanners={introBanners} />
-      <FeaturedProjects initialProjects={featuredProjects} />
-      <ServicesSlider />
-      <AboutBanner />
-      <FromTheJournal />
-    </div>
+    <>
+      <SEO 
+        title="OFY - Creative Portfolio & Design Studio"
+        description="OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences. We create compelling stories that leave lasting impressions."
+        image="https://ofy-portfolio.vercel.app/images/og-image.jpg"
+        schema={schema}
+      />
+      <div>
+        <IntroBanner initialBanners={introBanners} />
+        <FeaturedProjects initialProjects={featuredProjects} />
+        <ServicesSlider />
+        <AboutBanner />
+        <FromTheJournal />
+      </div>
+    </>
   )
 }
 

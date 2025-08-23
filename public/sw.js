@@ -52,9 +52,11 @@ self.addEventListener('install', (event) => {
               if (response.ok) {
                 await cache.put(endpoint, response);
                 console.log('Service Worker: Pre-cached', endpoint);
+              } else {
+                console.log('Service Worker: API returned error for', endpoint, response.status);
               }
             } catch (error) {
-              console.log('Service Worker: Failed to pre-cache', endpoint);
+              console.log('Service Worker: Failed to pre-cache', endpoint, error.message);
             }
           });
           
