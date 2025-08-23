@@ -3,7 +3,7 @@ import Image from "next/image";
 import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
-import { GetServerSideProps } from "next";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project } from "@/lib/api";
 import SEO from "@/components/SEO";
 
@@ -302,7 +302,28 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const projects = await fetchProjectsSSR();
+    
+    const paths = projects.map((project: Project) => ({
+      params: { slug: project.slug },
+    }));
+
+    return {
+      paths,
+      fallback: 'blocking' // Yeni projeler için blocking fallback
+    };
+  } catch (error) {
+    console.error('Error generating static paths:', error);
+    return {
+      paths: [],
+      fallback: 'blocking'
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
   const slug = context.params?.slug as string;
 
   try {
@@ -324,6 +345,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         moreProjects,
         galleryImages,
       },
+      revalidate: 300 // 5 dakikada bir yenile
     };
   } catch (error) {
     return { notFound: true };

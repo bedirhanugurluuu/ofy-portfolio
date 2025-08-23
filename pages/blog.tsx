@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchNews, normalizeImageUrl } from "@/lib/api";
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import SEO from "@/components/SEO";
 
 interface News {
@@ -150,7 +150,7 @@ export default function BlogPage({ news }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   try {
     const news = await fetchNews();
 
@@ -158,13 +158,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
       props: {
         news,
       },
+      revalidate: 600 // 10 dakikada bir yenile
     };
   } catch (error) {
-    console.error("News SSR alınamadı:", error);
+    console.error("News SSG alınamadı:", error);
     return {
       props: {
         news: [],
       },
+      revalidate: 600
     };
   }
 };

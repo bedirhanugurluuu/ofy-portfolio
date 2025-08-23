@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { fetchProjectsSSR, normalizeImageUrl } from "@/lib/api";
 import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import SEO from "@/components/SEO";
 
 interface Project {
@@ -244,24 +244,26 @@ export default function ProjectsPage({ projects }: Props) {
   );
 }
 
-// SSR ile veri çekmek için:
-export const getServerSideProps: GetServerSideProps = async () => {
+// SSG ile veri çekmek için:
+export const getStaticProps: GetStaticProps = async () => {
   try {
-    console.log('SSR: Fetching projects...');
+    console.log('SSG: Fetching projects...');
     const projects = await fetchProjectsSSR();
-    console.log('SSR: Projects loaded:', projects.length);
+    console.log('SSG: Projects loaded:', projects.length);
 
     return {
       props: {
         projects,
       },
+      revalidate: 300 // 5 dakikada bir yenile
     };
   } catch (error) {
-    console.error("SSR: Projeler alınamadı:", error);
+    console.error("SSG: Projeler alınamadı:", error);
     return {
       props: {
         projects: [],
       },
+      revalidate: 300
     };
   }
 };

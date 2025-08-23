@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchProjects, fetchNews } from '@/lib/api';
 
 const SITE_URL = 'https://ofy-portfolio.vercel.app';
@@ -51,12 +51,7 @@ function generateSiteMap(pages: string[], projects: any[], news: any[]) {
  `;
 }
 
-function SiteMap() {
-  // getServerSideProps will handle the XML generation
-  return null;
-}
-
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Fetch dynamic data
     const [projects, news] = await Promise.all([
@@ -80,10 +75,6 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate');
     res.write(sitemap);
     res.end();
-
-    return {
-      props: {},
-    };
   } catch (error) {
     console.error('Sitemap generation error:', error);
     
@@ -95,11 +86,5 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate');
     res.write(sitemap);
     res.end();
-
-    return {
-      props: {},
-    };
   }
-};
-
-export default SiteMap;
+}

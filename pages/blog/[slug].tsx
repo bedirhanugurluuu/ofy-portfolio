@@ -381,7 +381,7 @@ export const getStaticProps = async ({ params }: { params: { slug: string } }) =
         article,
         relatedArticles,
       },
-      revalidate: 60, // 1 dakikada bir yenile
+      revalidate: 300, // 5 dakikada bir yenile
     };
   } catch (error) {
     console.error("Blog detay static props error:", error);
