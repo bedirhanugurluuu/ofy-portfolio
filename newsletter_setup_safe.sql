@@ -1,7 +1,7 @@
--- Newsletter Subscribers Table Setup
+-- Newsletter Subscribers Table Setup (Safe Version)
 -- Run this in your Supabase SQL Editor
 
--- Create newsletter_subscribers table
+-- Create newsletter_subscribers table if it doesn't exist
 CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
     id UUID DEFAULT extensions.uuid_generate_v4() PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -11,26 +11,29 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create index for faster email lookups
+-- Create indexes if they don't exist
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email ON public.newsletter_subscribers(email);
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status ON public.newsletter_subscribers(status);
 
--- Enable Row Level Security (RLS)
+-- Enable Row Level Security (RLS) if not already enabled
 ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 
--- Create policy to allow inserts from authenticated and anonymous users
-CREATE POLICY IF NOT EXISTS "Allow newsletter subscription" ON public.newsletter_subscribers
+-- Drop existing policies if they exist (to avoid conflicts)
+DROP POLICY IF EXISTS "Allow newsletter subscription" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow admin to read subscribers" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow admin to update subscribers" ON public.newsletter_subscribers;
+
+-- Create new policies
+CREATE POLICY "Allow newsletter subscription" ON public.newsletter_subscribers
     FOR INSERT WITH CHECK (true);
 
--- Create policy to allow reads only for authenticated users (admin)
-CREATE POLICY IF NOT EXISTS "Allow admin to read subscribers" ON public.newsletter_subscribers
+CREATE POLICY "Allow admin to read subscribers" ON public.newsletter_subscribers
     FOR SELECT USING (auth.role() = 'authenticated');
 
--- Create policy to allow updates only for authenticated users (admin)
-CREATE POLICY IF NOT EXISTS "Allow admin to update subscribers" ON public.newsletter_subscribers
+CREATE POLICY "Allow admin to update subscribers" ON public.newsletter_subscribers
     FOR UPDATE USING (auth.role() = 'authenticated');
 
--- Create function to update updated_at timestamp
+-- Create function to update updated_at timestamp if it doesn't exist
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -39,13 +42,17 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+-- Drop existing trigger if it exists
+DROP TRIGGER IF EXISTS update_newsletter_subscribers_updated_at ON public.newsletter_subscribers;
+
 -- Create trigger to automatically update updated_at
 CREATE TRIGGER update_newsletter_subscribers_updated_at 
     BEFORE UPDATE ON public.newsletter_subscribers 
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
--- Optional: Insert some test data
--- INSERT INTO public.newsletter_subscribers (email, status) VALUES 
--- ('test@example.com', 'active'),
--- ('demo@example.com', 'active');
+-- Verify the setup
+SELECT 
+    'Table created successfully' as status,
+    COUNT(*) as subscriber_count
+FROM public.newsletter_subscribers;
