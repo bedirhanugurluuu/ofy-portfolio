@@ -17,6 +17,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: 'Invalid email address' });
     }
 
+    // Test Supabase connection first
+    console.log('Testing Supabase connection...');
+    const { data: testData, error: testError } = await supabase
+      .from('newsletter_subscribers')
+      .select('count')
+      .limit(1);
+
+    if (testError) {
+      console.error('Supabase connection test failed:', testError);
+      return res.status(500).json({ 
+        message: 'Database connection failed', 
+        error: testError.message,
+        code: testError.code 
+      });
+    }
+
+    console.log('Supabase connection successful');
+
     // Check if email already exists
     console.log('Checking for existing subscriber...');
     const { data: existingSubscriber, error: checkError } = await supabase
@@ -56,7 +74,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Newsletter subscription error:', error);
       return res.status(500).json({ 
         message: 'Failed to subscribe',
-        error: error.message 
+        error: error.message,
+        code: error.code
       });
     }
 
