@@ -23,11 +23,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('newsletter_subscribers')
       .select('id')
       .eq('email', email.toLowerCase())
-      .single();
+      .maybeSingle();
 
-    if (checkError && checkError.code !== 'PGRST116') {
+    if (checkError) {
       console.error('Error checking existing subscriber:', checkError);
-      return res.status(500).json({ message: 'Database error' });
+      return res.status(500).json({ 
+        message: 'Database error', 
+        error: checkError.message,
+        code: checkError.code 
+      });
     }
 
     if (existingSubscriber) {
