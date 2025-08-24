@@ -1,8 +1,52 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 export default function Footer() {
+    const [email, setEmail] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState("");
+
+    const handleNewsletterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!email) {
+            setMessage("Please enter your email address");
+            return;
+        }
+
+        if (!email.includes("@")) {
+            setMessage("Please enter a valid email address");
+            return;
+        }
+
+        setIsSubmitting(true);
+        setMessage("");
+
+        try {
+            // Newsletter subscription API call
+            const response = await fetch("/api/newsletter", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            if (response.ok) {
+                setMessage("Thank you for subscribing!");
+                setEmail("");
+            } else {
+                setMessage("Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            setMessage("Something went wrong. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <footer className="bg-black text-white relative lg:sticky bottom-0 px-4 pt-25 pb-8" style={{ zIndex: '1' }}>
             <div className="mx-auto">
@@ -73,16 +117,30 @@ export default function Footer() {
                     {/* Newsletter */}
                     <div>
                         <h4 className="text-white opacity-40 font-medium mb-2">NEWSLETTER</h4>
-                        <form className="flex items-center px-3 py-1 rounded" style={{ background: 'rgb(46, 46, 46)' }}>
+                        <form onSubmit={handleNewsletterSubmit} className="flex items-center px-3 py-1 rounded" style={{ background: 'rgb(46, 46, 46)' }}>
                             <input
                                 type="email"
                                 placeholder="Your email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="bg-transparent text-white placeholder:text-[#666666] placeholder:font-medium font-medium flex-1 outline-none py-2"
+                                aria-label="Email address for newsletter subscription"
+                                disabled={isSubmitting}
                             />
-                            <button type="submit" className="text-white hover:text-gray-300 p-2">
+                            <button 
+                                type="submit" 
+                                className="text-white hover:text-gray-300 p-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                aria-label="Subscribe to newsletter"
+                                disabled={isSubmitting}
+                            >
                                 <ArrowRight className="w-3 h-3" />
                             </button>
                         </form>
+                        {message && (
+                            <p className={`text-xs mt-2 ${message.includes("Thank you") ? "text-green-400" : "text-red-400"}`}>
+                                {message}
+                            </p>
+                        )}
                     </div>
                 </div>
 
