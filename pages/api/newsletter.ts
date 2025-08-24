@@ -1,11 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../lib/supabase';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-// Hardcode Supabase credentials for now
-const supabaseUrl = 'https://lsxafginsylkeuyzuiau.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzeGFmZ2luc3lsa2V1eXp1aWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ5NzI5NzQsImV4cCI6MjA1MDU0ODk3NH0.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8';
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -22,6 +16,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('Invalid email format:', email);
       return res.status(400).json({ message: 'Invalid email address' });
     }
+
+    // Test Supabase connection first
+    console.log('Testing Supabase connection...');
+    const { data: testData, error: testError } = await supabase
+      .from('newsletter_subscribers')
+      .select('count')
+      .limit(1);
+
+    if (testError) {
+      console.error('Supabase connection test failed:', testError);
+      return res.status(500).json({ 
+        message: 'Database connection failed', 
+        error: testError.message,
+        code: testError.code 
+      });
+    }
+
+    console.log('Supabase connection successful');
 
     // Check if email already exists
     console.log('Checking for existing subscriber...');
