@@ -14,10 +14,10 @@ export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
   const service3Items = content.service_3_items.split('\n').filter((item: string) => item.trim());
 
   return (
-    <section className="w-full px-5 py-20 bg-white">
+    <section className="w-full px-5 py-5 md:py-20 bg-white">
       <div className="">
         {/* Header */}
-        <div className="mb-25 text-left">
+        <div className="mb-12 md:mb-25 text-left">
           <h2 className="text-sm font-medium mb-1 uppercase tracking-wider opacity-40">
             {content.title}
           </h2>
@@ -27,7 +27,7 @@ export default function WhatWeDoSection({ content }: WhatWeDoSectionProps) {
         </div>
 
         <div className="flex">
-            <div className="relative flex-1"></div>
+            <div className="relative flex-1 md:block hidden"></div>
             {/* Services Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12  flex-2">
                 {/* Service 1 */}

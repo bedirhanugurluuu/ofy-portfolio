@@ -20,7 +20,6 @@ interface AnimatedAboutProps {
 }
 
 export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent, initialProjects = [] }: AnimatedAboutProps) {
-  const [isLoading, setIsLoading] = useState(!initialContent);
   const [content, setContent] = useState<AboutContent>(initialContent || {
     id: "1",
     title: "About Us",
@@ -68,25 +67,23 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
   const approachLineRef1 = useRef<HTMLDivElement>(null);
   const approachLineRef2 = useRef<HTMLDivElement>(null);
   const approachLineRef3 = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Eğer initialContent boşsa, client-side'da fetch et
+  // Smooth entrance animation
   useEffect(() => {
-    if (!initialContent) {
-      setIsLoading(true);
-      fetch('/api/about')
-        .then(res => res.json())
-        .then(data => {
-          setContent(data);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          // Hata durumunda varsayılan içerik kullan
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
+    if (containerRef.current) {
+      gsap.fromTo(containerRef.current, 
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 0.8, 
+          ease: "power2.out",
+          delay: 0.2
+        }
+      );
     }
-  }, [initialContent]);
+  }, []);
 
   // Projects ve Gallery'yi fetch et (sadece initialProjects boşsa)
   useEffect(() => {
@@ -158,44 +155,15 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
     });
   }, []);
 
-  // Loading skeleton
-  if (isLoading) {
-    return (
-      <div className="w-full bg-white min-h-screen">
-        <div className="flex flex-col lg:flex-row w-full min-h-screen px-5 pt-50 pb-28 gap-8">
-          <div className="w-full lg:w-1/2 flex flex-col gap-12 relative">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            </div>
-            <div className="sticky top-150">
-              <div className="relative py-4">
-                <div className="h-[1px] bg-gray-200 mb-2"></div>
-                <div className="flex flex-col md:flex-row gap-3 md:gap-0">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="w-full aspect-[.75/1] lg:w-1/2">
-            <div className="w-full h-full bg-gray-200 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full bg-white">
+    <div ref={containerRef} className="w-full bg-white">
       {/* İlk Bölüm - Mevcut */}
-      <div className="flex flex-col lg:flex-row w-full min-h-screen px-5 pt-50 pb-28 gap-8">
+      <div className="flex flex-col lg:flex-row w-full min-h-screen px-5 pt-37 md:pt-50 pb-15 md:pb-28 gap-8">
         <div className="w-full lg:w-1/2 flex flex-col gap-12 relative">
           <div>
             <AnimatedText
               as="p"
-              className="text-3xl font-medium max-w-xl"
+              className="text-2xl md:text-3xl font-medium max-w-xl"
               delay={0}
             >
               {content.main_text}
@@ -241,7 +209,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
         </div>
       </div>
 
-             {/* Approach Bölümü */}
+        {/* Approach Bölümü */}
        <div className="px-5 py-10">
          <div className="">
            <h2 className="text-sm font-medium mb-2 opacity-40">
@@ -264,9 +232,9 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
               </div>
 
               {/* Brand Strategy */}
-              <div className="flex flex-col lg:flex-row gap-8 mb-9">
+              <div className="flex flex-col lg:flex-row gap-2 md:gap-8 mb-9">
                 <div className="lg:w-1/2">
-                  <h3 className="text-lg font-medium mb-4">
+                  <h3 className="text-lg font-medium mb-0">
                     {content.brand_strategy_title}
                   </h3>
                 </div>
@@ -288,9 +256,9 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
               </div>
 
               {/* Visual Design */}
-              <div className="flex flex-col lg:flex-row gap-8 mb-9">
+              <div className="flex flex-col lg:flex-row gap-2 md:gap-8 mb-9">
                 <div className="lg:w-1/2">
-                  <h3 className="text-lg font-medium mb-4">
+                  <h3 className="text-lg font-medium mb-0">
                     {content.visual_design_title}
                   </h3>
                 </div>
@@ -312,9 +280,9 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
               </div>
 
               {/* Launch */}
-              <div className="flex flex-col lg:flex-row gap-8 mb-9">
+              <div className="flex flex-col lg:flex-row gap-2 md:gap-8 mb-9">
                 <div className="lg:w-1/2">
-                  <h3 className="text-lg font-medium mb-4">
+                  <h3 className="text-lg font-medium mb-0">
                     {content.launch_title}
                   </h3>
                 </div>
@@ -359,7 +327,7 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
          />
        )}
 
-               {/* Clients & Industries Section */}
+        {/* Clients & Industries Section */}
         {content.clients_title && (
           <ClientsIndustriesSection
             clientsTitle={content.clients_title}

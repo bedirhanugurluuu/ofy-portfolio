@@ -36,10 +36,10 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
   if (!mounted) return null;
 
   return (
-    <section className="w-full py-20">
+    <section className="w-full py-10 md:py-20">
       <div className="px-5">
         {/* Header */}
-        <div className="mb-16">
+        <div className="mb-8 md:mb-16">
           <h2 className="text-4xl font-medium mb-4">{title}</h2>
           {subtitle && (
             <p className="text-lg text-gray-600 max-w-2xl">{subtitle}</p>
@@ -47,15 +47,15 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
         </div>
 
         {/* Insights Grid */}
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid items-start md:items-center md:grid-cols-2 gap-5">
           {insights.map((insight, index) => {
             const project = getProjectById(insight.projectId);
             return (
-              <div key={index} className="flex flex-col justify-between bg-[#F8F8F8] p-5" style={{ aspectRatio: '1.46154 / 1' }}>
+              <div key={index} className="flex flex-col justify-between bg-[#F8F8F8] p-5 h-[437px] md:h-auto aspect-auto md:aspect-[1.46154/1]">
                 {/* Insight Content */}
                 <div className="mb-6">
                   <h3 className="text-sm uppercase font-medium mb-2 opacity-40">{insight.title}</h3>
-                  <p className="text-2xl font-medium max-w-[590px]" style={{ lineHeight: '27px' }}>{insight.text}</p>
+                  <p className="text-xl md:text-2xl font-medium max-w-[590px]" style={{ lineHeight: '27px' }}>{insight.text}</p>
                 </div>
 
                 {/* Related Case Study Card */}
@@ -65,13 +65,13 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
                         href={`/projects/${project.slug}`}
                         className="contents"
                     >
-                        <div className="relative flex group max-w-[322px] h-[100px] flex-1 gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
+                        <div className="relative flex group max-w-[322px] h-[80px] md:h-[100px] flex-1 gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
                             {/* Project Thumbnail */}
                             <div className="absolute group top-2 right-2" style={{ rotate: '-45deg' }}>
                                 <ButtonWithHoverArrow />
                             </div>
                             <div className="flex-shrink-0">
-                                <div className="w-[90px] h-[90px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
+                                <div className="w-[70px] h-[70px] md:w-[90px] md:h-[90px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
                                     {project.thumbnail_media ? (
                                     project.thumbnail_media.toLowerCase().endsWith('.mp4') || 
                                     project.thumbnail_media.toLowerCase().endsWith('.webm') ? (

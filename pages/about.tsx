@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { GetStaticProps } from 'next';
 import { fetchAbout, AboutContent, fetchAwards, Award, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent, fetchProjectsSSR, Project } from '@/lib/api';
@@ -104,7 +104,7 @@ export const getStaticProps: GetStaticProps = async () => {
         whatWeDoContent,
         projects
       },
-      revalidate: 60 // 1 dakikada bir yenile
+      revalidate: 300 // 5 dakikada bir yenile (daha uzun cache)
     };
   } catch (error) {
     console.error('About static props error:', error);

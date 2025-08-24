@@ -19,6 +19,9 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      // Cache headers ekle
+      res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+      
       const { data, error } = await supabase
         .from('about_content')
         .select('*')

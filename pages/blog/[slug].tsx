@@ -150,7 +150,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
       </div>
       {/* Article Header */}
       <div className="mb-8">
-        <div className="flex pb-50 pt-5 gap-5">
+        <div className="flex flex-col md:flex-row pb-30 md:pb-50 pt-5 gap-5">
           <div className="lg:w-1/2">
             <AnimatedText
               as="h1"
@@ -163,7 +163,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
           <div className="lg:w-1/2">
             <AnimatedText
               as="span"
-              className="flex text-2xl font-medium opacity-50 max-w-[600px]"
+              className="flex text-xl md:text-2xl font-medium opacity-50 max-w-[600px]"
               delay={0.5}
             >
               {article.title}
@@ -171,8 +171,8 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
           </div>
         </div>
 
-          <div className="flex items-center pt-5 gap-5">
-           <div className="lg:w-1/2 ">
+          <div className="flex flex-col md:flex-row items-start md:items-center pt-5 gap-5">
+           <div className="lg:w-1/2 w-full">
              <button
                onClick={() => {
                  navigator.clipboard.writeText(window.location.href);
@@ -193,7 +193,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
                </svg>
              </button>
            </div>
-          <div className="lg:w-1/2">
+          <div className="lg:w-1/2 w-full">
             <div className="relative h-[1px] mb-2">
               <div
                 ref={lineRef1}
@@ -244,7 +244,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
          className="mb-12"
          delay={2}
        >
-         <div className={`relative ${article.aspect_ratio || 'aspect-video'} w-full overflow-hidden`} style={{ aspectRatio: '2/1', }}>
+         <div className={`relative ${article.aspect_ratio || 'aspect-video'} w-full overflow-hidden h-[365px] md:h-auto md:aspect-[2/1]`}>
            <Image
              src={normalizeImageUrl(article.image_path)}
              alt={article.subtitle}

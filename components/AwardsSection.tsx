@@ -10,12 +10,12 @@ export default function AwardsSection({ awards }: AwardsSectionProps) {
   console.log('AwardsSection received awards:', awards);
   
   return (
-    <section className="w-full py-20">
+    <section className="w-full py-15 md:py-20">
       <div className="px-5">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Sol taraf - Awards başlığı */}
           <div className="flex flex-col">
-            <div className="border-t border-gray-300 pt-2">
+            <div className="md:border-t border-gray-300 pt-2">
               <h2 className="text-sm font-medium uppercase opacity-40">
                 Awards
               </h2>

@@ -327,8 +327,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const slug = context.params?.slug as string;
 
   try {
-    const project = await fetchProjectBySlugSSR(slug);
-    const allProjects = await fetchProjectsSSR();
+    const [project, allProjects] = await Promise.all([
+      fetchProjectBySlugSSR(slug),
+      fetchProjectsSSR()
+    ]);
     
     // Mevcut projeyi hariç tut, featured projeleri al ve 3 tane göster
     const moreProjects = allProjects
@@ -336,7 +338,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       .sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
       .slice(0, 3);
     
-    // Gallery images'ı fetch et
+    // Gallery images'ı parallel fetch et
     const galleryImages = project ? await fetchProjectGallery(project.id) : [];
 
     return {
@@ -345,7 +347,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         moreProjects,
         galleryImages,
       },
-      revalidate: 300 // 5 dakikada bir yenile
+      revalidate: 60 // 1 dakikada bir yenile
     };
   } catch (error) {
     return { notFound: true };

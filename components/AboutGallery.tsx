@@ -35,7 +35,7 @@ export default function AboutGallery({ images }: AboutGalleryProps) {
   if (images.length === 0) return null;
 
   return (
-    <section className="w-full py-20">
+    <section className="w-full py-10 md:py-20">
       <div>
         <div className="flex justify-center">
           <div className="relative overflow-hidden">
@@ -50,7 +50,7 @@ export default function AboutGallery({ images }: AboutGalleryProps) {
               {[...images, ...images].map((image, index) => (
                 <div
                   key={`${image.id}-${index}`}
-                  className="relative w-[450px] h-[520px] flex-shrink-0"
+                  className="relative w-[280px] md:w-[450px] h-[324px] md:h-[520px] flex-shrink-0"
                 >
                   <Image
                     src={normalizeImageUrl(image.image_path)}

@@ -215,35 +215,16 @@ export async function fetchFeaturedProjects(): Promise<Project[]> {
 
 export async function fetchProjectBySlug(slug: string): Promise<Project | null> {
   const raw = decodeURIComponent(slug || "").trim();
-  const normalized = raw.toLowerCase().replace(/\s+/g, "-");
 
-  // Try exact match first
-  let { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('slug', raw)
-    .single();
-
-  if (!error && data) return data;
-
-  // Fallback: case-insensitive exact match
-  const ci = await supabase
+  // Single optimized query with case-insensitive match
+  const { data, error } = await supabase
     .from('projects')
     .select('*')
     .ilike('slug', raw)
     .single();
 
-  if (!ci.error && ci.data) return ci.data as Project;
-
-  // Fallback: normalized (lowercased, spaces->hyphens)
-  const norm = await supabase
-    .from('projects')
-    .select('*')
-    .ilike('slug', normalized)
-    .single();
-
-  if (norm.error) throw norm.error;
-  return norm.data as Project;
+  if (error) throw error;
+  return data as Project;
 }
 
 export async function fetchProjectGallery(projectId: string): Promise<string[]> {
