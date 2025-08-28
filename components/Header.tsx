@@ -5,17 +5,13 @@ import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-
-const navItems = [
-  { href: "/projects", label: "WORK" },
-  { href: "/about", label: "ABOUT" },
-  { href: "/blog", label: "NEWS" },
-  { href: "/careers", label: "CAREERS" },
-];
+import { useHeaderSettings } from "../hooks/useHeaderSettings";
+import Image from "next/image";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { settings: headerSettings, loading } = useHeaderSettings();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -26,7 +22,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (menuOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -42,6 +38,30 @@ export default function Header() {
     forceBlackTextPages.includes(pathname) || pathname.startsWith("/blog/") :
     false;
 
+  // Varsayılan menü öğeleri (fallback)
+  const defaultNavItems = [
+    { href: "/projects", label: "WORK" },
+    { href: "/about", label: "ABOUT" },
+    { href: "/blog", label: "NEWS" },
+    { href: "/careers", label: "CAREERS" },
+  ];
+
+  const navItems = headerSettings?.menu_items?.sort((a: any, b: any) => a.order - b.order) || defaultNavItems;
+
+  if (loading) {
+    return (
+      <header className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-white text-black">
+        <div className="animate-pulse bg-gray-200 h-6 w-20 rounded"></div>
+        <div className="hidden md:flex items-center gap-4">
+          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <>
       <header
@@ -53,14 +73,27 @@ export default function Header() {
         )}
       >
         <Link href="/" className="flex items-center space-x-1 z-50">
-          <span className="font-switzer text-xl font-bold tracking-tight">Luca</span>
-          <span className="font-switzer text-[10px] -mt-2">™</span>
+          {headerSettings?.logo_image_url ? (
+            <div className="relative w-20 h-8">
+              <Image
+                src={headerSettings.logo_image_url}
+                alt="Logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          ) : (
+            <div className="w-20 h-8 bg-gray-200 rounded flex items-center justify-center">
+              <span className="text-xs text-gray-500">Logo</span>
+            </div>
+          )}
         </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-35">
           <nav className="flex space-x-4 text-sm uppercase font-medium">
-            {navItems.map((item) => (
+            {navItems.map((item: any) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -120,7 +153,7 @@ export default function Header() {
         style={{ top: "60px" }}
       >
         <nav className="flex flex-col items-start gap-1 text-4xl font-medium w-full pt-20">
-          {navItems.map((item, index) => (
+          {navItems.map((item: any, index: number) => (
             <div
               key={item.href}
               className="overflow-hidden"

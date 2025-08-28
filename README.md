@@ -1,213 +1,277 @@
-# 🎨 Portfolio Website - Merkezi API Sistemi
+# 🎨 OFY Portfolio Website
 
-Modern portfolio website with centralized API management system, ready for Vercel deployment.
+Modern, responsive portfolio website built with Next.js, Supabase, and TypeScript. Features a comprehensive admin panel for content management and a beautiful frontend with smooth animations.
 
-## 🚀 Features
+## 🚀 Live Demo
+
+- **Frontend**: [ofy-portfolio.vercel.app](https://ofy-portfolio.vercel.app)
+- **Admin Panel**: [ofy-admin.vercel.app](https://ofy-admin.vercel.app)
+
+## ✨ Features
 
 ### Frontend (Next.js)
-- **Modern Design**: Clean, responsive portfolio design
-- **Animations**: GSAP animations and smooth transitions
-- **Dynamic Content**: CMS-like content management
-- **SEO Optimized**: Static generation with Next.js
+- **Modern Design**: Clean, responsive portfolio design with smooth animations
+- **GSAP Animations**: Professional animations and transitions
+- **SEO Optimized**: Static generation, meta tags, sitemap, robots.txt
+- **Newsletter System**: Email subscription with Supabase integration
+- **Dynamic Content**: CMS-like content management via admin panel
+- **Performance**: 90+ PageSpeed Insights score
 
 ### Admin Panel (React + Vite)
-- **Centralized API System**: Single source of truth for all API calls
-- **CRUD Operations**: Full content management
-- **File Uploads**: Image and media management
-- **TypeScript**: Full type safety
+- **Complete CMS**: Full content management system
+- **Supabase Integration**: Real-time database operations
+- **File Management**: Image uploads to Supabase Storage
+- **Authentication**: Secure login system
+- **TypeScript**: Full type safety throughout
+- **Responsive Design**: Works on all devices
 
-### Backend (Next.js API Routes)
-- **Serverless Functions**: Vercel-ready API routes
-- **Database Integration**: MySQL with connection pooling
-- **File Handling**: Image uploads and management
-- **CORS Support**: Cross-origin request handling
+### Backend (Supabase)
+- **Database**: PostgreSQL with Row Level Security (RLS)
+- **Storage**: File uploads and management
+- **Authentication**: User management and sessions
+- **Real-time**: Live data updates
+- **API**: RESTful API with automatic generation
 
 ## 🏗️ Architecture
 
 ```
 portfolio-ofy/
-├── pages/                    # Next.js pages
-│   ├── api/                  # API routes (serverless functions)
-│   └── *.tsx                 # Frontend pages
+├── pages/                    # Next.js pages (SSG/SSR)
+│   ├── api/                  # API routes
+│   │   ├── newsletter.ts     # Newsletter subscription
+│   │   ├── projects/         # Project management
+│   │   ├── news/            # News/blog management
+│   │   └── ...              # Other endpoints
+│   ├── about.tsx            # About page
+│   ├── projects.tsx         # Projects listing
+│   ├── blog.tsx             # News/blog listing
+│   └── contact.tsx          # Contact page
 ├── components/               # React components
-├── admin-panel/              # Admin panel (React + Vite)
+│   ├── Header.tsx           # Navigation
+│   ├── Footer.tsx           # Footer with newsletter
+│   ├── IntroBanner.tsx      # Hero section
+│   └── ...                  # Other components
+├── temp-admin-panel/         # Admin panel (React + Vite)
 │   ├── src/
-│   │   ├── config/
-│   │   │   └── api.ts        # Centralized API config
-│   │   ├── utils/
-│   │   │   └── api.ts        # API client and functions
-│   │   └── pages/            # Admin pages
+│   │   ├── pages/           # Admin pages
+│   │   ├── components/      # Admin components
+│   │   ├── utils/           # Utilities
+│   │   └── types/           # TypeScript types
 │   └── package.json
-├── backend/                  # Legacy Express backend (for reference)
-└── package.json
-```
-
-## 🔧 Centralized API System
-
-### Benefits:
-- ✅ **Single Configuration**: All API URLs managed in one place
-- ✅ **Environment Auto-Detection**: Development/Production switching
-- ✅ **Type Safety**: Full TypeScript support
-- ✅ **Error Handling**: Centralized error management
-- ✅ **Authentication**: Automatic token management
-
-### Usage:
-```typescript
-import { api } from '../utils/api';
-
-// All API calls go through centralized system
-const projects = await api.getProjects();
-const newProject = await api.createProject(data);
-const updatedProject = await api.updateProject(id, data);
-await api.deleteProject(id);
+├── lib/
+│   ├── supabase.ts          # Supabase client
+│   └── api.ts               # API utilities
+├── hooks/                    # Custom React hooks
+├── styles/                   # Global styles
+└── public/                   # Static assets
 ```
 
 ## 🚀 Quick Start
 
-### 🎯 Environment Switch Scripts
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
 
-We've created convenient PowerShell scripts to switch between environments:
-
-**For Local Development:**
-```powershell
-.\switch-to-local.ps1
-```
-
-**For Vercel Production:**
-```powershell
-.\switch-to-vercel.ps1
-```
-
-**Quick Deploy to Vercel:**
-```powershell
-.\quick-deploy.ps1
-```
-
-### 📋 Manual Setup
-
-#### 1. Install Dependencies
+### 1. Clone Repository
 ```bash
+git clone https://github.com/yourusername/portfolio-ofy.git
+cd portfolio-ofy
+```
+
+### 2. Install Dependencies
+```bash
+# Main project
 npm install
-cd admin-panel && npm install
+
+# Admin panel
+cd temp-admin-panel
+npm install
+cd ..
 ```
 
-#### 2. Environment Setup
+### 3. Environment Setup
 ```bash
-# Copy environment examples
+# Copy environment files
 cp env.example .env.local
-cp admin-panel/env.example admin-panel/.env
+cp temp-admin-panel/env.example temp-admin-panel/.env
 ```
 
-#### 3. Database Setup
+### 4. Configure Environment Variables
+
+#### Main Project (.env.local)
 ```bash
-# Run SQL scripts for database tables
-# See DEPLOYMENT.md for details
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-#### 4. Development
+#### Admin Panel (temp-admin-panel/.env)
 ```bash
-# Frontend
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 5. Database Setup
+Run the SQL scripts in your Supabase SQL editor:
+
+1. **Database Schema**: `database_setup.sql`
+2. **Newsletter Setup**: `newsletter_setup_safe.sql`
+3. **RLS Policies**: `newsletter_policies.sql`
+
+### 6. Development
+```bash
+# Frontend (Next.js)
 npm run dev
 
-# Admin Panel (in admin-panel directory)
+# Admin Panel (in temp-admin-panel directory)
+cd temp-admin-panel
 npm run dev
-
-# Backend (legacy, optional)
-cd backend && npm run dev
 ```
 
 ## 🌐 Deployment
 
 ### Vercel Deployment
-1. **Database**: Set up MySQL database (PlanetScale, Railway, etc.)
-2. **Environment Variables**: Configure in Vercel dashboard
-3. **Deploy**: Push to GitHub, Vercel auto-deploys
 
-### Admin Panel Deployment
-- Deploy as separate Vercel project
-- Point to main API endpoints
+#### Frontend
+1. Connect GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-See `DEPLOYMENT.md` for detailed instructions.
+#### Admin Panel
+1. Create separate Vercel project for admin panel
+2. Set environment variables
+3. Deploy from `temp-admin-panel` directory
 
-## 📁 Project Structure
+### Environment Variables for Production
 
-### Frontend Pages
-- **Home**: Landing page with hero section
-- **About**: Company information with slider
-- **Projects**: Portfolio showcase
-- **Blog**: News and articles
-- **Contact**: Contact information and form
+#### Frontend (Vercel)
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
+
+#### Admin Panel (Vercel)
+```bash
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
+## 📁 Content Management
 
 ### Admin Panel Sections
 - **Dashboard**: Overview and navigation
-- **About Management**: Company content
-- **Projects**: Portfolio management
+- **About Management**: Company information and insights
+- **Projects**: Portfolio management with galleries
 - **News**: Blog post management
-- **Awards**: Recognition management
+- **Awards**: Recognition and achievements
 - **Slider**: Hero section management
-- **What We Do**: Services section
+- **What We Do**: Services and capabilities
 - **Contact**: Contact information
+- **Intro Banners**: Banner management
 
-### API Endpoints
-- `/api/about` - About page content
-- `/api/projects` - Project management
-- `/api/news` - News/blog management
-- `/api/awards` - Awards management
-- `/api/slider` - Slider management
-- `/api/what-we-do` - Services content
-- `/api/contact` - Contact information
+### Database Tables
+- `about_content` - Company information
+- `projects` - Portfolio projects
+- `project_gallery` - Project images
+- `news` - Blog posts
+- `awards` - Awards and recognition
+- `slider` - Hero slider
+- `what_we_do` - Services
+- `contact` - Contact information
+- `newsletter_subscribers` - Email subscriptions
+- `about_gallery` - About page images
+- `intro_banners` - Banner images
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 15**: React framework
+- **Next.js 15**: React framework with SSG/SSR
 - **TypeScript**: Type safety
-- **Tailwind CSS**: Styling
-- **GSAP**: Animations
+- **Tailwind CSS**: Utility-first styling
+- **GSAP**: Professional animations
 - **Framer Motion**: UI animations
 
 ### Admin Panel
 - **React 19**: UI library
-- **Vite**: Build tool
+- **Vite**: Fast build tool
 - **TypeScript**: Type safety
 - **Tailwind CSS**: Styling
 - **React Router**: Navigation
 
-### Backend
-- **Next.js API Routes**: Serverless functions
-- **MySQL**: Database
-- **Formidable**: File uploads
-- **CORS**: Cross-origin support
+### Backend & Database
+- **Supabase**: Backend as a Service
+- **PostgreSQL**: Database
+- **Row Level Security**: Data protection
+- **Supabase Storage**: File management
+- **Supabase Auth**: Authentication
 
-## 📝 Environment Variables
+### Development Tools
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **TypeScript**: Type checking
 
-### Main Project
-```bash
-DATABASE_HOST=your-database-host
-DATABASE_USER=your-database-user
-DATABASE_PASSWORD=your-database-password
-DATABASE_NAME=your-database-name
-NEXT_PUBLIC_API_BASE_URL=https://your-domain.vercel.app/api
-```
+## 📊 Performance
 
-### Admin Panel
-```bash
-VITE_API_BASE_URL=https://your-domain.vercel.app/api
-```
+- **PageSpeed Insights**: 90+ score
+- **Core Web Vitals**: Optimized
+- **SEO**: Full optimization
+- **Accessibility**: WCAG compliant
+- **Mobile**: Responsive design
+
+## 🔒 Security
+
+- **Row Level Security**: Database-level protection
+- **Environment Variables**: Secure configuration
+- **Input Validation**: Client and server-side validation
+- **CORS**: Cross-origin protection
+- **Authentication**: Secure admin access
+
+## 📝 API Endpoints
+
+### Public APIs
+- `GET /api/projects` - Get all projects
+- `GET /api/projects/[slug]` - Get project by slug
+- `GET /api/news` - Get all news
+- `GET /api/news/[slug]` - Get news by slug
+- `GET /api/about` - Get about content
+- `GET /api/contact` - Get contact info
+- `GET /api/slider` - Get slider content
+- `GET /api/what-we-do` - Get services
+- `GET /api/awards` - Get awards
+- `POST /api/newsletter` - Subscribe to newsletter
+
+### Admin APIs (Protected)
+- All CRUD operations for content management
+- File upload and deletion
+- User authentication
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch
-3. Make changes
-4. Test thoroughly
-5. Submit pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-For deployment issues, see `DEPLOYMENT.md`.
-For API system questions, check the centralized config files.
+- **Documentation**: Check the code comments and TypeScript types
+- **Issues**: Create an issue on GitHub
+- **Deployment**: See deployment scripts and environment setup
+
+## 🎯 Roadmap
+
+- [ ] Multi-language support
+- [ ] Advanced analytics
+- [ ] Email notifications
+- [ ] Advanced image optimization
+- [ ] PWA features
+- [ ] Advanced SEO features
+
+---
+
+**Built with ❤️ using Next.js, Supabase, and TypeScript**
