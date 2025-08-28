@@ -61,11 +61,10 @@ export async function updateHeaderSettings(settings: Partial<HeaderSettings>): P
 export async function uploadLogoImage(file: File): Promise<string | null> {
   const fileExt = file.name.split('.').pop()
   const fileName = `logo-${Date.now()}.${fileExt}`
-  const filePath = `header/${fileName}`
 
   const { error: uploadError } = await supabase.storage
-    .from('images')
-    .upload(filePath, file)
+    .from('uploads')
+    .upload(fileName, file)
 
   if (uploadError) {
     console.error('Error uploading logo:', uploadError)
@@ -73,8 +72,8 @@ export async function uploadLogoImage(file: File): Promise<string | null> {
   }
 
   const { data } = supabase.storage
-    .from('images')
-    .getPublicUrl(filePath)
+    .from('uploads')
+    .getPublicUrl(fileName)
 
   return data.publicUrl
 }
@@ -85,11 +84,10 @@ export async function deleteLogoImage(imageUrl: string): Promise<boolean> {
     // URL'den dosya yolunu çıkar
     const urlParts = imageUrl.split('/')
     const fileName = urlParts[urlParts.length - 1]
-    const filePath = `header/${fileName}`
 
     const { error } = await supabase.storage
-      .from('images')
-      .remove([filePath])
+      .from('uploads')
+      .remove([fileName])
 
     if (error) {
       console.error('Error deleting logo:', error)
