@@ -1,13 +1,44 @@
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
+import { fetchAboutBanner, normalizeImageUrl } from "@/lib/api";
+import type { AboutBanner } from "@/lib/api";
+
+// Varsayılan about banner (fallback için)
+const defaultAboutBanner: AboutBanner = {
+  id: 'default',
+  image: '/images/about-banner.png',
+  title_desktop: 'Where bold concepts meet timeless execution, creating designs that inspire and endure.',
+  title_mobile: 'Where bold ideas meet great design.',
+  button_text: 'ABOUT US',
+  button_link: '/about',
+  created_at: '',
+  updated_at: ''
+};
 
 export default function AboutBanner() {
+  const [banner, setBanner] = useState<AboutBanner>(defaultAboutBanner);
+
+  useEffect(() => {
+    fetchAboutBanner()
+      .then((data) => {
+        if (data) {
+          setBanner(data);
+        }
+      })
+      .catch(() => {
+        // Hata durumunda varsayılan banner kullan
+        setBanner(defaultAboutBanner);
+      });
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden px-4 mb-20">
         <div className="aspect-[0.6363636364/1] md:aspect-[2.32/1] " style={{ position: 'relative' }}>
             <Image
-                src="/images/about-banner.png"
+                src={normalizeImageUrl(banner.image)}
                 alt="About Banner"
                 fill
                 sizes="100vw"
@@ -19,17 +50,17 @@ export default function AboutBanner() {
             <div className="absolute inset-0 flex items-start">
                 <div className="text-white max-w-4xl text-left p-4 md:p-8">
                     <p className="hidden md:block mb-6 text-4xl font-medium">
-                        Where bold concepts meet timeless execution, creating designs that inspire and endure.
+                        {banner.title_desktop}
                     </p>
                     <p className="block md:hidden mb-6 text-3xl font-medium max-w-[260]">
-                        Where bold ideas meet great design.
+                        {banner.title_mobile}
                     </p>
                     <Link
-                        href="/about"
+                        href={banner.button_link}
                         className="inline-flex items-center gap-2 px-4 py-2 text-sm text-white group hover:bg-gray-200!important transition"
                         style={{ background: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(15px)", letterSpacing: "0", border: "1px solid rgba(255, 255, 255, 0.1)" }}
                     >
-                        ABOUT US
+                        {banner.button_text}
                         <ButtonWithHoverArrow />
                     </Link>
                 </div>

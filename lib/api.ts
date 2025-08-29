@@ -108,6 +108,17 @@ export interface Service {
   updated_at: string;
 }
 
+export interface AboutBanner {
+  id: string;
+  image: string;
+  title_desktop: string;
+  title_mobile: string;
+  button_text: string;
+  button_link: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Award {
   id: string;
   title: string;
@@ -310,6 +321,35 @@ export async function fetchServices(): Promise<Service[]> {
 
 export async function fetchServicesSSR(): Promise<Service[]> {
   return fetchServices();
+}
+
+export async function fetchAboutBanner(): Promise<AboutBanner | null> {
+  const { data, error } = await supabase
+    .from('about_banner')
+    .select('*')
+    .single();
+
+  if (error) {
+    console.error('Error fetching about banner:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function updateAboutBanner(banner: Partial<AboutBanner>): Promise<AboutBanner | null> {
+  const { data, error } = await supabase
+    .from('about_banner')
+    .upsert(banner)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating about banner:', error);
+    return null;
+  }
+
+  return data;
 }
 
 export async function fetchFeaturedNews(): Promise<News[]> {
