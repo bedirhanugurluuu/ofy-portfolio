@@ -3,36 +3,53 @@ import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import SplitType from 'split-type'
 import gsap from 'gsap'
+import { fetchServices, Service } from '@/lib/api';
 
-const slides = [
-    { title: "Strategy", description: "Where insight meets execution. We develop data-driven strategies that align with your vision and drive measurable success. Every decision is guided by research and market intelligence, ensuring sustainable growth. With a holistic approach, we turn challenges from opportunities to results." },
-    { title: "Branding", description: "Building stories that resonate. From visual identity to messaging, we design brands that connect with audiences and stand the test of time. We craft every detail with intention, ensuring consistency across every touchpoint. Our approach blends strategy and creativity, turning brands into experiences." },
-    { title: "Web Design", description: "Where creativity meets functionality. We craft immersive and responsive digital experiences tailored to drive engagement and achieve your goals. With a user-centric approach, we design seamless interactions that captivate and convert. Thoughtfully crafted to elevate your brand in the digital landscape." },
+// Varsayılan services (fallback için)
+const defaultServices: Service[] = [
+    { id: '1', title: "Strategy", description: "Where insight meets execution. We develop data-driven strategies that align with your vision and drive measurable success. Every decision is guided by research and market intelligence, ensuring sustainable growth. With a holistic approach, we turn challenges from opportunities to results.", order_index: 1, created_at: '', updated_at: '' },
+    { id: '2', title: "Branding", description: "Building stories that resonate. From visual identity to messaging, we design brands that connect with audiences and stand the test of time. We craft every detail with intention, ensuring consistency across every touchpoint. Our approach blends strategy and creativity, turning brands into experiences.", order_index: 2, created_at: '', updated_at: '' },
+    { id: '3', title: "Web Design", description: "Where creativity meets functionality. We craft immersive and responsive digital experiences tailored to drive engagement and achieve your goals. With a user-centric approach, we design seamless interactions that captivate and convert. Thoughtfully crafted to elevate your brand in the digital landscape.", order_index: 3, created_at: '', updated_at: '' },
 ];
 
 export default function ServicesSlider() {
+    const [services, setServices] = useState<Service[]>(defaultServices);
     const [index, setIndex] = useState(0);
     const textRef = useRef<HTMLParagraphElement | null>(null);
     const titleLineRef = useRef<HTMLHeadingElement | null>(null);
     const isInView = useInView(titleLineRef, { once: true, margin: '-100px' });
+
+    // Services'leri fetch et
+    useEffect(() => {
+        fetchServices()
+            .then((data) => {
+                if (data && data.length > 0) {
+                    setServices(data);
+                }
+            })
+            .catch(() => {
+                // Hata durumunda varsayılan services kullan
+                setServices(defaultServices);
+            });
+    }, []);
 
     const formatNumber = (i: number) => (i < 9 ? `0${i + 1}` : `${i + 1}`);
 
     const number = formatNumber(index);
 
     const prevSlide = () => {
-        setIndex((prev) => (prev - 1 + slides.length) % slides.length);
+        setIndex((prev) => (prev - 1 + services.length) % services.length);
     };
 
     const nextSlide = () => {
-        setIndex((prev) => (prev + 1) % slides.length);
+        setIndex((prev) => (prev + 1) % services.length);
     };
 
     useEffect(() => {
         if (!textRef.current) return;
 
         // Her değişimde içeriği sıfırla (SplitType yeniden çalışsın)
-        textRef.current.innerHTML = slides[index].description;
+        textRef.current.innerHTML = services[index].description;
 
         const split = new SplitType(textRef.current, {
             types: 'lines',
@@ -100,7 +117,7 @@ export default function ServicesSlider() {
                             key={`title-${index}`}
                             className="text-2xl font-medium mb-3 animate-[slideUp_0.8s_ease-out_forwards]"
                         >
-                            {slides[index].title}
+                            {services[index].title}
                         </h2>
                     </div>
                     <div className="w-full max-w-[600px] overflow-hidden">

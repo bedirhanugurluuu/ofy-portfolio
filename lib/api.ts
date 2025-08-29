@@ -99,6 +99,15 @@ export interface AboutGalleryImage {
   updated_at: string;
 }
 
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Award {
   id: string;
   title: string;
@@ -287,6 +296,20 @@ export async function fetchNews(): Promise<News[]> {
 
   if (error) throw error;
   return data || [];
+}
+
+export async function fetchServices(): Promise<Service[]> {
+  const { data, error } = await supabase
+    .from('services')
+    .select('*')
+    .order('order_index', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchServicesSSR(): Promise<Service[]> {
+  return fetchServices();
 }
 
 export async function fetchFeaturedNews(): Promise<News[]> {

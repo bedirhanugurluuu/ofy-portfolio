@@ -157,74 +157,82 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
             )}
           </div>
 
-          {/* Sol alt köşe - Scroll to view more */}
-          {currentBanner.scroll_text && (
-            <div className="absolute bottom-8 left-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
-              <Link
-                href="/projects"
-                className="group relative inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm"
-              >
-                {currentBanner.scroll_text}
-                <div className="w-4 h-4 border-l-2 border-b-2 border-white/80 group-hover:border-white transform rotate-45 transition-colors"></div>
-              </Link>
-            </div>
-          )}
+          {/* Alt köşe - Scroll ve Project Info */}
+          <div className="absolute bottom-8 left-8 right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
+            <div className="flex justify-between items-end">
+              {/* Sol taraf - Scroll to view more */}
+              {currentBanner.scroll_text && (
+                <button
+                  onClick={() => {
+                    const element = document.getElementById('featured-projects');
+                    if (element) {
+                      element.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                  className="group relative inline-flex items-center font-medium gap-2 text-white opacity-40 hover:opacity-100 transition-opacity text-sm cursor-pointer"
+                >
+                  {currentBanner.scroll_text}
+                </button>
+              )}
 
-          {/* Sağ alt köşe - Project Info */}
-          {relatedProject && (
-            <div className="absolute bottom-8 right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.6s] opacity-0">
-              <Link href={`/projects/${relatedProject.slug}`} className="contents">
-                <div className="relative flex group max-w-[280px] h-[80px] gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
-                  {/* Project Thumbnail */}
-                  <div className="absolute group top-2 right-2" style={{ rotate: '-45deg' }}>
-                    <ButtonWithHoverArrow />
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-[70px] h-[70px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
-                      {relatedProject.thumbnail_media ? (
-                        relatedProject.thumbnail_media.toLowerCase().endsWith('.mp4') || 
-                        relatedProject.thumbnail_media.toLowerCase().endsWith('.webm') ? (
-                          <video
-                            src={normalizeImageUrl(relatedProject.thumbnail_media)}
-                            className="w-full h-full object-cover"
-                            muted
-                            loop
-                            playsInline
-                          />
+              {/* Sağ taraf - Project Info */}
+              {relatedProject && (
+                <Link href={`/projects/${relatedProject.slug}`} className="contents">
+                  <div className="relative flex group w-[320px] h-[100px] gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
+                    {/* Project Thumbnail */}
+                    <div className="absolute group top-2 right-2" style={{ rotate: '-45deg' }}>
+                      <ButtonWithHoverArrow />
+                    </div>
+                    <div className="flex-shrink-0">
+                      <div className="w-[90px] h-[90px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
+                        {relatedProject.thumbnail_media ? (
+                          relatedProject.thumbnail_media.toLowerCase().endsWith('.mp4') || 
+                          relatedProject.thumbnail_media.toLowerCase().endsWith('.webm') ? (
+                            <video
+                              src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                              className="w-full h-full object-cover"
+                              muted
+                              loop
+                              playsInline
+                            />
+                          ) : (
+                            <Image
+                              src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                              alt={relatedProject.title}
+                              fill
+                              className="object-cover"
+                            />
+                          )
                         ) : (
-                          <Image
-                            src={normalizeImageUrl(relatedProject.thumbnail_media)}
-                            alt={relatedProject.title}
-                            fill
-                            className="object-cover"
-                          />
-                        )
-                      ) : (
-                        <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-500 text-xs">No image</span>
-                        </div>
-                      )}
+                          <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                            <span className="text-gray-500 text-xs">No image</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Project Info */}
-                  <div className="min-w-0 flex flex-col justify-between">
-                    <p className="text-xs uppercase tracking-wide mb-1 font-medium">
-                      Related Case Study
-                    </p>
-                    <div className="block group">
-                      <h4 className="text-xs font-medium">
-                        {relatedProject.title}
-                      </h4>
-                      {relatedProject.role && (
-                        <p className="text-xs opacity-40 font-medium">{relatedProject.role}</p>
-                      )}
+                    {/* Project Info */}
+                    <div className="min-w-0 flex flex-col justify-between">
+                      <p className="text-xs uppercase tracking-wide mb-1 font-medium">
+                        Latest Case Studies
+                      </p>
+                      <div className="block group">
+                        <h4 className="text-xs font-medium">
+                          {relatedProject.title}
+                        </h4>
+                        {relatedProject.role && (
+                          <p className="text-xs opacity-40 font-medium">{relatedProject.role}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              )}
             </div>
-          )}
+          </div>
         </>
       )}
     </div>

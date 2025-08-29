@@ -31,7 +31,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 	if (projects.length === 0) return null;
 
 	return (
-		<section className="my-20 px-4 md:px-5">
+		<section id="featured-projects" className="my-20 px-4 md:px-5">
 			<div className="flex items-end justify-between mb-5">
 				<h2 className="text-2xl md:text-3xl font-medium">Featured Projects</h2>
 				<Link
