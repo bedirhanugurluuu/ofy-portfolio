@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS header_settings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   logo_text TEXT,
   logo_image_url TEXT,
+  logo_image_url_light TEXT, -- Açık renkli logo (şeffaf arka plan için)
   menu_items JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

@@ -14,6 +14,7 @@ export interface HeaderSettings {
   id: string
   logo_text?: string
   logo_image_url?: string
+  logo_image_url_light?: string
   menu_items: MenuItem[]
   created_at: string
   updated_at: string

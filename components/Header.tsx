@@ -60,20 +60,32 @@ export default function Header() {
         )}
       >
         <Link href="/" className="flex items-center space-x-1 z-50">
-          {headerSettings?.logo_image_url ? (
-            <div className="relative w-20 h-8">
-              <Image
-                src={headerSettings.logo_image_url}
-                alt="Logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+          {(scrolled || menuOpen || isDarkText) ? (
+            // Beyaz arka plan için koyu logo
+            headerSettings?.logo_image_url && (
+              <div className="relative w-20 h-8">
+                <Image
+                  src={headerSettings.logo_image_url}
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            )
           ) : (
-            <div className="w-20 h-8 flex items-center justify-center">
-              <span className="text-lg font-bold">OFY</span>
-            </div>
+            // Şeffaf arka plan için açık logo
+            headerSettings?.logo_image_url_light && (
+              <div className="relative w-20 h-8">
+                <Image
+                  src={headerSettings.logo_image_url_light}
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            )
           )}
         </Link>
 
