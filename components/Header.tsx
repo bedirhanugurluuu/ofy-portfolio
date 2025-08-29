@@ -46,21 +46,8 @@ export default function Header() {
     { href: "/careers", label: "CAREERS" },
   ];
 
+  // Her zaman menü öğelerini göster - loading olsa bile varsayılan öğeleri kullan
   const navItems = headerSettings?.menu_items?.sort((a: any, b: any) => a.order - b.order) || defaultNavItems;
-
-  if (loading) {
-    return (
-      <header className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-white text-black">
-        <div className="animate-pulse bg-gray-200 h-6 w-20 rounded"></div>
-        <div className="hidden md:flex items-center gap-4">
-          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
-          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
-          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
-          <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
-        </div>
-      </header>
-    );
-  }
 
   return (
     <>
@@ -84,8 +71,8 @@ export default function Header() {
               />
             </div>
           ) : (
-            <div className="w-20 h-8 bg-gray-200 rounded flex items-center justify-center">
-              <span className="text-xs text-gray-500">Logo</span>
+            <div className="w-20 h-8 flex items-center justify-center">
+              <span className="text-lg font-bold">OFY</span>
             </div>
           )}
         </Link>
