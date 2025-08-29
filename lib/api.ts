@@ -123,8 +123,8 @@ export interface Footer {
   id: string;
   cta_title: string;
   cta_link: string;
-  sitemap_items: string[];
-  social_items: string[];
+  sitemap_items: Array<{ name: string; link: string }>;
+  social_items: Array<{ name: string; link: string }>;
   copyright_text: string;
   created_at: string;
   updated_at: string;

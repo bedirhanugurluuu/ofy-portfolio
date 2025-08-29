@@ -6,20 +6,9 @@ import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 import { fetchAboutBanner, normalizeImageUrl } from "@/lib/api";
 import type { AboutBanner } from "@/lib/api";
 
-// Varsayılan about banner (fallback için)
-const defaultAboutBanner: AboutBanner = {
-  id: 'default',
-  image: '/images/about-banner.png',
-  title_desktop: 'Where bold concepts meet timeless execution, creating designs that inspire and endure.',
-  title_mobile: 'Where bold ideas meet great design.',
-  button_text: 'ABOUT US',
-  button_link: '/about',
-  created_at: '',
-  updated_at: ''
-};
-
 export default function AboutBanner() {
-  const [banner, setBanner] = useState<AboutBanner>(defaultAboutBanner);
+  const [banner, setBanner] = useState<AboutBanner | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchAboutBanner()
@@ -28,11 +17,18 @@ export default function AboutBanner() {
           setBanner(data);
         }
       })
-      .catch(() => {
-        // Hata durumunda varsayılan banner kullan
-        setBanner(defaultAboutBanner);
+      .catch((error) => {
+        console.error('About banner yükleme hatası:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
+
+  // Loading durumunda hiçbir şey gösterme
+  if (loading || !banner) {
+    return null;
+  }
 
   return (
     <section className="relative w-full overflow-hidden px-4 mb-20">

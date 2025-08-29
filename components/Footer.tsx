@@ -3,20 +3,9 @@
 import { useState, useEffect } from "react";
 import { fetchFooter, Footer } from "@/lib/api";
 
-// Varsayılan footer (fallback için)
-const defaultFooter: Footer = {
-  id: 'default',
-  cta_title: 'Interested in working with us?',
-  cta_link: '#',
-  sitemap_items: ['Home', 'About', 'Projects', 'Contact'],
-  social_items: ['Instagram', 'LinkedIn', 'Dribbble', 'X'],
-  copyright_text: '© 2025 Ömer Faruk Yılmaz. Tüm hakları saklıdır.',
-  created_at: '',
-  updated_at: ''
-};
-
 export default function Footer() {
-    const [footer, setFooter] = useState<Footer>(defaultFooter);
+    const [footer, setFooter] = useState<Footer | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchFooter()
@@ -25,11 +14,18 @@ export default function Footer() {
               setFooter(data);
             }
           })
-          .catch(() => {
-            // Hata durumunda varsayılan footer kullan
-            setFooter(defaultFooter);
+          .catch((error) => {
+            console.error('Footer yükleme hatası:', error);
+          })
+          .finally(() => {
+            setLoading(false);
           });
     }, []);
+
+    // Loading durumunda hiçbir şey gösterme
+    if (loading || !footer) {
+        return null;
+    }
 
     return (
         <footer className="bg-black text-white relative lg:sticky bottom-0 px-4 pt-25 pb-8" style={{ zIndex: '1' }}>
@@ -61,10 +57,10 @@ export default function Footer() {
                             {footer.sitemap_items.map((item, i) => (
                                 <li key={i} className="mb-0">
                                     <a
-                                        href="#"
+                                        href={item.link}
                                         className="text-white text-md font-medium hover:opacity-40 transition"
                                     >
-                                        {item}
+                                        {item.name}
                                     </a>
                                 </li>
                             ))}
@@ -78,10 +74,10 @@ export default function Footer() {
                             {footer.social_items.map((item, i) => (
                                 <li key={i} className="mb-0">
                                     <a
-                                        href="#"
+                                        href={item.link}
                                         className="text-white text-md font-medium hover:opacity-40 transition"
                                     >
-                                        {item}
+                                        {item.name}
                                     </a>
                                 </li>
                             ))}
