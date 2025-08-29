@@ -25,11 +25,13 @@ export default function ServicesSlider() {
             .then((data) => {
                 if (data && data.length > 0) {
                     setServices(data);
+                    setIndex(0); // İlk service'i göster
                 }
             })
             .catch(() => {
                 // Hata durumunda varsayılan services kullan
                 setServices(defaultServices);
+                setIndex(0);
             });
     }, []);
 
@@ -46,7 +48,7 @@ export default function ServicesSlider() {
     };
 
     useEffect(() => {
-        if (!textRef.current) return;
+        if (!textRef.current || !services[index]) return;
 
         // Her değişimde içeriği sıfırla (SplitType yeniden çalışsın)
         textRef.current.innerHTML = services[index].description;
@@ -68,7 +70,7 @@ export default function ServicesSlider() {
         return () => {
             split.revert();
         };
-    }, [index]);
+    }, [index, services]);
 
     return (
         <section className="my-20 px-4 md:px-5">
@@ -114,14 +116,19 @@ export default function ServicesSlider() {
                 <div className=" md:[flex:0.6] w-full overflow-hidden">
                     <div className="overflow-hidden">
                         <h2
-                            key={`title-${index}`}
+                            key={`title-${index}-${services[index]?.id}`}
                             className="text-2xl font-medium mb-3 animate-[slideUp_0.8s_ease-out_forwards]"
                         >
                             {services[index].title}
                         </h2>
                     </div>
                     <div className="w-full max-w-[600px] overflow-hidden">
-                        <p ref={textRef} className="text-xl md:text-2xl opacity-[0.5] h-[200px] font-medium leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.2' }} />
+                        <p 
+                            key={`description-${index}-${services[index]?.id}`}
+                            ref={textRef} 
+                            className="text-xl md:text-2xl opacity-[0.5] h-[200px] font-medium leading-relaxed whitespace-pre-line" 
+                            style={{ lineHeight: '1.2' }} 
+                        />
                     </div>
                     <div className="flex justify-end gap-2">
                         <button
