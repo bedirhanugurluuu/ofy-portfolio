@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchFooter, Footer } from "@/lib/api";
+import { fetchFooter } from "@/lib/api";
+import type { Footer } from "@/lib/api";
 
 export default function Footer() {
     const [footer, setFooter] = useState<Footer | null>(null);
