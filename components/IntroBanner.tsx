@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchIntroBanners, normalizeImageUrl } from "@/lib/api";
+import { fetchIntroBanners, normalizeImageUrl, fetchProjects, Project } from "@/lib/api";
 
 import { IntroBanner as IntroBannerType } from "@/lib/api";
 
@@ -13,6 +13,7 @@ interface IntroBannerProps {
 
 export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
   const [banners, setBanners] = useState<IntroBannerType[]>(initialBanners);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
@@ -26,6 +27,11 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         .then((data) => setBanners(data))
         .catch(() => setBanners([]));
     }
+    
+    // Projeleri fetch et
+    fetchProjects()
+      .then((data) => setProjects(data))
+      .catch(() => setProjects([]));
   }, [initialBanners.length]);
 
   useEffect(() => {
@@ -73,6 +79,11 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
     return <div className="relative w-full min-h-screen overflow-hidden" />;
 
   const currentBanner = banners[index];
+  
+  // Bağlantılı projeyi bul
+  const relatedProject = currentBanner.project_id 
+    ? projects.find(p => p.id === currentBanner.project_id) 
+    : null;
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
@@ -116,33 +127,105 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
         )}
       </div>
       {expanded && (
-        <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
-          {currentBanner.title_line1 && (
-            <div className="overflow-hidden banner-title">
-              <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
-                {currentBanner.title_line1}
-              </h1>
-            </div>
-          )}
-          {currentBanner.title_line2 && (
-            <div className="overflow-hidden">
-              <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
-                {currentBanner.title_line2}
-              </p>
-            </div>
-          )}
-          {currentBanner.button_text && currentBanner.button_link && (
-            <div className="overflow-hidden">
+        <>
+          {/* Ana içerik */}
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
+            {currentBanner.title_line1 && (
+              <div className="overflow-hidden banner-title">
+                <h1 className="text-2xl md:text-3xl font-bold leading-tight animate-[slideUp_0.8s_ease-out_forwards]">
+                  {currentBanner.title_line1}
+                </h1>
+              </div>
+            )}
+            {currentBanner.title_line2 && (
+              <div className="overflow-hidden">
+                <p className="text-2xl md:text-3xl font-bold text-white animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.15s] opacity-0">
+                  {currentBanner.title_line2}
+                </p>
+              </div>
+            )}
+            {currentBanner.button_text && currentBanner.button_link && (
+              <div className="overflow-hidden">
+                <Link
+                  href={currentBanner.button_link}
+                  className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
+                >
+                  {currentBanner.button_text}
+                  <ButtonWithHoverArrow />
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Sol alt köşe - Scroll to view more */}
+          {currentBanner.scroll_text && (
+            <div className="absolute bottom-8 left-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
               <Link
-                href={currentBanner.button_link}
-                className="group relative inline-flex items-center gap-2 border border-white/20 bg-white/10 backdrop-blur-md px-5 py-2 text-sm hover:bg-white/20 transition-colors animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.3s] opacity-0"
+                href="/projects"
+                className="group relative inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm"
               >
-                {currentBanner.button_text}
-                <ButtonWithHoverArrow />
+                {currentBanner.scroll_text}
+                <div className="w-4 h-4 border-l-2 border-b-2 border-white/80 group-hover:border-white transform rotate-45 transition-colors"></div>
               </Link>
             </div>
           )}
-        </div>
+
+          {/* Sağ alt köşe - Project Info */}
+          {relatedProject && (
+            <div className="absolute bottom-8 right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.6s] opacity-0">
+              <Link href={`/projects/${relatedProject.slug}`} className="contents">
+                <div className="relative flex group max-w-[280px] h-[80px] gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
+                  {/* Project Thumbnail */}
+                  <div className="absolute group top-2 right-2" style={{ rotate: '-45deg' }}>
+                    <ButtonWithHoverArrow />
+                  </div>
+                  <div className="flex-shrink-0">
+                    <div className="w-[70px] h-[70px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
+                      {relatedProject.thumbnail_media ? (
+                        relatedProject.thumbnail_media.toLowerCase().endsWith('.mp4') || 
+                        relatedProject.thumbnail_media.toLowerCase().endsWith('.webm') ? (
+                          <video
+                            src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                            className="w-full h-full object-cover"
+                            muted
+                            loop
+                            playsInline
+                          />
+                        ) : (
+                          <Image
+                            src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                            alt={relatedProject.title}
+                            fill
+                            className="object-cover"
+                          />
+                        )
+                      ) : (
+                        <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-gray-500 text-xs">No image</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Project Info */}
+                  <div className="min-w-0 flex flex-col justify-between">
+                    <p className="text-xs uppercase tracking-wide mb-1 font-medium">
+                      Related Case Study
+                    </p>
+                    <div className="block group">
+                      <h4 className="text-xs font-medium">
+                        {relatedProject.title}
+                      </h4>
+                      {relatedProject.role && (
+                        <p className="text-xs opacity-40 font-medium">{relatedProject.role}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

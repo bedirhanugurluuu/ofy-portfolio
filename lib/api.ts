@@ -28,6 +28,8 @@ export interface IntroBanner {
   button_link: string;
   image: string; // intro_banners tablosunda alan adı 'image'
   order_index: number;
+  scroll_text?: string; // "Scroll to view more" metni
+  project_id?: string; // Bağlantılı proje ID'si
   created_at: string;
   updated_at: string;
 }
