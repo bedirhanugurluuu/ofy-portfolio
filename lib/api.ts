@@ -119,6 +119,17 @@ export interface AboutBanner {
   updated_at: string;
 }
 
+export interface Footer {
+  id: string;
+  cta_title: string;
+  cta_link: string;
+  sitemap_items: string[];
+  social_items: string[];
+  copyright_text: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Award {
   id: string;
   title: string;
@@ -346,6 +357,35 @@ export async function updateAboutBanner(banner: Partial<AboutBanner>): Promise<A
 
   if (error) {
     console.error('Error updating about banner:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function fetchFooter(): Promise<Footer | null> {
+  const { data, error } = await supabase
+    .from('footer')
+    .select('*')
+    .single();
+
+  if (error) {
+    console.error('Error fetching footer:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function updateFooter(footer: Partial<Footer>): Promise<Footer | null> {
+  const { data, error } = await supabase
+    .from('footer')
+    .upsert(footer)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating footer:', error);
     return null;
   }
 
