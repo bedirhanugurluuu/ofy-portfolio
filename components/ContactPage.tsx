@@ -12,13 +12,11 @@ interface ContactPageProps {
 export default function ContactPage({ content }: ContactPageProps) {
   const contactRef = useRef<HTMLDivElement>(null);
   const socialsRef = useRef<HTMLDivElement>(null);
-  const addressRef = useRef<HTMLDivElement>(null);
-  const hoursRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline();
     
-    tl.fromTo([contactRef.current, socialsRef.current, addressRef.current, hoursRef.current], 
+    tl.fromTo([contactRef.current, socialsRef.current], 
       { y: 30, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.8, stagger: 0.2, ease: "power2.out" }
     );
@@ -64,44 +62,17 @@ export default function ContactPage({ content }: ContactPageProps) {
                 SOCIALS
               </h3>
               <div className="space-y-2">
-                <a
-                  href={content.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity block mb-0"
-                >
-                  Instagram
-                </a>
-                <a
-                  href={content.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity block mb-0"
-                >
-                  LinkedIn
-                </a>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div ref={addressRef} className="space-y-4 min-w-[260px]">
-              <h3 className="text-xs font-medium uppercase tracking-wider mb-1">
-                ADDRESS
-              </h3>
-              <div className="space-y-2">
-                <p className="text-sm opacity-40 hover:opacity-100 font-medium mb-0">{content.address_line1}</p>
-                <p className="text-sm opacity-40 hover:opacity-100 font-medium mb-0">{content.address_line2}</p>
-              </div>
-            </div>
-
-            {/* Studio Hours */}
-            <div ref={hoursRef} className="space-y-4 min-w-[260px]">
-              <h3 className="text-xs font-medium uppercase tracking-wider mb-1">
-                STUDIO HOURS
-              </h3>
-              <div className="space-y-2">
-                <p className="text-sm opacity-40 hover:opacity-100 font-medium mb-0">{content.studio_hours_weekdays}</p>
-                <p className="text-sm opacity-40 hover:opacity-100 font-medium mb-0">{content.studio_hours_weekend}</p>
+                {content.social_items.map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity block mb-0"
+                  >
+                    {item.name}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

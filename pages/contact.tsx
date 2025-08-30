@@ -26,17 +26,7 @@ export default function Contact({ contactContent }: ContactPageProps) {
         "contactType": "customer service",
         "availableLanguage": "English"
       },
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": contactContent.address_line1,
-        "addressLocality": "Copenhagen",
-        "addressCountry": "Denmark",
-        "postalCode": "1051"
-      },
-      "sameAs": [
-        contactContent.instagram,
-        contactContent.linkedin
-      ]
+      "sameAs": contactContent.social_items.map(item => item.link)
     }
   };
 
@@ -72,12 +62,10 @@ export const getStaticProps: GetStaticProps = async () => {
           title: "Contact",
           phone: "+45 123 456 789",
           email: "hello@lucastudio.com",
-          instagram: "https://instagram.com/lucastudio",
-          linkedin: "https://linkedin.com/company/lucastudio",
-          address_line1: "12 Nyhavn Street",
-          address_line2: "Copenhagen, Denmark, 1051",
-          studio_hours_weekdays: "Monday to Friday: 9:00 AM – 6:00 PM",
-          studio_hours_weekend: "Saturday & Sunday: Closed",
+          social_items: [
+            { name: "Instagram", link: "https://instagram.com/lucastudio" },
+            { name: "LinkedIn", link: "https://linkedin.com/company/lucastudio" }
+          ],
           image_path: null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

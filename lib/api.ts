@@ -173,12 +173,7 @@ export interface ContactContent {
   title: string;
   phone: string;
   email: string;
-  instagram: string;
-  linkedin: string;
-  address_line1: string;
-  address_line2: string;
-  studio_hours_weekdays: string;
-  studio_hours_weekend: string;
+  social_items: Array<{ name: string; link: string }>;
   image_path?: string;
   created_at: string;
   updated_at: string;
