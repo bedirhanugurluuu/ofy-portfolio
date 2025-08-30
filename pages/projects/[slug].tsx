@@ -122,7 +122,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                 href={project.external_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-2 text-sm font-medium uppercase"
+                className="group relative inline-flex items-start gap-2 text-sm font-medium uppercase"
               >
                 View Live Site
                 <ButtonWithHoverArrow />

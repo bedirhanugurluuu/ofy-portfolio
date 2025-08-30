@@ -158,7 +158,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           </div>
 
           {/* Alt köşe - Scroll ve Project Info */}
-          <div className="absolute bottom-8 left-8 right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
+          <div className="absolute bottom-8 left-4 md:left-8 right-4 md:right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
             <div className="flex justify-between items-end">
               {/* Sol taraf - Scroll to view more */}
               {currentBanner.scroll_text && (
@@ -172,7 +172,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
                       });
                     }
                   }}
-                  className="group relative inline-flex items-center font-medium gap-2 text-white opacity-40 hover:opacity-100 transition-opacity text-sm cursor-pointer"
+                  className="group relative hidden md:inline-flex items-center font-medium gap-2 text-white opacity-40 hover:opacity-100 transition-opacity text-sm cursor-pointer"
                 >
                   {currentBanner.scroll_text}
                 </button>

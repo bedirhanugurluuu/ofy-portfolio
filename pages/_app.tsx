@@ -6,16 +6,44 @@ import { useEffect } from 'react'
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
+    // Scroll to top on page refresh/load
+    if (typeof window !== 'undefined') {
+      // Scroll to top when page loads
+      window.scrollTo(0, 0);
+      
+      // Also handle beforeunload for refresh
+      const handleBeforeUnload = () => {
+        sessionStorage.setItem('scrollToTop', 'true');
+      };
+
+      const handleLoad = () => {
+        if (sessionStorage.getItem('scrollToTop') === 'true') {
+          window.scrollTo(0, 0);
+          sessionStorage.removeItem('scrollToTop');
+        }
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      window.addEventListener('load', handleLoad);
+      
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+        window.removeEventListener('load', handleLoad);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     // Register Service Worker
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
-            console.log('Service Worker registered successfully:', registration);
+            // Service Worker registered successfully
           })
           .catch((error) => {
-            console.log('Service Worker registration failed:', error);
+            // Service Worker registration failed
           });
       });
     }
@@ -42,7 +70,7 @@ export default function App({ Component, pageProps }: AppProps) {
         // Ignore preload errors
       });
 
-      console.log('Critical data preloading started');
+      // Critical data preloading started
     } catch (error) {
       // Ignore preload errors
     }

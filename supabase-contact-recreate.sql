@@ -1,11 +1,14 @@
 -- Contact tablosunu sil ve yeniden oluştur
 DROP TABLE IF EXISTS contact CASCADE;
 
+-- UUID extension'ı etkinleştir
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Contact tablosu
 CREATE TABLE contact (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   title TEXT NOT NULL DEFAULT 'Contact',
-  phone TEXT NOT NULL DEFAULT '+45 123 456 789',
+  phone TEXT NOT NULL DEFAULT '+45123456789',
   email TEXT NOT NULL DEFAULT 'hello@lucastudio.com',
   social_items JSONB NOT NULL DEFAULT '[{"name": "Instagram", "link": "#"}, {"name": "LinkedIn", "link": "#"}, {"name": "Dribbble", "link": "#"}, {"name": "X", "link": "#"}]',
   image_path TEXT,
@@ -15,7 +18,7 @@ CREATE TABLE contact (
 
 -- Varsayılan contact verisi ekle
 INSERT INTO contact (title, phone, email, social_items, image_path) VALUES 
-  ('Contact', '+45 123 456 789', 'hello@lucastudio.com', '[{"name": "Instagram", "link": "#"}, {"name": "LinkedIn", "link": "#"}, {"name": "Dribbble", "link": "#"}, {"name": "X", "link": "#"}]', null)
+  ('Contact', '+45123456789', 'hello@lucastudio.com', '[{"name": "Instagram", "link": "#"}, {"name": "LinkedIn", "link": "#"}, {"name": "Dribbble", "link": "#"}, {"name": "X", "link": "#"}]', null)
 ON CONFLICT DO NOTHING;
 
 -- RLS (Row Level Security) politikaları

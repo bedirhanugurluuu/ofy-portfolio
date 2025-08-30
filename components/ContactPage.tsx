@@ -42,13 +42,13 @@ export default function ContactPage({ content }: ContactPageProps) {
               </h3>
               <div className="space-y-2">
                 <a
-                  href={`tel:${content.phone}`}
+                  href={`tel:${content.phone.replace(/\s+/g, '')}`}
                   className="text-sm opacity-40 hover:opacity-100 font-medium mb-0 block transition-opacity"
                 >
                   {content.phone}
                 </a>
                 <a
-                  href={`mailto:${content.email}`}
+                  href={`mailto:${content.email.replace(/\s+/g, '')}`}
                   className="text-sm opacity-40 hover:opacity-100 font-medium mb-0 block transition-opacity"
                 >
                   {content.email}

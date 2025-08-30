@@ -59,7 +59,11 @@ export default function Header() {
             : "bg-transparent text-white"
         )}
       >
-        <Link href="/" className="flex items-center space-x-1 z-50">
+        <Link 
+          href="/" 
+          className="flex items-center space-x-1 z-[60]"
+          onClick={() => setMenuOpen(false)}
+        >
           {(scrolled || menuOpen || isDarkText) ? (
             // Beyaz arka plan için koyu logo
             headerSettings?.logo_image_url && (
@@ -96,6 +100,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setMenuOpen(false)}
                 className="group relative h-[20px] overflow-hidden"
               >
                 <span className="block transition-transform duration-300 group-hover:-translate-y-full">
@@ -109,6 +114,7 @@ export default function Header() {
           </nav>
           <Link
             href="/contact"
+            onClick={() => setMenuOpen(false)}
             className="group ml-4 inline-flex items-center space-x-2 text-sm font-medium"
           >
             <span style={{ letterSpacing: 0 }}>GET IN TOUCH</span>
@@ -118,7 +124,7 @@ export default function Header() {
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden z-50 relative"
+          className="md:hidden z-[60] relative"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -146,12 +152,12 @@ export default function Header() {
       {/* Mobile Menu */}
       <div
         className={clsx(
-          "fixed inset-0 bg-white text-black z-40 flex flex-col items-start px-6 justify-start gap-6 transition-all duration-500 ease-in-out",
-          menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
+          "fixed inset-0 bg-white text-black z-50 flex flex-col items-start px-6 justify-start gap-6 transition-all duration-300 ease-in-out pointer-events-none",
+          menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full"
         )}
         style={{ top: "60px" }}
       >
-        <nav className="flex flex-col items-start gap-1 text-4xl font-medium w-full pt-20">
+        <nav className="flex flex-col items-start gap-1 text-4xl font-medium w-full pt-20 pointer-events-auto">
           {navItems.map((item: any, index: number) => (
             <div
               key={item.href}
@@ -162,10 +168,10 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className={clsx(
                   "block opacity-0 hover:opacity-60",
-                  menuOpen && "animate-[slideUp_0.8s_ease-out_forwards]"
+                  menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
                 )}
                 style={{
-                  animationDelay: menuOpen ? `${0.5 + index * 0.15}s` : "0s",
+                  animationDelay: menuOpen ? `${0.2 + index * 0.08}s` : "0s",
                   animationFillMode: "forwards",
                 }}
               >
@@ -174,16 +180,16 @@ export default function Header() {
             </div>
           ))}
         </nav>
-        <div className="overflow-hidden mt-6 w-full">
+        <div className="overflow-hidden mt-6 w-full pointer-events-auto">
           <Link
             href="/contact"
             onClick={() => setMenuOpen(false)}
             className={clsx(
               "flex align-center gap-2 text-base font-medium opacity-0 hover:opacity-60",
-              menuOpen && "animate-[slideUp_0.8s_ease-out_forwards]"
+              menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
             )}
             style={{
-              animationDelay: menuOpen ? `${0.5 + navItems.length * 0.15}s` : "0s",
+              animationDelay: menuOpen ? `${0.2 + navItems.length * 0.08}s` : "0s",
               animationFillMode: "forwards",
             }}
           >

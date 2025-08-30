@@ -247,9 +247,7 @@ export default function ProjectsPage({ projects }: Props) {
 // SSG ile veri çekmek için:
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    console.log('SSG: Fetching projects...');
     const projects = await fetchProjectsSSR();
-    console.log('SSG: Projects loaded:', projects.length);
 
     return {
       props: {

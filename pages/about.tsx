@@ -88,13 +88,7 @@ export const getStaticProps: GetStaticProps = async () => {
       fetchProjectsSSR()
     ]);
     
-    console.log('About page getStaticProps:', { 
-      aboutContent: aboutContent ? 'exists' : 'null',
-      awards: awards ? awards.length : 0,
-      sliderItems: sliderItems ? sliderItems.length : 0,
-      whatWeDoContent: whatWeDoContent ? 'exists' : 'null',
-      projects: projects ? projects.length : 0
-    });
+
     
     return {
       props: {

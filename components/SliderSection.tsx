@@ -12,7 +12,7 @@ interface SliderSectionProps {
 export default function SliderSection({ sliderItems }: SliderSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  console.log('SliderSection received sliderItems:', sliderItems);
+
   
 
 
@@ -26,11 +26,11 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
 
 
   if (!currentItem || sliderItems.length === 0) {
-    console.log('SliderSection: No items or currentItem is null', { sliderItems, currentItem });
+
     return null;
   }
 
-  console.log('SliderSection: Rendering with', { currentItem, imageUrl: normalizeImageUrl(currentItem.image_path || '') });
+  
 
   return (
     <section className="w-full px-5 py-20">
@@ -43,7 +43,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
             fill
             className="object-cover"
             sizes="100vw"
-            onLoad={() => console.log('Main image loaded successfully')}
+            
             onError={(e) => console.error('Main image failed to load:', e)}
           />
           <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center" style={{background: 'linear-gradient(114deg, rgba(0, 0, 0, 0.51) 0%, rgba(0, 0, 0, 0) 47.051%)'}}></div>
@@ -96,7 +96,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                      width={134}
                      height={90}
                      className="object-cover w-full h-full"
-                     onLoad={() => console.log(`Thumbnail ${index + 1} loaded successfully`)}
+     
                      onError={(e) => console.error(`Thumbnail ${index + 1} failed to load:`, e)}
                    />
                 </div>
