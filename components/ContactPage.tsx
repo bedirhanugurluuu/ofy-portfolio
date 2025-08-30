@@ -62,7 +62,7 @@ export default function ContactPage({ content }: ContactPageProps) {
                 SOCIALS
               </h3>
               <div className="space-y-2">
-                {content.social_items.map((item, index) => (
+                {content.social_items?.map((item, index) => (
                   <a
                     key={index}
                     href={item.link}
@@ -72,7 +72,26 @@ export default function ContactPage({ content }: ContactPageProps) {
                   >
                     {item.name}
                   </a>
-                ))}
+                )) || (
+                  <>
+                    <a
+                      href="#"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity block mb-0"
+                    >
+                      Instagram
+                    </a>
+                    <a
+                      href="#"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity block mb-0"
+                    >
+                      LinkedIn
+                    </a>
+                  </>
+                )}
               </div>
             </div>
           </div>

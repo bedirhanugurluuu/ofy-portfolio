@@ -47,6 +47,28 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     const contactContent = await fetchContact();
     
+    // Eğer contactContent null ise veya social_items yoksa fallback kullan
+    if (!contactContent || !contactContent.social_items) {
+      return {
+        props: {
+          contactContent: {
+            id: '',
+            title: "Contact",
+            phone: "+45 123 456 789",
+            email: "hello@lucastudio.com",
+            social_items: [
+              { name: "Instagram", link: "https://instagram.com/lucastudio" },
+              { name: "LinkedIn", link: "https://linkedin.com/company/lucastudio" }
+            ],
+            image_path: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        },
+        revalidate: 60
+      };
+    }
+    
     return {
       props: {
         contactContent

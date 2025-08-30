@@ -456,6 +456,18 @@ export async function fetchContact(): Promise<ContactContent | null> {
     .single();
 
   if (error && error.code !== 'PGRST116') throw error;
+  
+  // Eğer data varsa ama social_items yoksa, fallback değer ekle
+  if (data && !data.social_items) {
+    return {
+      ...data,
+      social_items: [
+        { name: "Instagram", link: "#" },
+        { name: "LinkedIn", link: "#" }
+      ]
+    };
+  }
+  
   return data;
 }
 
