@@ -112,6 +112,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           alt="banner"
           fill
           priority
+          fetchPriority="high"
           className="object-cover"
           onLoadingComplete={() => setFirstImageLoaded(true)}
         />

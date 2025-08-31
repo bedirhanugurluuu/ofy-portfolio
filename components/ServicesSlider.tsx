@@ -128,7 +128,7 @@ export default function ServicesSlider() {
                         <p 
                             key={`description-${index}-${services[index]?.id}`}
                             ref={textRef} 
-                            className="text-xl md:text-2xl opacity-[0.5] h-[200px] font-medium leading-relaxed whitespace-pre-line" 
+                            className="text-xl md:text-2xl opacity-[0.5] md:h-[200px] font-medium leading-relaxed whitespace-pre-line" 
                             style={{ lineHeight: '1.2' }} 
                         />
                     </div>
