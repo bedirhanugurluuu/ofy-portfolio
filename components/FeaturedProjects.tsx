@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchProjects, Project, normalizeImageUrl } from '@/lib/api';
-import AlternativeVideoPlayer from './AlternativeVideoPlayer';
 
 interface FeaturedProjectsProps {
 	initialProjects?: Project[];
@@ -71,7 +70,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								style={{ aspectRatio: index === 0 ? "3/2" : "1" }}
 							>
 								{isVideo ? (
-									<AlternativeVideoPlayer
+									<video
 										src={mediaUrl}
 										autoPlay
 										loop
@@ -116,7 +115,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								style={{ aspectRatio: index === 0 ? "1" : "3/2" }}
 							>
 								{isVideo ? (
-									<AlternativeVideoPlayer
+									<video
 										src={mediaUrl}
 										autoPlay
 										loop
