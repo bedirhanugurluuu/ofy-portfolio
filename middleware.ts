@@ -49,16 +49,23 @@ export async function middleware(request: NextRequest) {
   }
   
   // Client IP adresini al
-  const clientIP = request.ip || 
-    request.headers.get('x-forwarded-for') || 
+  const clientIP = request.headers.get('x-forwarded-for') || 
     request.headers.get('x-real-ip') || 
     '127.0.0.1'
   
+  // Debug için IP'yi logla
+  console.log('Client IP:', clientIP)
+  console.log('Request headers:', Object.fromEntries(request.headers.entries()))
+  
   // IP kontrolü
   const allowedIPs = await getAllowedIPs()
+  console.log('Allowed IPs:', allowedIPs)
+  
   const isAllowed = allowedIPs.includes(clientIP)
+  console.log('Is allowed:', isAllowed)
   
   if (!isAllowed) {
+    console.log('Redirecting to maintenance page')
     // Maintenance mode sayfasına yönlendir
     return NextResponse.rewrite(new URL('/maintenance', request.url))
   }
@@ -73,7 +80,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - api (API routes)
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api).*)',
   ],
 }
