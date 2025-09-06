@@ -1,23 +1,30 @@
 -- Supabase Storage CORS ayarlarını düzeltmek için
 -- Bu script'i Supabase SQL Editor'da çalıştırın
 
+-- Önce mevcut politikaları temizle
+DROP POLICY IF EXISTS "Public read access for videos" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access for all files" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload files" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update files" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete files" ON storage.objects;
+
 -- Storage bucket'ları için CORS politikalarını güncelle
 UPDATE storage.buckets 
 SET public = true, 
-    file_size_limit = 52428800, -- 50MB
-    allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime']
+    file_size_limit = 104857600, -- 100MB
+    allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/avi']
 WHERE id = 'uploads';
+
+-- Tüm dosyalar için genel okuma erişimi (daha geniş)
+CREATE POLICY "Public read access for all files" ON storage.objects
+FOR SELECT USING (bucket_id = 'uploads');
 
 -- Video dosyaları için özel RLS politikaları
 CREATE POLICY "Public read access for videos" ON storage.objects
 FOR SELECT USING (
   bucket_id = 'uploads' AND 
-  (storage.extension(name) = 'mp4' OR storage.extension(name) = 'webm' OR storage.extension(name) = 'mov')
+  (storage.extension(name) = 'mp4' OR storage.extension(name) = 'webm' OR storage.extension(name) = 'mov' OR storage.extension(name) = 'avi')
 );
-
--- Tüm dosyalar için genel okuma erişimi
-CREATE POLICY "Public read access for all files" ON storage.objects
-FOR SELECT USING (bucket_id = 'uploads');
 
 -- Dosya yükleme politikası (sadece authenticated kullanıcılar)
 CREATE POLICY "Authenticated users can upload files" ON storage.objects

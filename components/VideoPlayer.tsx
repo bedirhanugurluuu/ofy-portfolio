@@ -31,6 +31,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [useFallback, setUseFallback] = useState(false);
 
   const handleError = (error: any) => {
     console.error('Video loading error:', error);
@@ -38,11 +40,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     setIsLoading(false);
     
     // Retry logic for iPhone Safari
-    if (retryCount < 3) {
+    if (retryCount < 5) {
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
         setHasError(false);
         setIsLoading(true);
+        
+        // Try different approaches
+        if (retryCount === 0) {
+          // First retry: Add cache busting
+          setCurrentSrc(`${src}?t=${Date.now()}`);
+        } else if (retryCount === 1) {
+          // Second retry: Try without crossOrigin
+          setCurrentSrc(src);
+        } else if (retryCount === 2) {
+          // Third retry: Try with different parameters
+          setCurrentSrc(`${src}?response-cache-control=public&t=${Date.now()}`);
+        } else if (retryCount === 3) {
+          // Fourth retry: Use fallback method
+          setUseFallback(true);
+          setCurrentSrc(src);
+        } else {
+          // Fifth retry: Last attempt
+          setCurrentSrc(`${src}?v=${Math.random()}`);
+        }
+        
         if (videoRef.current) {
           videoRef.current.load();
         }
@@ -94,25 +116,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, [retryCount]);
 
-  // iPhone Safari için fallback URL
-  const getOptimizedSrc = (originalSrc: string) => {
-    // Eğer Supabase URL'si ise, iPhone Safari için optimize edilmiş parametreler ekle
-    if (originalSrc.includes('supabase.co')) {
-      const url = new URL(originalSrc);
-      // iPhone Safari için özel parametreler
-      url.searchParams.set('t', Date.now().toString());
-      // Range request desteği için
-      url.searchParams.set('response-cache-control', 'public, max-age=31536000');
-      return url.toString();
-    }
-    return originalSrc;
-  };
-
   // User agent kontrolü
   const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isSafari = typeof window !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 
-  if (hasError && retryCount >= 3) {
+  // Video src'yi güncelle
+  useEffect(() => {
+    setCurrentSrc(src);
+    setRetryCount(0);
+    setHasError(false);
+    setUseFallback(false);
+  }, [src]);
+
+  if (hasError && retryCount >= 5) {
     return (
       <div className={`${className} bg-gray-200 flex items-center justify-center`}>
         <div className="text-center text-gray-500">
@@ -122,6 +138,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               setRetryCount(0);
               setHasError(false);
               setIsLoading(true);
+              setCurrentSrc(src);
+              setUseFallback(false);
             }}
             className="mt-2 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
           >
@@ -142,7 +160,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       
       <video
         ref={videoRef}
-        src={getOptimizedSrc(src)}
+        src={currentSrc}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         autoPlay={autoPlay}
         loop={loop}
@@ -151,7 +169,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         controls={controls}
         poster={poster}
         preload={isIOS && isSafari ? "none" : "metadata"}
-        crossOrigin="anonymous"
+        crossOrigin={useFallback ? undefined : "anonymous"}
         // iPhone Safari için ek özellikler
         webkit-playsinline="true"
         x5-playsinline="true"
@@ -161,8 +179,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         {...(isIOS && isSafari && {
           'webkit-playsinline': 'true',
           'playsinline': 'true',
-          'preload': 'none',
-          'controls': 'false'
+          'preload': 'none'
         })}
         // Error handling
         onError={handleError}

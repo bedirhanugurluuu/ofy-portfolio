@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Project, normalizeImageUrl } from "@/lib/api";
 import ButtonWithHoverArrow from "./ButtonWithHoverArrow";
-import VideoPlayer from "./VideoPlayer";
+import AlternativeVideoPlayer from "./AlternativeVideoPlayer";
 
 interface InsightCard {
   title: string;
@@ -76,7 +76,7 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
                                     {project.thumbnail_media ? (
                                     project.thumbnail_media.toLowerCase().endsWith('.mp4') || 
                                     project.thumbnail_media.toLowerCase().endsWith('.webm') ? (
-                                        <VideoPlayer
+                                        <AlternativeVideoPlayer
                                         src={normalizeImageUrl(project.thumbnail_media)}
                                         className="w-full h-full object-cover"
                                         muted

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { GetStaticProps, GetStaticPaths } from "next";
 import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project } from "@/lib/api";
 import SEO from "@/components/SEO";
-import VideoPlayer from "@/components/VideoPlayer";
+import AlternativeVideoPlayer from "@/components/AlternativeVideoPlayer";
 
 interface ProjectDetailProps {
   project: Project | null;
@@ -148,7 +148,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                   rows.push(
                     <div key={i} className="w-full relative aspect-[16/9]">
                       {isVideo ? (
-                        <VideoPlayer
+                        <AlternativeVideoPlayer
                           src={normalizeImageUrl(image)}
                           autoPlay
                           loop
@@ -267,7 +267,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                   style={{ aspectRatio: 0.8 / 1 }}
                 >
                   {isVideo ? (
-                    <VideoPlayer
+                    <AlternativeVideoPlayer
                       src={mediaUrl}
                       autoPlay
                       loop
