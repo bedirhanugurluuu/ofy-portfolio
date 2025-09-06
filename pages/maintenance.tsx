@@ -40,7 +40,7 @@ const MaintenancePage = () => {
             </p>
             <div className="flex justify-center space-x-6">
               <a 
-                href="mailto:info@farukyilmaz.com" 
+                href="mailto:faruky@yandex.com" 
                 className="text-blue-400 hover:text-blue-300 transition-colors duration-300"
               >
                 📧 E-posta
@@ -65,12 +65,14 @@ const MaintenancePage = () => {
           </div>
             {/* Footer */}
             <div className="text-gray-500 text-sm">
-                <p>© 2024 Faruk Yılmaz. Tüm hakları saklıdır.</p>
+                <p>© 2025 Faruk Yılmaz. Tüm hakları saklıdır.</p>
             </div>
         </div>
       </div>
     </>
   );
 };
+
+MaintenancePage.displayName = 'MaintenancePage';
 
 export default MaintenancePage;
