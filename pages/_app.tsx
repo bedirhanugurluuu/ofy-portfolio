@@ -76,6 +76,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   };
 
+  // Maintenance sayfası için Layout kullanma
+  if (Component.name === 'MaintenancePage') {
+    return <Component {...pageProps} />;
+  }
+
   return (
     <Layout>
       <Component {...pageProps} />
