@@ -134,6 +134,7 @@ export default function ProjectsPage({ projects }: Props) {
                 preload="none"
                 className="w-full h-full object-cover"
                 playsInline
+                controls={false}
                 style={{aspectRatio: 0.8 / 1,}}
               />
             ) : (
@@ -172,6 +173,8 @@ export default function ProjectsPage({ projects }: Props) {
                       autoPlay
                       muted
                       loop
+                      controls={false}
+                      playsInline
                       className="w-full object-cover h-full"
                     />
                   ) : media.type === "image" ? (

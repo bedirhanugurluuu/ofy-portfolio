@@ -82,6 +82,7 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
                                         muted
                                         loop
                                         playsInline
+                                        controls={false}
                                         />
                                     ) : (
                                         <Image

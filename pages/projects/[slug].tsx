@@ -154,6 +154,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                           loop
                           muted
                           playsInline
+                          controls={false}
                           className="w-full object-cover"
                         />
                         ) : (
@@ -273,6 +274,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                       loop
                       muted
                       playsInline
+                      controls={false}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
