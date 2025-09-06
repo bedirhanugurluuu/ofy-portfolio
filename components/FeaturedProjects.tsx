@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchProjects, Project, normalizeImageUrl } from '@/lib/api';
+import VideoPlayer from './VideoPlayer';
 
 interface FeaturedProjectsProps {
 	initialProjects?: Project[];
@@ -70,15 +71,14 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								style={{ aspectRatio: index === 0 ? "3/2" : "1" }}
 							>
 								{isVideo ? (
-									<video
+									<VideoPlayer
+										src={mediaUrl}
 										autoPlay
 										loop
 										muted
 										playsInline
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
-									>
-										<source src={mediaUrl} type="video/mp4" />
-									</video>
+									/>
 								) : (
 									<Image
 										src={mediaUrl}
@@ -115,15 +115,14 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								style={{ aspectRatio: index === 0 ? "1" : "3/2" }}
 							>
 								{isVideo ? (
-									<video
+									<VideoPlayer
+										src={mediaUrl}
 										autoPlay
 										loop
 										muted
 										playsInline
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
-									>
-										<source src={mediaUrl} type="video/mp4" />
-									</video>
+									/>
 								) : (
 									<Image
 										src={mediaUrl}
