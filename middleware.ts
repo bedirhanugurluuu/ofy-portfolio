@@ -36,11 +36,6 @@ async function getAllowedIPs(): Promise<string[]> {
 }
 
 export async function middleware(request: NextRequest) {
-  // GEÇİCİ OLARAK IP WHITELIST DEVRE DIŞI - SİTE HERKESE AÇIK
-  // Tekrar aktif etmek için aşağıdaki yorum satırlarını kaldırın
-  return NextResponse.next()
-  
-  /*
   const { pathname } = request.nextUrl
   
   // Admin paneli için IP kontrolü yapma
@@ -76,7 +71,6 @@ export async function middleware(request: NextRequest) {
   }
   
   return NextResponse.next()
-  */
 }
 
 export const config = {
