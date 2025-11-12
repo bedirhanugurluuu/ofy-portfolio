@@ -36,41 +36,7 @@ async function getAllowedIPs(): Promise<string[]> {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
   
-  // Admin paneli için IP kontrolü yapma
-  if (ADMIN_PATHS.some(path => pathname.startsWith(path))) {
-    return NextResponse.next()
-  }
-  
-  // API routes için IP kontrolü yapma
-  if (pathname.startsWith('/api/')) {
-    return NextResponse.next()
-  }
-  
-  // Client IP adresini al
-  const clientIP = request.headers.get('x-forwarded-for') || 
-    request.headers.get('x-real-ip') || 
-    '127.0.0.1'
-  
-  // Debug için IP'yi logla
-  console.log('Client IP:', clientIP)
-  console.log('Request headers:', Object.fromEntries(request.headers.entries()))
-  
-  // IP kontrolü
-  const allowedIPs = await getAllowedIPs()
-  console.log('Allowed IPs:', allowedIPs)
-  
-  const isAllowed = allowedIPs.includes(clientIP)
-  console.log('Is allowed:', isAllowed)
-  
-  if (!isAllowed) {
-    console.log('Redirecting to maintenance page')
-    // Maintenance mode sayfasına yönlendir
-    return NextResponse.rewrite(new URL('/maintenance', request.url))
-  }
-  
-  return NextResponse.next()
 }
 
 export const config = {
