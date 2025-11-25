@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { GetStaticProps } from 'next';
-import { fetchAbout, AboutContent, fetchAwards, Award, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent, fetchProjectsSSR, Project } from '@/lib/api';
+import { fetchAbout, AboutContent, fetchSlider, SliderItem, fetchWhatWeDo, WhatWeDoContent, fetchProjectsSSR, Project } from '@/lib/api';
 import SEO from '@/components/SEO';
 
 const AnimatedAbout = dynamic(() => import("@/components/AnimatedAbout"), {
@@ -9,13 +9,12 @@ const AnimatedAbout = dynamic(() => import("@/components/AnimatedAbout"), {
 
 interface AboutPageProps {
   aboutContent: AboutContent;
-  awards: Award[];
   sliderItems: SliderItem[];
   whatWeDoContent: WhatWeDoContent;
   projects: Project[];
 }
 
-export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoContent, projects }: AboutPageProps) {
+export default function AboutPage({ aboutContent, sliderItems, whatWeDoContent, projects }: AboutPageProps) {
   // Schema for about page
   const schema = {
     "@context": "https://schema.org",
@@ -27,11 +26,6 @@ export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoC
       "@type": "Organization",
       "name": "OFY",
       "description": aboutContent?.description || "Creative design studio specializing in brand strategy and visual design",
-      "award": awards.map(award => ({
-        "@type": "Award",
-        "name": award.title,
-        "description": award.subtitle
-      })),
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Services",
@@ -73,16 +67,15 @@ export default function AboutPage({ aboutContent, awards, sliderItems, whatWeDoC
         image={aboutContent?.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${aboutContent.image_path}` : "https://ofy-portfolio.vercel.app/images/about-og.jpg"}
         schema={schema}
       />
-      <AnimatedAbout initialContent={aboutContent} awards={awards} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />
+      <AnimatedAbout initialContent={aboutContent} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />
     </>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const [aboutContent, awards, sliderItems, whatWeDoContent, projects] = await Promise.all([
+    const [aboutContent, sliderItems, whatWeDoContent, projects] = await Promise.all([
       fetchAbout(),
-      fetchAwards(),
       fetchSlider(),
       fetchWhatWeDo(),
       fetchProjectsSSR()
@@ -93,7 +86,6 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
       props: {
         aboutContent,
-        awards,
         sliderItems,
         whatWeDoContent,
         projects
@@ -113,7 +105,6 @@ export const getStaticProps: GetStaticProps = async () => {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         },
-        awards: [],
         sliderItems: [],
         whatWeDoContent: {
           id: '',

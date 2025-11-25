@@ -66,7 +66,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								href={`/projects/${project.slug}`}
 								className={`${
 									index === 0 ? "flex-[0.6]" : "flex-[0.4]"
-								} bg-gray-100 overflow-hidden group relative`}
+								} bg-gray-100 overflow-hidden group relative after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-32 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10`}
 								style={{ aspectRatio: index === 0 ? "3/2" : "1" }}
 							>
 								{isVideo ? (
@@ -88,7 +88,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
 									/>
 								)}
-								<div className="absolute bottom-4 left-4 text-white font-regular">
+								<div className="absolute bottom-4 left-4 text-white font-regular z-20">
 									<h3 className="text-sm font-bold">{project.title}</h3>
 									<p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">
 										{project.subtitle}
@@ -111,7 +111,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 								href={`/projects/${project.slug}`}
 								className={`${
 									index === 0 ? "flex-[0.4]" : "flex-[0.6]"
-								} bg-gray-100 overflow-hidden group relative`}
+								} bg-gray-100 overflow-hidden group relative after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-32 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10`}
 								style={{ aspectRatio: index === 0 ? "1" : "3/2" }}
 							>
 								{isVideo ? (
@@ -133,7 +133,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
 									/>
 								)}
-								<div className="absolute bottom-4 left-4 text-white font-regular">
+								<div className="absolute bottom-4 left-4 text-white font-regular z-20">
 									<h3 className="text-sm font-bold">{project.title}</h3>
 									<p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">
 										{project.subtitle}

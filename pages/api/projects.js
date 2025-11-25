@@ -29,6 +29,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
+        .order('order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: false });
       
       if (error) throw error;

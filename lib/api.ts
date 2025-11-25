@@ -11,6 +11,7 @@ export interface Project {
   video_url?: string;
   is_featured: boolean;
   featured_order?: number;
+  order?: number; // Genel sıralama
   client_name?: string;
   year?: number;
   role?: string;
@@ -130,19 +131,6 @@ export interface Footer {
   updated_at: string;
 }
 
-export interface Award {
-  id: string;
-  title: string;
-  link: string;
-  date: string;
-  subtitle: string;
-  halo: string;
-  image_path?: string;
-  year?: number;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface SliderItem {
   id: string;
   title: string;
@@ -220,9 +208,21 @@ export async function fetchProjects(): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
+    .order('order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    // Eğer order kolonu yoksa, sadece created_at'e göre sırala
+    if (error.code === '42703') {
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (fallbackError) throw fallbackError;
+      return fallbackData || [];
+    }
+    throw error;
+  }
   return data || [];
 }
 
@@ -407,16 +407,6 @@ export async function fetchNewsBySlug(slug: string): Promise<News | null> {
 
   if (error) throw error;
   return data;
-}
-
-export async function fetchAwards(): Promise<Award[]> {
-  const { data, error } = await supabase
-    .from('awards')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data || [];
 }
 
 export async function fetchSlider(): Promise<SliderItem[]> {

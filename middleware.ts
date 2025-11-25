@@ -37,7 +37,53 @@ async function getAllowedIPs(): Promise<string[]> {
 
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
   
+  // Admin paneli için IP kontrolü yapma
+  if (ADMIN_PATHS.some(path => pathname.startsWith(path))) {
+    return NextResponse.next()
+  }
+  
+  // API routes için IP kontrolü yapma
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+  
+  // Client IP adresini al
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const realIP = request.headers.get('x-real-ip')
+  
+  // x-forwarded-for birden fazla IP içerebilir, ilkini al
+  const rawIP = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIP || '127.0.0.1')
+  const clientIP = rawIP
+  
+  // Localhost IP'leri (development için otomatik izin ver)
+  const localhostIPs = ['127.0.0.1', '::1', 'localhost', '::ffff:127.0.0.1']
+  const isLocalhost = localhostIPs.includes(clientIP) || clientIP.startsWith('127.') || clientIP.startsWith('::1')
+  
+  // Debug için IP'yi logla
+  console.log('Client IP:', clientIP)
+  console.log('Is localhost:', isLocalhost)
+  
+  // Localhost ise direkt izin ver
+  if (isLocalhost) {
+    return NextResponse.next()
+  }
+  
+  // IP kontrolü
+  const allowedIPs = await getAllowedIPs()
+  console.log('Allowed IPs:', allowedIPs)
+  
+  const isAllowed = allowedIPs.includes(clientIP)
+  console.log('Is allowed:', isAllowed)
+  
+  if (!isAllowed) {
+    console.log('Redirecting to maintenance page')
+    // Maintenance mode sayfasına yönlendir
+    return NextResponse.rewrite(new URL('/maintenance', request.url))
+  }
+  
+  return NextResponse.next()
 }
 
 export const config = {

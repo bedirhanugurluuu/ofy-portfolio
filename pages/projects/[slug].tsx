@@ -51,7 +51,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
       />
       <div className="w-full">
       {/* Banner or Video Section */}
-      <section className="relative w-full h-screen">
+      <section className="relative w-full h-screen after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-40 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10">
         {project.banner_media && (
           <Image
             src={normalizeImageUrl(project.banner_media)}
@@ -68,14 +68,14 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
         {/* Subtitle (p) — Sol ortalı */}
         <AnimatedText
           as="div"
-          className="absolute top-1/2 left-5 -translate-y-1/2 text-white text-2xl md:text-3xl font-semibold max-w-[320px]"
+          className="absolute top-1/2 left-5 -translate-y-1/2 text-white text-2xl md:text-3xl font-semibold max-w-[320px] z-20"
           delay={0.5}
         >
           {project.subtitle}
         </AnimatedText>
 
         {/* Metadata — En altta, yan yana */}
-        <div className="absolute bottom-5 left-5 text-white text-sm flex flex-wrap gap-3 md:gap-8" style={{ letterSpacing: 0 }}>
+        <div className="absolute bottom-5 left-5 text-white text-sm flex flex-wrap gap-3 md:gap-8 z-20" style={{ letterSpacing: 0 }}>
           {project.client_name && (
             <AnimatedText as="div" className="font-semibold" delay={0.5}>
               CLIENT <span className="pl-2 opacity-40">{project.client_name}</span>
@@ -263,7 +263,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                 <Link
                   key={proj.id}
                   href={`/projects/${proj.slug}`}
-                  className="relative block overflow-hidden group"
+                  className="relative block overflow-hidden group after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-32 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10"
                   style={{ aspectRatio: 0.8 / 1 }}
                 >
                   {isVideo ? (
@@ -287,7 +287,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                     />
                   )}
 
-                  <div className="absolute bottom-4 left-4 text-white font-regular">
+                  <div className="absolute bottom-4 left-4 text-white font-regular z-20">
                     <h3 className="text-sm font-bold">{proj.title}</h3>
                     <p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">
                       {proj.subtitle}

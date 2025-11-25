@@ -2,24 +2,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnimatedText from "@/components/AnimatedText";
 import gsap from "gsap";
-import { AboutContent, Project, AboutGalleryImage, Award, SliderItem, WhatWeDoContent, fetchProjects, fetchAboutGallery, normalizeImageUrl } from "@/lib/api";
+import { AboutContent, Project, AboutGalleryImage, SliderItem, WhatWeDoContent, fetchProjects, fetchAboutGallery, normalizeImageUrl } from "@/lib/api";
 import InsightsSection from "@/components/InsightsSection";
 import ClientsIndustriesSection from "@/components/ClientsIndustriesSection";
 import AboutGallery from "@/components/AboutGallery";
-import AwardsSection from "@/components/AwardsSection";
 import SliderSection from "@/components/SliderSection";
 import WhatWeDoSection from "@/components/WhatWeDoSection";
 import FromTheJournal from "@/components/FromTheJournal";
 
 interface AnimatedAboutProps {
   initialContent?: AboutContent;
-  awards?: Award[];
   sliderItems?: SliderItem[];
   whatWeDoContent?: WhatWeDoContent;
   initialProjects?: Project[];
 }
 
-export default function AnimatedAbout({ initialContent, awards = [], sliderItems = [], whatWeDoContent, initialProjects = [] }: AnimatedAboutProps) {
+export default function AnimatedAbout({ initialContent, sliderItems = [], whatWeDoContent, initialProjects = [] }: AnimatedAboutProps) {
   const [content, setContent] = useState<AboutContent>(initialContent || {
     id: "1",
     title: "About Us",
@@ -339,9 +337,6 @@ export default function AnimatedAbout({ initialContent, awards = [], sliderItems
 
         {/* About Gallery Section */}
         <AboutGallery images={galleryImages} />
-
-        {/* Awards Section */}
-        <AwardsSection awards={awards || []} />
 
         {/* Slider Section */}
         <SliderSection sliderItems={sliderItems} />

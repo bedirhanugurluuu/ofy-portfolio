@@ -25,7 +25,7 @@ export default function ClientsIndustriesSection({
           {/* Clients */}
           <div className="flex flex-col md:flex-row gap-3 border-t pt-5 items-start" style={{ borderColor: '#0000001a' }}>
             <h2 className="text-sm w-1/2 uppercase">{clientsTitle}</h2>
-            <div className="grid grid-cols-2 content-center flex-1 gap-x-3">
+            <div className="grid grid-cols-2 content-center flex-1 gap-x-3 w-full">
               {clients.map((client, index) => (
                 <div key={index} className="text-sm font-medium opacity-40" style={{ lineHeight: '18px' }}>
                   {client.trim()}
@@ -37,7 +37,7 @@ export default function ClientsIndustriesSection({
           {/* Industries */}
           <div className="flex flex-col md:flex-row gap-3 border-t pt-5 items-start" style={{ borderColor: '#0000001a' }}>
             <h2 className="text-sm w-1/2 uppercase">{industriesTitle}</h2>
-            <div className="grid grid-cols-2 content-center flex-1 gap-x-3">
+            <div className="grid grid-cols-2 content-center flex-1 gap-x-3 w-full">
               {industries.map((industry, index) => (
                 <div key={index} className="text-sm font-medium opacity-40" style={{ lineHeight: '18px' }}>
                   {industry.trim()}

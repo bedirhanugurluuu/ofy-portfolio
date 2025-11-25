@@ -55,7 +55,7 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
                 {/* Insight Content */}
                 <div className="mb-6">
                   <h3 className="text-sm uppercase font-medium mb-2 opacity-40">{insight.title}</h3>
-                  <p className="text-xl md:text-2xl font-medium max-w-[590px]" style={{ lineHeight: '27px' }}>{insight.text}</p>
+                  <p className="text-lg md:text-2xl font-medium max-w-[590px]" style={{ lineHeight: '27px' }}>{insight.text}</p>
                 </div>
 
                 {/* Related Case Study Card */}

@@ -21,6 +21,7 @@ interface Project {
   description?: string;
   is_featured?: boolean;
   featured_order?: number;
+  order?: number;
   created_at: string;
   updated_at: string;
 }
@@ -164,7 +165,7 @@ export default function ProjectsPage({ projects }: Props) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="group relative overflow-hidden block cursor-pointer"
+                  className="group relative overflow-hidden block cursor-pointer after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-32 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10"
                   style={{ aspectRatio: 0.8 / 1 }}
                 >
                   {media.type === "video" ? (
@@ -191,7 +192,7 @@ export default function ProjectsPage({ projects }: Props) {
                     </div>
                   )}
 
-                    <div className="absolute bottom-4 left-4 text-white font-regular">
+                    <div className="absolute bottom-4 left-4 text-white font-regular z-20">
                         <h2 className="text-sm font-bold">{project.title}</h2>
                         <p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">
                             {project.subtitle}

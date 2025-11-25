@@ -11,6 +11,7 @@ import Image from "next/image";
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [istanbulTime, setIstanbulTime] = useState("");
   const { settings: headerSettings, loading } = useHeaderSettings();
   const pathname = usePathname();
 
@@ -32,6 +33,28 @@ export default function Header() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    const updateIstanbulTime = () => {
+      const now = new Date();
+      const istanbulTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Europe/Istanbul",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }).format(now);
+      setIstanbulTime(istanbulTime);
+    };
+
+    // İlk güncelleme
+    updateIstanbulTime();
+
+    // Her saniye güncelle
+    const interval = setInterval(updateIstanbulTime, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const forceBlackTextPages = ["/about", "/blog", "/careers", "/projects", "/contact"];
   const isDarkText = pathname ?
@@ -68,12 +91,10 @@ export default function Header() {
             // Beyaz arka plan için koyu logo
             headerSettings?.logo_image_url && (
               <div className="relative w-20 h-8">
-                <Image
+                <img
                   src={headerSettings.logo_image_url}
                   alt="Logo"
-                  fill
-                  className="object-contain"
-                  priority
+                  className="object-contain h-8"
                 />
               </div>
             )
@@ -81,12 +102,10 @@ export default function Header() {
             // Şeffaf arka plan için açık logo
             headerSettings?.logo_image_url_light && (
               <div className="relative w-20 h-8">
-                <Image
+                <img
                   src={headerSettings.logo_image_url_light}
                   alt="Logo"
-                  fill
-                  className="object-contain"
-                  priority
+                  className="object-contain h-8"
                 />
               </div>
             )
@@ -95,7 +114,7 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-35">
-          <nav className="flex space-x-4 text-sm uppercase font-medium">
+          <nav className="flex space-x-4 text-sm uppercase font-medium items-center">
             {navItems.map((item: any) => (
               <Link
                 key={item.href}
@@ -111,6 +130,10 @@ export default function Header() {
                 </span>
               </Link>
             ))}
+            <div className="text-sm font-medium flex items-center gap-1 normal-case">
+              <span>{istanbulTime}</span>
+              <span>IST</span>
+            </div>
           </nav>
           <Link
             href="/contact"
