@@ -7,7 +7,8 @@ export interface Project {
   subtitle: string;
   description: string;
   thumbnail_media?: string;
-  banner_media?: string;
+  banner_media?: string; // Desktop banner (default)
+  banner_media_mobile?: string; // Mobile banner (optional, falls back to banner_media if not set)
   video_url?: string;
   is_featured: boolean;
   featured_order?: number;
@@ -17,6 +18,9 @@ export interface Project {
   role?: string;
   external_link?: string;
   slug: string;
+  subtitle_color?: string; // Subtitle rengi
+  hide_subtitle?: boolean; // Subtitle'ı gizle (opacity-0)
+  project_credits?: Array<{ role: string; name: string }>; // Projede ismi geçen kişiler
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +32,7 @@ export interface IntroBanner {
   button_text: string;
   button_link: string;
   image: string; // intro_banners tablosunda alan adı 'image'
+  image_mobile?: string; // Mobile görsel (sadece 3. banner için kullanılır)
   order_index: number;
   scroll_text?: string; // "Scroll to view more" metni
   project_id?: string; // Bağlantılı proje ID'si
@@ -39,6 +44,7 @@ export interface AboutContent {
   id: string;
   title: string;
   subtitle: string;
+  main_title: string;
   content: string;
   description: string;
   main_text: string;

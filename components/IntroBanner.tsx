@@ -107,13 +107,28 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           transitionTimingFunction: "ease-out",
         }}
       >
+        {/* Desktop görsel - her zaman image kullan */}
         <Image
           src={normalizeImageUrl(currentBanner.image || '')}
           alt="banner"
           fill
           priority
           fetchPriority="high"
-          className="object-cover"
+          className="object-cover hidden md:block"
+          onLoadingComplete={() => setFirstImageLoaded(true)}
+        />
+        {/* Mobile görsel - 3. banner için image_mobile varsa onu, yoksa image kullan */}
+        <Image
+          src={normalizeImageUrl(
+            (currentBanner.order_index === 3 && currentBanner.image_mobile) 
+              ? currentBanner.image_mobile 
+              : currentBanner.image || ''
+          )}
+          alt="banner mobile"
+          fill
+          priority
+          fetchPriority="high"
+          className="object-cover block md:hidden"
           onLoadingComplete={() => setFirstImageLoaded(true)}
         />
         {index === 0 && !overlayGone && (

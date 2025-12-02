@@ -70,7 +70,7 @@ export default function BlogPage({ news }: Props) {
   return (
     <>
       <SEO 
-        title="Journal - OFY Portfolio"
+        title="Faruk Yılmaz | Blog"
         description="Insights, thoughts, and stories from our creative journey. Explore our latest articles on design, branding, and digital experiences."
         image="https://ofy-portfolio.vercel.app/images/blog-og.jpg"
         schema={schema}

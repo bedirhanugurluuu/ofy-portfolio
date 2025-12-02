@@ -33,7 +33,7 @@ export default function Contact({ contactContent }: ContactPageProps) {
   return (
     <>
       <SEO 
-        title={`${contactContent.title} - OFY Portfolio`}
+        title="Faruk Yılmaz | Contact"
         description="Get in touch with OFY. We're here to help bring your creative vision to life. Contact us for brand strategy, design, and development services."
         image={contactContent.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${contactContent.image_path}` : "https://ofy-portfolio.vercel.app/images/contact-og.jpg"}
         schema={schema}

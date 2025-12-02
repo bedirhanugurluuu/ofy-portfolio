@@ -79,7 +79,7 @@ export default function ProjectsPage({ projects }: Props) {
   return (
     <>
       <SEO 
-        title="Projects - OFY Portfolio"
+        title="Faruk Yılmaz | Projects"
         description="Explore our creative projects and design work. From brand strategy to visual design, discover how we create compelling stories that leave lasting impressions."
         image="https://ofy-portfolio.vercel.app/images/projects-og.jpg"
         schema={schema}
@@ -184,7 +184,7 @@ export default function ProjectsPage({ projects }: Props) {
                       alt={project.title}
                       width={600}
                       height={400}
-                      className="w-full object-cover h-full scale-105 group-hover:scale-100 transition-transform duration-500"
+                      className="w-full object-cover h-full md:scale-105 group-hover:scale-100 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full bg-gray-200 flex items-center justify-center">
@@ -192,7 +192,7 @@ export default function ProjectsPage({ projects }: Props) {
                     </div>
                   )}
 
-                    <div className="absolute bottom-4 left-4 text-white font-regular z-20">
+                    <div className="absolute p-4 bottom-0 left-0 text-white font-regular z-20">
                         <h2 className="text-sm font-bold">{project.title}</h2>
                         <p className="text-sm opacity-40 group-hover:opacity-100 transition-opacity">
                             {project.subtitle}

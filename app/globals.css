@@ -95,3 +95,9 @@ body, p, span, a, h1, h2, h3, h4, h5, h6 {
 nav a, nav span {
   letter-spacing: 0;
 }
+
+@media (max-width: 768px) {
+  .approach-text {
+    min-height: 210px !important;
+  }
+}

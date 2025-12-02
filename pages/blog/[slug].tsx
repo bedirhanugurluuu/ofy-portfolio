@@ -128,7 +128,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
   return (
     <>
       <SEO 
-        title={`${article.subtitle} - OFY Journal`}
+        title={`Faruk Yılmaz | ${article.subtitle}`}
         description={article.title}
         image={article.image_path ? normalizeImageUrl(article.image_path) : "https://ofy-portfolio.vercel.app/images/blog-og.jpg"}
         type="article"

@@ -62,7 +62,7 @@ export default function AboutPage({ aboutContent, sliderItems, whatWeDoContent, 
   return (
     <>
       <SEO 
-        title={`${aboutContent?.title || "About"} - OFY Portfolio`}
+        title="Faruk Yılmaz | About"
         description={aboutContent?.description || "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design."}
         image={aboutContent?.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${aboutContent.image_path}` : "https://ofy-portfolio.vercel.app/images/about-og.jpg"}
         schema={schema}

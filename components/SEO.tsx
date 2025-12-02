@@ -16,7 +16,7 @@ interface SEOProps {
 }
 
 export default function SEO({
-  title = "OFY - Creative Portfolio & Design Studio",
+  title = "Faruk Yılmaz Design Studio",
   description = "OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences. We create compelling stories that leave lasting impressions.",
   image = "https://ofy-portfolio.vercel.app/images/og-image.jpg",
   type = "website",

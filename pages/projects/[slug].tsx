@@ -44,7 +44,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
   return (
     <>
       <SEO 
-        title={`${project.title} - OFY Portfolio`}
+        title={`Faruk Yılmaz | ${project.title}`}
         description={project.subtitle}
         image={project.banner_media ? normalizeImageUrl(project.banner_media) : "https://ofy-portfolio.vercel.app/images/project-og.jpg"}
         schema={schema}
@@ -52,6 +52,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
       <div className="w-full">
       {/* Banner or Video Section */}
       <section className="relative w-full h-screen after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-40 after:bg-gradient-to-t after:from-black/20 after:to-transparent after:z-10">
+        {/* Desktop Banner - always use banner_media */}
         {project.banner_media && (
           <Image
             src={normalizeImageUrl(project.banner_media)}
@@ -59,6 +60,18 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
             fill
             style={{ objectFit: "cover" }}
             priority
+            className="hidden md:block"
+          />
+        )}
+        {/* Mobile Banner - use banner_media_mobile if exists, otherwise fallback to banner_media */}
+        {(project.banner_media_mobile || project.banner_media) && (
+          <Image
+            src={normalizeImageUrl(project.banner_media_mobile || project.banner_media || "")}
+            alt="Banner Mobile"
+            fill
+            style={{ objectFit: "cover" }}
+            priority
+            className="block md:hidden"
           />
         )}
 
@@ -68,7 +81,10 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
         {/* Subtitle (p) — Sol ortalı */}
         <AnimatedText
           as="div"
-          className="absolute top-1/2 left-5 -translate-y-1/2 text-white text-2xl md:text-3xl font-semibold max-w-[320px] z-20"
+          className={`absolute top-1/2 left-5 -translate-y-1/2 text-2xl md:text-3xl font-semibold max-w-[420px] z-20 ${project.hide_subtitle ? "opacity-0" : ""}`}
+          style={{
+            color: project.subtitle_color || "#ffffff",
+          } as React.CSSProperties}
           delay={0.5}
         >
           {project.subtitle}
@@ -226,6 +242,20 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
               }
               return rows;
             })()}
+          </div>
+        </section>
+      )}
+
+      {/* Projede İsmi Geçen Kişiler Section */}
+      {project.project_credits && project.project_credits.length > 0 && (
+        <section className="px-5 pb-20">
+          <div className="flex flex-col gap-3">
+            {project.project_credits.map((credit, index) => (
+              <div key={index} className="text-sm font-medium">
+                <span className="opacity-40">{credit.role}:</span>{" "}
+                <span>{credit.name}</span>
+              </div>
+            ))}
           </div>
         </section>
       )}

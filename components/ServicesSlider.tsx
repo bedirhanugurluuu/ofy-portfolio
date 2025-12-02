@@ -124,7 +124,7 @@ export default function ServicesSlider() {
                             {services[index].title}
                         </h2>
                     </div>
-                    <div className="w-full max-w-[600px] overflow-hidden">
+                    <div className="approach-text w-full max-w-[600px] overflow-hidden">
                         <p 
                             key={`description-${index}-${services[index]?.id}`}
                             ref={textRef} 

@@ -131,8 +131,7 @@ export default function Header() {
               </Link>
             ))}
             <div className="text-sm font-medium flex items-center gap-1 normal-case">
-              <span>{istanbulTime}</span>
-              <span>IST</span>
+              IST, {istanbulTime}
             </div>
           </nav>
           <Link

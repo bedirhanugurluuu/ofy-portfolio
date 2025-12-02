@@ -212,3 +212,8 @@ nav a, nav span {
   text-decoration-color: #93c5fd;
 }
 
+@media (max-width: 768px) {
+  .approach-text {
+    min-height: 210px !important;
+  }
+}

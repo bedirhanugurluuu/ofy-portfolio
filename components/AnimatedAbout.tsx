@@ -24,6 +24,7 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
     subtitle: "A collective of visionaries shaping tomorrow",
     content: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
     description: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
+    main_title: "",
     main_text: "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design.",
     vision_title: "Our Vision",
     vision_text: "We craft innovative design strategies for forward thinking brands, combining aesthetics with purpose to create impactful solutions.",
@@ -159,10 +160,19 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
       <div className="flex flex-col lg:flex-row w-full min-h-screen px-5 pt-37 md:pt-50 pb-15 md:pb-28 gap-8">
         <div className="w-full lg:w-1/2 flex flex-col gap-12 relative">
           <div>
+            {content.main_title && (
+              <AnimatedText
+                as="h1"
+                className="text-3xl md:text-4xl lg:text-5xl font-medium max-w-xl mb-6"
+                delay={0}
+              >
+                {content.main_title}
+              </AnimatedText>
+            )}
             <AnimatedText
               as="p"
               className="text-2xl md:text-3xl font-medium max-w-xl"
-              delay={0}
+              delay={0.3}
             >
               {content.main_text}
             </AnimatedText>
@@ -325,6 +335,9 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
          />
        )}
 
+       {/* About Gallery Section */}
+       <AboutGallery images={galleryImages} />
+
         {/* Clients & Industries Section */}
         {content.clients_title && (
           <ClientsIndustriesSection
@@ -334,9 +347,6 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
             industriesList={content.industries_list || ""}
           />
         )}
-
-        {/* About Gallery Section */}
-        <AboutGallery images={galleryImages} />
 
         {/* Slider Section */}
         <SliderSection sliderItems={sliderItems} />
