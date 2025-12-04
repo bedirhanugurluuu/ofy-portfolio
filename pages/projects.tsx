@@ -53,7 +53,7 @@ export default function ProjectsPage({ projects }: Props) {
     "@type": "CollectionPage",
     "name": "Projects - OFY Portfolio",
     "description": "Explore our creative projects and design work. From brand strategy to visual design, discover how we create compelling stories.",
-    "url": "https://ofy-portfolio.vercel.app/projects",
+    "url": "https://farukyilmaz.com/projects",
     "mainEntity": {
       "@type": "ItemList",
       "numberOfItems": projects.length,
@@ -64,7 +64,7 @@ export default function ProjectsPage({ projects }: Props) {
           "@type": "CreativeWork",
           "name": project.title,
           "description": project.subtitle,
-          "url": `https://ofy-portfolio.vercel.app/projects/${project.slug}`,
+          "url": `https://farukyilmaz.com/projects/${project.slug}`,
           "creator": {
             "@type": "Organization",
             "name": "OFY"
@@ -81,7 +81,7 @@ export default function ProjectsPage({ projects }: Props) {
       <SEO 
         title="Faruk Yılmaz | Projects"
         description="Explore our creative projects and design work. From brand strategy to visual design, discover how we create compelling stories that leave lasting impressions."
-        image="https://ofy-portfolio.vercel.app/images/projects-og.jpg"
+        image="https://farukyilmaz.com/images/projects-og.jpg"
         schema={schema}
       />
       <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">

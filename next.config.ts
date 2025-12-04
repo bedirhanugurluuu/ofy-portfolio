@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     domains: [
       "localhost", 
       "lsxafginsylkeuyzuiau.supabase.co", // Supabase Storage domain
-      "your-vercel-domain.vercel.app" // Production domain
+      "farukyilmaz.com" // Production domain
     ],
   },
   env: {

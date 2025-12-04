@@ -18,11 +18,11 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "OFY - Creative Portfolio & Design Studio",
-    "url": "https://ofy-portfolio.vercel.app",
+    "url": "https://farukyilmaz.com",
     "description": "OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences.",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://ofy-portfolio.vercel.app/projects?search={search_term_string}",
+      "target": "https://farukyilmaz.com/projects?search={search_term_string}",
       "query-input": "required name=search_term_string"
     },
     "publisher": {
@@ -30,7 +30,7 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
       "name": "OFY",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+        "url": "https://farukyilmaz.com/images/logo.png"
       }
     }
   };
@@ -40,7 +40,7 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
       <SEO 
         title="Faruk Yılmaz Design Studio"
         description="OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences. We create compelling stories that leave lasting impressions."
-        image="https://ofy-portfolio.vercel.app/images/og-image.jpg"
+        image="https://farukyilmaz.com/images/og-image.jpg"
         schema={schema}
       />
       <div>

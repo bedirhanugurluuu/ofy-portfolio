@@ -42,6 +42,11 @@ export default function Document() {
         <link rel="prefetch" href="/about" />
         <link rel="prefetch" href="/projects" />
         
+        {/* Favicon - will be updated dynamically by JavaScript */}
+        <link id="favicon" rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link id="favicon-png" rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+        <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
+        
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />

@@ -5,6 +5,34 @@ import Footer from "@/components/Footer";
 
 export default function Layout({ children }: { children: ReactNode }) {
   useEffect(() => {
+    // Dynamic favicon based on system theme
+    const updateFavicon = () => {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      const favicon = document.getElementById('favicon') as HTMLLinkElement;
+      const faviconPng = document.getElementById('favicon-png') as HTMLLinkElement;
+      const appleTouchIcon = document.getElementById('apple-touch-icon') as HTMLLinkElement;
+      
+      if (isDark) {
+        // Dark mode - use dark favicon
+        if (favicon) favicon.href = '/favicon-light.ico';
+        if (faviconPng) faviconPng.href = '/favicon-light.png';
+        if (appleTouchIcon) appleTouchIcon.href = '/favicon-light.png';
+      } else {
+        // Light mode - use light favicon
+        if (favicon) favicon.href = '/favicon-dark.ico';
+        if (faviconPng) faviconPng.href = '/favicon-dark.png';
+        if (appleTouchIcon) appleTouchIcon.href = '/favicon-dark.png';
+      }
+    };
+
+    // Set initial favicon
+    updateFavicon();
+
+    // Listen for theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', updateFavicon);
+
     // Preload critical pages on mount
     const preloadPages = () => {
       const links = [
@@ -24,7 +52,11 @@ export default function Layout({ children }: { children: ReactNode }) {
 
     // Preload after initial render
     const timer = setTimeout(preloadPages, 1000);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      clearTimeout(timer);
+      mediaQuery.removeEventListener('change', updateFavicon);
+    };
   }, []);
 
   return (

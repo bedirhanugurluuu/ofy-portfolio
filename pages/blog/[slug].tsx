@@ -112,14 +112,14 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
       "name": "OFY",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+        "url": "https://farukyilmaz.com/images/logo.png"
       }
     },
     "datePublished": article.published_at,
     "dateModified": article.updated_at,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://ofy-portfolio.vercel.app/blog/${article.slug}`
+      "@id": `https://farukyilmaz.com/blog/${article.slug}`
     },
     "articleSection": article.category_text,
     "keywords": [article.category_text, "design", "creative", "portfolio"]
@@ -130,7 +130,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
       <SEO 
         title={`Faruk Yılmaz | ${article.subtitle}`}
         description={article.title}
-        image={article.image_path ? normalizeImageUrl(article.image_path) : "https://ofy-portfolio.vercel.app/images/blog-og.jpg"}
+        image={article.image_path ? normalizeImageUrl(article.image_path) : "https://farukyilmaz.com/images/blog-og.jpg"}
         type="article"
         publishedTime={article.published_at}
         modifiedTime={article.updated_at}

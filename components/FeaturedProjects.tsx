@@ -57,7 +57,11 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 				{/* First Row */}
 				<div className="flex flex-col md:flex-row gap-5">
 					{projects.slice(0, 2).map((project, index) => {
-						const mediaUrl = normalizeImageUrl(project.thumbnail_media || "");
+						// 1. sıradaki proje (index 0) için banner_media kullan
+						const mediaSource = index === 0 
+							? (project.banner_media || project.thumbnail_media || "")
+							: (project.thumbnail_media || "");
+						const mediaUrl = normalizeImageUrl(mediaSource);
 						const isVideo = mediaUrl.toLowerCase().endsWith(".mp4") || mediaUrl.toLowerCase().endsWith(".webm");
 
 						return (
@@ -102,7 +106,11 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 				{/* Second Row */}
 				<div className="flex flex-col md:flex-row gap-5">
 					{projects.slice(2, 4).map((project, index) => {
-						const mediaUrl = normalizeImageUrl(project.thumbnail_media || "");
+						// 4. sıradaki proje (index 1) için banner_media kullan
+						const mediaSource = index === 1 
+							? (project.banner_media || project.thumbnail_media || "")
+							: (project.thumbnail_media || "");
+						const mediaUrl = normalizeImageUrl(mediaSource);
 						const isVideo = mediaUrl.toLowerCase().endsWith(".mp4") || mediaUrl.toLowerCase().endsWith(".webm");
 
 						return (

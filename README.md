@@ -4,7 +4,7 @@ Modern, responsive portfolio website built with Next.js, Supabase, and TypeScrip
 
 ## 🚀 Live Demo
 
-- **Frontend**: [ofy-portfolio.vercel.app](https://ofy-portfolio.vercel.app)
+- **Frontend**: [farukyilmaz.com](https://farukyilmaz.com)
 - **Admin Panel**: [ofy-admin.vercel.app](https://ofy-admin.vercel.app)
 
 ## ✨ Features

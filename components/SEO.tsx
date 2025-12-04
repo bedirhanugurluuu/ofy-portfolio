@@ -18,7 +18,7 @@ interface SEOProps {
 export default function SEO({
   title = "Faruk Yılmaz Design Studio",
   description = "OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences. We create compelling stories that leave lasting impressions.",
-  image = "https://ofy-portfolio.vercel.app/images/og-image.jpg",
+  image = "https://farukyilmaz.com/images/og-image.jpg",
   type = "website",
   publishedTime,
   modifiedTime,
@@ -29,15 +29,15 @@ export default function SEO({
   canonical
 }: SEOProps) {
   const router = useRouter();
-  const url = canonical || `https://ofy-portfolio.vercel.app${router.asPath}`;
+  const url = canonical || `https://farukyilmaz.com${router.asPath}`;
 
   // Default schema for organization
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "OFY",
-    "url": "https://ofy-portfolio.vercel.app",
-    "logo": "https://ofy-portfolio.vercel.app/images/logo.png",
+    "url": "https://farukyilmaz.com",
+    "logo": "https://farukyilmaz.com/images/logo.png",
     "description": "Creative design studio specializing in brand strategy and visual design",
     "sameAs": [
       "https://instagram.com/ofystudio",

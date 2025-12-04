@@ -15,7 +15,7 @@ export default function Contact({ contactContent }: ContactPageProps) {
     "@type": "ContactPage",
     "name": "Contact - OFY Portfolio",
     "description": "Get in touch with OFY. We're here to help bring your creative vision to life.",
-    "url": "https://ofy-portfolio.vercel.app/contact",
+    "url": "https://farukyilmaz.com/contact",
     "mainEntity": {
       "@type": "Organization",
       "name": "OFY",
@@ -35,7 +35,7 @@ export default function Contact({ contactContent }: ContactPageProps) {
       <SEO 
         title="Faruk Yılmaz | Contact"
         description="Get in touch with OFY. We're here to help bring your creative vision to life. Contact us for brand strategy, design, and development services."
-        image={contactContent.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${contactContent.image_path}` : "https://ofy-portfolio.vercel.app/images/contact-og.jpg"}
+        image={contactContent.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${contactContent.image_path}` : "https://farukyilmaz.com/images/contact-og.jpg"}
         schema={schema}
       />
       <ContactPage content={contactContent} />

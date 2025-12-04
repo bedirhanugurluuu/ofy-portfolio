@@ -9,7 +9,7 @@ export default function Custom404() {
     "@type": "WebPage",
     "name": "404 - Page Not Found",
     "description": "The page you're looking for doesn't exist.",
-    "url": "https://ofy-portfolio.vercel.app/404"
+    "url": "https://farukyilmaz.com/404"
   };
 
   return (
@@ -17,7 +17,7 @@ export default function Custom404() {
       <SEO 
         title="404 - Page Not Found | OFY Portfolio"
         description="The page you're looking for doesn't exist. Return to our portfolio."
-        image="https://ofy-portfolio.vercel.app/images/og-image.jpg"
+        image="https://farukyilmaz.com/images/og-image.jpg"
         schema={schema}
       />
       

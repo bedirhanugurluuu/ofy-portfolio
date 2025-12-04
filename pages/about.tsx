@@ -21,7 +21,7 @@ export default function AboutPage({ aboutContent, sliderItems, whatWeDoContent, 
     "@type": "AboutPage",
     "name": "About - OFY Portfolio",
     "description": aboutContent?.description || "A collective of visionaries shaping tomorrow, where creativity and innovation intersect.",
-    "url": "https://ofy-portfolio.vercel.app/about",
+    "url": "https://farukyilmaz.com/about",
     "mainEntity": {
       "@type": "Organization",
       "name": "OFY",
@@ -64,7 +64,7 @@ export default function AboutPage({ aboutContent, sliderItems, whatWeDoContent, 
       <SEO 
         title="Faruk Yılmaz | About"
         description={aboutContent?.description || "A collective of visionaries shaping tomorrow, where creativity and innovation intersect. Our studio is built on the belief that bold ideas and meticulous execution drive meaningful design."}
-        image={aboutContent?.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${aboutContent.image_path}` : "https://ofy-portfolio.vercel.app/images/about-og.jpg"}
+        image={aboutContent?.image_path ? `https://lsxafginsylkeuyzuiau.supabase.co/storage/v1/object/public/uploads/${aboutContent.image_path}` : "https://farukyilmaz.com/images/about-og.jpg"}
         schema={schema}
       />
       <AnimatedAbout initialContent={aboutContent} sliderItems={sliderItems} whatWeDoContent={whatWeDoContent} initialProjects={projects} />

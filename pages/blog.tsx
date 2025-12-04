@@ -42,13 +42,13 @@ export default function BlogPage({ news }: Props) {
     "@type": "Blog",
     "name": "Journal - OFY Portfolio",
     "description": "Insights, thoughts, and stories from our creative journey. Explore our latest articles on design, branding, and digital experiences.",
-    "url": "https://ofy-portfolio.vercel.app/blog",
+    "url": "https://farukyilmaz.com/blog",
     "publisher": {
       "@type": "Organization",
       "name": "OFY",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://ofy-portfolio.vercel.app/images/logo.png"
+        "url": "https://farukyilmaz.com/images/logo.png"
       }
     },
     "blogPost": news.map(article => ({
@@ -61,7 +61,7 @@ export default function BlogPage({ news }: Props) {
       },
       "datePublished": article.published_at,
       "dateModified": article.updated_at,
-      "url": `https://ofy-portfolio.vercel.app/blog/${article.slug}`,
+      "url": `https://farukyilmaz.com/blog/${article.slug}`,
       "image": article.image_path ? normalizeImageUrl(article.image_path) : null,
       "articleSection": article.category_text
     }))
@@ -72,7 +72,7 @@ export default function BlogPage({ news }: Props) {
       <SEO 
         title="Faruk Yılmaz | Blog"
         description="Insights, thoughts, and stories from our creative journey. Explore our latest articles on design, branding, and digital experiences."
-        image="https://ofy-portfolio.vercel.app/images/blog-og.jpg"
+        image="https://farukyilmaz.com/images/blog-og.jpg"
         schema={schema}
       />
       <div className="min-h-screen px-5 pt-35 md:pt-50 pb-10">

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchProjects, fetchNews } from '@/lib/api';
 
-const SITE_URL = 'https://ofy-portfolio.vercel.app';
+const SITE_URL = 'https://farukyilmaz.com';
 
 function generateSiteMap(pages: string[], projects: any[], news: any[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>

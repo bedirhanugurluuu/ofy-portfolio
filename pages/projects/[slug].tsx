@@ -29,7 +29,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
     },
     "dateCreated": project.created_at,
     "dateModified": project.updated_at,
-    "url": `https://ofy-portfolio.vercel.app/projects/${project.slug}`,
+    "url": `https://farukyilmaz.com/projects/${project.slug}`,
     "mainEntity": {
       "@type": "Project",
       "name": project.title,
@@ -46,7 +46,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
       <SEO 
         title={`Faruk Yılmaz | ${project.title}`}
         description={project.subtitle}
-        image={project.banner_media ? normalizeImageUrl(project.banner_media) : "https://ofy-portfolio.vercel.app/images/project-og.jpg"}
+        image={project.banner_media ? normalizeImageUrl(project.banner_media) : "https://farukyilmaz.com/images/project-og.jpg"}
         schema={schema}
       />
       <div className="w-full">
@@ -81,7 +81,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
         {/* Subtitle (p) — Sol ortalı */}
         <AnimatedText
           as="div"
-          className={`absolute top-1/2 left-5 -translate-y-1/2 text-2xl md:text-3xl font-semibold max-w-[420px] z-20 ${project.hide_subtitle ? "opacity-0" : ""}`}
+          className={`absolute top-1/2 left-5 -translate-y-1/2 text-2xl md:text-3xl font-semibold max-w-[600px] z-20 ${project.hide_subtitle ? "opacity-0" : ""}`}
           style={{
             color: project.subtitle_color || "#ffffff",
           } as React.CSSProperties}
