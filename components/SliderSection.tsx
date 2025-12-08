@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { SliderItem, normalizeImageUrl } from "@/lib/api";
+import { SliderItem, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 import gsap from "gsap";
 import AnimatedText from "./AnimatedText";
 
@@ -43,7 +43,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
             fill
             className="object-cover"
             sizes="100vw"
-            
+            unoptimized={isSupabaseImage(normalizeImageUrl(currentItem.image_path || ''))}
             onError={(e) => console.error('Main image failed to load:', e)}
           />
           <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center" style={{background: 'linear-gradient(114deg, rgba(0, 0, 0, 0.51) 0%, rgba(0, 0, 0, 0) 47.051%)'}}></div>
@@ -96,6 +96,7 @@ export default function SliderSection({ sliderItems }: SliderSectionProps) {
                      width={134}
                      height={90}
                      className="object-cover w-full h-full"
+                     unoptimized={isSupabaseImage(normalizeImageUrl(item.image_path || ''))}
      
                      onError={(e) => console.error(`Thumbnail ${index + 1} failed to load:`, e)}
                    />

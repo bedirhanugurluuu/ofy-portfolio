@@ -4,7 +4,7 @@ import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project } from "@/lib/api";
+import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project, isSupabaseImage } from "@/lib/api";
 import SEO from "@/components/SEO";
 
 interface ProjectDetailProps {
@@ -61,6 +61,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
             style={{ objectFit: "cover" }}
             priority
             className="hidden md:block"
+            unoptimized={isSupabaseImage(normalizeImageUrl(project.banner_media))}
           />
         )}
         {/* Mobile Banner - use banner_media_mobile if exists, otherwise fallback to banner_media */}
@@ -72,6 +73,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
             style={{ objectFit: "cover" }}
             priority
             className="block md:hidden"
+            unoptimized={isSupabaseImage(normalizeImageUrl(project.banner_media_mobile || project.banner_media || ""))}
           />
         )}
 
@@ -179,6 +181,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                             fill
                             className="object-cover"
                             sizes="100vw"
+                            unoptimized={isSupabaseImage(normalizeImageUrl(image))}
                           />
                         )}
                     </div>
@@ -211,6 +214,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100vw, 50vw"
+                            unoptimized={isSupabaseImage(normalizeImageUrl(secondImage))}
                           />
                         )}
                       </div>
@@ -232,6 +236,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                               fill
                               className="object-cover"
                               sizes="(max-width: 768px) 100vw, 50vw"
+                              unoptimized={isSupabaseImage(normalizeImageUrl(thirdImage))}
                             />
                           )}
                         </div>
@@ -314,6 +319,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                       sizes="(max-width: 640px) 100vw, 33vw"
                       loading="lazy"
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      unoptimized={isSupabaseImage(mediaUrl)}
                     />
                   )}
 

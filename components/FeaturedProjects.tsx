@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchProjects, Project, normalizeImageUrl } from '@/lib/api';
+import { fetchProjects, Project, normalizeImageUrl, isSupabaseImage } from '@/lib/api';
 
 interface FeaturedProjectsProps {
 	initialProjects?: Project[];
@@ -90,6 +90,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 										width={800}
 										height={500}
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
+										unoptimized={isSupabaseImage(mediaUrl)}
 									/>
 								)}
 								<div className="absolute bottom-4 left-4 text-white font-regular z-20">
@@ -139,6 +140,7 @@ const FeaturedProjects = ({ initialProjects = [] }: FeaturedProjectsProps) => {
 										width={800}
 										height={600}
 										className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
+										unoptimized={isSupabaseImage(mediaUrl)}
 									/>
 								)}
 								<div className="absolute bottom-4 left-4 text-white font-regular z-20">

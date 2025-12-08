@@ -209,6 +209,13 @@ export const normalizeImageUrl = (imagePath: string): string => {
   return p;
 };
 
+// Supabase görseli olup olmadığını kontrol eden helper fonksiyon
+// Supabase görselleri için Next.js Image Optimization kullanılmamalı (Vercel limiti için)
+export const isSupabaseImage = (url: string): boolean => {
+  if (!url) return false;
+  return url.includes("supabase.co/storage/v1/object/public/");
+};
+
 // Client-side API functions
 export async function fetchProjects(): Promise<Project[]> {
   const { data, error } = await supabase

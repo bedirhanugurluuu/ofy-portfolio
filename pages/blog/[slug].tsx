@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchNewsBySlug, fetchNews, normalizeImageUrl } from "@/lib/api";
+import { fetchNewsBySlug, fetchNews, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 import { GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
 import AnimatedText from "@/components/AnimatedText";
@@ -251,6 +251,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
              fill
              className="object-cover"
              priority
+             unoptimized={isSupabaseImage(normalizeImageUrl(article.image_path))}
            />
          </div>
        </AnimatedText>
@@ -309,6 +310,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
                         fill
                         className="object-cover scale-105 group-hover:scale-100 transition-transform duration-500"
                         loading="lazy"
+                        unoptimized={isSupabaseImage(normalizeImageUrl(relatedArticle.image_path))}
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center">

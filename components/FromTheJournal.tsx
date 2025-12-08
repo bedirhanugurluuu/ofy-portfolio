@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchFeaturedNews, normalizeImageUrl, News } from "@/lib/api";
+import { fetchFeaturedNews, normalizeImageUrl, News, isSupabaseImage } from "@/lib/api";
 
 export default function FromTheJournal() {
   const [featuredNews, setFeaturedNews] = useState<News[]>([]);
@@ -123,6 +123,7 @@ export default function FromTheJournal() {
                     fill
                     loading="lazy"
                     className="object-cover"
+                    unoptimized={isSupabaseImage(normalizeImageUrl(article.image_path))}
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">

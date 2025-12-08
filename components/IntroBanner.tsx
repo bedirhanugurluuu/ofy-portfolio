@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchIntroBanners, normalizeImageUrl, fetchProjects, Project } from "@/lib/api";
+import { fetchIntroBanners, normalizeImageUrl, fetchProjects, Project, isSupabaseImage } from "@/lib/api";
 
 import { IntroBanner as IntroBannerType } from "@/lib/api";
 
@@ -116,6 +116,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           fetchPriority="high"
           className="object-cover hidden md:block"
           onLoadingComplete={() => setFirstImageLoaded(true)}
+          unoptimized={isSupabaseImage(normalizeImageUrl(currentBanner.image || ''))}
         />
         {/* Mobile görsel - 3. banner için image_mobile varsa onu, yoksa image kullan */}
         <Image
@@ -130,6 +131,11 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           fetchPriority="high"
           className="object-cover block md:hidden"
           onLoadingComplete={() => setFirstImageLoaded(true)}
+          unoptimized={isSupabaseImage(normalizeImageUrl(
+            (currentBanner.order_index === 3 && currentBanner.image_mobile) 
+              ? currentBanner.image_mobile 
+              : currentBanner.image || ''
+          ))}
         />
         {index === 0 && !overlayGone && (
           <div
@@ -220,6 +226,7 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
                               alt={relatedProject.title}
                               fill
                               className="object-cover"
+                              unoptimized={isSupabaseImage(normalizeImageUrl(relatedProject.thumbnail_media))}
                             />
                           )
                         ) : (

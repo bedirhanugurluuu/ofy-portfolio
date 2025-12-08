@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Project, normalizeImageUrl } from "@/lib/api";
+import { Project, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 import ButtonWithHoverArrow from "./ButtonWithHoverArrow";
 
 interface InsightCard {
@@ -89,6 +89,7 @@ export default function InsightsSection({ title, subtitle, insights, projects }:
                                         alt={project.title}
                                         fill
                                         className="object-cover"
+                                        unoptimized={isSupabaseImage(normalizeImageUrl(project.thumbnail_media))}
                                         />
                                     )
                                     ) : (

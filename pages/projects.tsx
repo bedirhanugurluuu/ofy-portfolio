@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { fetchProjectsSSR, normalizeImageUrl } from "@/lib/api";
+import { fetchProjectsSSR, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { GetStaticProps } from "next";
@@ -147,6 +147,7 @@ export default function ProjectsPage({ projects }: Props) {
                 className="object-cover"
                 loading="lazy"
                 style={{aspectRatio: 0.8 / 1,}}
+                unoptimized={isSupabaseImage(hoveredMedia.url)}
               />
             )}
           </motion.div>
@@ -185,6 +186,7 @@ export default function ProjectsPage({ projects }: Props) {
                       width={600}
                       height={400}
                       className="w-full object-cover h-full md:scale-105 group-hover:scale-100 transition-transform duration-500"
+                      unoptimized={isSupabaseImage(media.url)}
                     />
                   ) : (
                     <div className="w-full bg-gray-200 flex items-center justify-center">

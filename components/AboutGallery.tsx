@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { AboutGalleryImage, normalizeImageUrl } from "@/lib/api";
+import { AboutGalleryImage, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 
 interface AboutGalleryProps {
   images: AboutGalleryImage[];
@@ -58,6 +58,7 @@ export default function AboutGallery({ images }: AboutGalleryProps) {
                     fill
                     className="object-cover"
                     sizes="450px"
+                    unoptimized={isSupabaseImage(normalizeImageUrl(image.image_path))}
                   />
                 </div>
               ))}
