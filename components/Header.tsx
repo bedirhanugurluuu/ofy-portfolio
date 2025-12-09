@@ -56,7 +56,8 @@ export default function Header() {
     return () => clearInterval(interval);
   }, []);
 
-  const forceBlackTextPages = ["/about", "/blog", "/careers", "/projects", "/contact"];
+  const forceBlackTextPages = ["/about", "/blog", "/careers", "/projects"];
+  const isContactPage = pathname === "/contact";
   const isDarkText = pathname ?
     forceBlackTextPages.includes(pathname) || pathname.startsWith("/blog/") :
     false;
@@ -77,7 +78,9 @@ export default function Header() {
       <header
         className={clsx(
           "fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300",
-          scrolled || menuOpen || isDarkText
+          isContactPage
+            ? "bg-transparent text-white"
+            : scrolled || menuOpen || isDarkText
             ? "bg-white text-black"
             : "bg-transparent text-white"
         )}
@@ -87,23 +90,23 @@ export default function Header() {
           className="flex items-center space-x-1 z-[60]"
           onClick={() => setMenuOpen(false)}
         >
-          {(scrolled || menuOpen || isDarkText) ? (
-            // Beyaz arka plan için koyu logo
-            headerSettings?.logo_image_url && (
+          {(isContactPage || (!scrolled && !menuOpen && !isDarkText)) ? (
+            // Contact sayfası veya şeffaf arka plan için açık logo
+            headerSettings?.logo_image_url_light && (
               <div className="relative w-20 h-8">
                 <img
-                  src={headerSettings.logo_image_url}
+                  src={headerSettings.logo_image_url_light}
                   alt="Logo"
                   className="object-contain h-8"
                 />
               </div>
             )
           ) : (
-            // Şeffaf arka plan için açık logo
-            headerSettings?.logo_image_url_light && (
+            // Beyaz arka plan için koyu logo
+            headerSettings?.logo_image_url && (
               <div className="relative w-20 h-8">
                 <img
-                  src={headerSettings.logo_image_url_light}
+                  src={headerSettings.logo_image_url}
                   alt="Logo"
                   className="object-contain h-8"
                 />

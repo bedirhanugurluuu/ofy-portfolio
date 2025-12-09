@@ -113,7 +113,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
       </section>
 
       {project.description && (
-        <section className="px-5 pt-10 md:pt-12 pb-20 md:pb-30 flex flex-col justify-between sm:flex-row gap-10">
+        <section className="px-5 pt-10 md:pt-12 pb-5 md:pb-15 flex flex-col justify-between sm:flex-row gap-10">
           {/* Sol: Description */}
           <div className="sm:w-2/3 max-w-[450px]">
             <h2 className="opacity-40 text-sm mb-4 font-medium">Project Description</h2>
@@ -147,6 +147,20 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
               </a>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Projede İsmi Geçen Kişiler Section */}
+      {project.project_credits && project.project_credits.length > 0 && (
+        <section className="px-5 pb-20">
+          <div className="flex flex-col gap-1">
+            {project.project_credits.map((credit, index) => (
+              <div key={index} className="text-sm font-medium">
+                <span className="opacity-40 mr-2">{credit.role}:</span>{" "}
+                <span>{credit.name}</span>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
@@ -247,20 +261,6 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
               }
               return rows;
             })()}
-          </div>
-        </section>
-      )}
-
-      {/* Projede İsmi Geçen Kişiler Section */}
-      {project.project_credits && project.project_credits.length > 0 && (
-        <section className="px-5 pb-20">
-          <div className="flex flex-col gap-3">
-            {project.project_credits.map((credit, index) => (
-              <div key={index} className="text-sm font-medium">
-                <span className="opacity-40">{credit.role}:</span>{" "}
-                <span>{credit.name}</span>
-              </div>
-            ))}
           </div>
         </section>
       )}
