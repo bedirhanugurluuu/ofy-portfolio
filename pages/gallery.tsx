@@ -186,7 +186,13 @@ function Scene({
 }) {
   const baseRadius = 8;
   const [scrollRadius, setScrollRadius] = useState(baseRadius);
+  const scrollRadiusRef = useRef(scrollRadius);
   const { gl } = useThree();
+  
+  // scrollRadius değiştiğinde ref'i güncelle
+  useEffect(() => {
+    scrollRadiusRef.current = scrollRadius;
+  }, [scrollRadius]);
   
   // Mouse wheel event handler (desktop)
   useEffect(() => {
@@ -229,13 +235,7 @@ function Scene({
     const canvas = gl.domElement;
     if (!canvas) return;
 
-    let initialDistance = 0;
-    let initialRadius = baseRadius;
-    let isPinching = false;
-    const scrollRadiusRef = { current: scrollRadius };
-
-    // scrollRadius değiştiğinde ref'i güncelle
-    scrollRadiusRef.current = scrollRadius;
+    const initialDataRef = { distance: 0, radius: baseRadius };
 
     const getDistance = (touch1: Touch, touch2: Touch): number => {
       const dx = touch2.clientX - touch1.clientX;
@@ -246,22 +246,22 @@ function Scene({
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         e.preventDefault();
-        isPinching = true;
-        initialDistance = getDistance(e.touches[0], e.touches[1]);
-        initialRadius = scrollRadiusRef.current; // Mevcut radius'u başlangıç olarak al
+        // Her pinch başladığında mevcut radius'u al (ref'ten - her zaman güncel)
+        initialDataRef.radius = scrollRadiusRef.current;
+        initialDataRef.distance = getDistance(e.touches[0], e.touches[1]);
       }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 2 && isPinching) {
+      if (e.touches.length === 2) {
         e.preventDefault();
         const currentDistance = getDistance(e.touches[0], e.touches[1]);
         
         // Pinch mesafesi değişimini hesapla (zoom faktörü)
-        const scale = currentDistance / initialDistance;
+        const scale = currentDistance / initialDataRef.distance;
         
         // Radius'u scale'e göre güncelle (initial radius'tan başla)
-        const newRadius = initialRadius * scale;
+        const newRadius = initialDataRef.radius * scale;
         const clampedRadius = Math.max(
           baseRadius, 
           Math.min(baseRadius + 12, newRadius)
@@ -272,9 +272,7 @@ function Scene({
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (e.touches.length < 2) {
-        isPinching = false;
-      }
+      // Touch bittiğinde bir şey yapmaya gerek yok
     };
 
     canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
@@ -288,7 +286,7 @@ function Scene({
       canvas.removeEventListener('touchend', handleTouchEnd);
       canvas.removeEventListener('touchcancel', handleTouchEnd);
     };
-  }, [baseRadius, gl]); // scrollRadius'u dependency'den çıkardık, ref kullanıyoruz
+  }, [baseRadius, gl]);
 
   // Fibonacci sphere algorithm
   const angles = useMemo(() => {
@@ -480,9 +478,9 @@ export default function GalleryPage({ images: initialImages = [] }: GalleryProps
   return (
     <>
       <SEO
-        title="Gallery - StudioBomonty"
-        description="Explore our creative work in an immersive 3D gallery experience"
-        image="https://studiobomonty.vercel.app/images/og-image.jpg"
+        title="Faruk Yılmaz | Gallery"
+        description="Explore Faruk Yılmaz's creative work in an immersive 3D gallery experience"
+        image="https://farukyilmaz.com/images/og-image.jpg"
       />
       <div className="bg-black w-full overflow-hidden relative" style={{ height: '100vh', minHeight: '100vh' }}>
         {/* Loading ekranı - Canvas mount edilip görseller render olana kadar göster */}
