@@ -480,13 +480,7 @@ export const getStaticProps: GetStaticProps = async () => {
     let imageIndex = 0;
 
     for (const project of projects) {
-      if (project.thumbnail_media && isImageFile(project.thumbnail_media)) {
-        allImages.push({
-          id: `project-${project.id}-thumbnail-${imageIndex++}`,
-          image: project.thumbnail_media
-        });
-      }
-
+      // Banner media'yı ekle
       if (project.banner_media && isImageFile(project.banner_media)) {
         allImages.push({
           id: `project-${project.id}-banner-${imageIndex++}`,
@@ -494,17 +488,23 @@ export const getStaticProps: GetStaticProps = async () => {
         });
       }
 
-      if (project.banner_media_mobile && isImageFile(project.banner_media_mobile)) {
-        allImages.push({
-          id: `project-${project.id}-banner-mobile-${imageIndex++}`,
-          image: project.banner_media_mobile
-        });
-      }
-
+      // Gallery'den random 2 görsel seç
       try {
         const galleryImages = await fetchProjectGallery(project.id);
-        for (const galleryImage of galleryImages) {
-          if (galleryImage && isImageFile(galleryImage)) {
+        const imageGalleryImages = galleryImages.filter(img => img && isImageFile(img));
+        
+        if (imageGalleryImages.length > 0) {
+          // Random shuffle (Fisher-Yates)
+          const shuffled = [...imageGalleryImages];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          
+          // İlk 2 görseli al (veya mevcut kadarsa)
+          const selectedImages = shuffled.slice(0, Math.min(3, shuffled.length));
+          
+          for (const galleryImage of selectedImages) {
             allImages.push({
               id: `project-${project.id}-gallery-${imageIndex++}`,
               image: galleryImage
