@@ -62,16 +62,8 @@ export default function Header() {
     forceBlackTextPages.includes(pathname) || pathname.startsWith("/blog/") :
     false;
 
-  // Varsayılan menü öğeleri (fallback)
-  const defaultNavItems = [
-    { href: "/projects", label: "WORK" },
-    { href: "/about", label: "ABOUT" },
-    { href: "/blog", label: "NEWS" },
-    { href: "/careers", label: "CAREERS" },
-  ];
-
-  // Her zaman menü öğelerini göster - loading olsa bile varsayılan öğeleri kullan
-  const navItems = headerSettings?.menu_items?.sort((a: any, b: any) => a.order - b.order) || defaultNavItems;
+  // Veritabanından gelen menü öğeleri
+  const navItems = headerSettings?.menu_items?.sort((a: any, b: any) => a.order - b.order) || [];
 
   return (
     <>
@@ -116,36 +108,38 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-35">
-          <nav className="flex space-x-4 text-sm uppercase font-medium items-center">
-            {navItems.map((item: any) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="group relative h-[20px] overflow-hidden"
-              >
-                <span className="block transition-transform duration-300 group-hover:-translate-y-full">
-                  {item.label}
-                </span>
-                <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-            <div className="text-sm font-medium flex items-center gap-1 normal-case">
-              IST, {istanbulTime}
-            </div>
-          </nav>
-          <Link
-            href="/contact"
-            onClick={() => setMenuOpen(false)}
-            className="group ml-4 inline-flex items-center space-x-2 text-sm font-medium"
-          >
-            <span style={{ letterSpacing: 0 }}>GET IN TOUCH</span>
-            <ButtonWithHoverArrow />
-          </Link>
-        </div>
+        {!loading && navItems.length > 0 && (
+          <div className="hidden md:flex items-center gap-35">
+            <nav className="flex space-x-4 text-sm uppercase font-medium items-center">
+              {navItems.map((item: any) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="group relative h-[20px] overflow-hidden"
+                >
+                  <span className="block transition-transform duration-300 group-hover:-translate-y-full">
+                    {item.label}
+                  </span>
+                  <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+              <div className="text-sm font-medium flex items-center gap-1 normal-case">
+                IST, {istanbulTime}
+              </div>
+            </nav>
+            <Link
+              href="/contact"
+              onClick={() => setMenuOpen(false)}
+              className="group ml-4 inline-flex items-center space-x-2 text-sm font-medium"
+            >
+              <span style={{ letterSpacing: 0 }}>GET IN TOUCH</span>
+              <ButtonWithHoverArrow />
+            </Link>
+          </div>
+        )}
 
         {/* Mobile Hamburger */}
         <button
@@ -175,54 +169,56 @@ export default function Header() {
       </header>
 
       {/* Mobile Menu */}
-      <div
-        className={clsx(
-          "fixed inset-0 bg-white text-black z-50 flex flex-col items-start px-6 justify-start gap-6 transition-all duration-300 ease-in-out pointer-events-none",
-          menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full"
-        )}
-        style={{ top: "60px" }}
-      >
-        <nav className="flex flex-col items-start gap-1 text-4xl font-medium w-full pt-20 pointer-events-auto">
-          {navItems.map((item: any, index: number) => (
-            <div
-              key={item.href}
-              className="overflow-hidden"
-            >
-              <Link
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={clsx(
-                  "block opacity-0 hover:opacity-60",
-                  menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
-                )}
-                style={{
-                  animationDelay: menuOpen ? `${0.2 + index * 0.08}s` : "0s",
-                  animationFillMode: "forwards",
-                }}
+      {!loading && navItems.length > 0 && (
+        <div
+          className={clsx(
+            "fixed inset-0 bg-white text-black z-50 flex flex-col items-start px-6 justify-start gap-6 transition-all duration-300 ease-in-out pointer-events-none",
+            menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full"
+          )}
+          style={{ top: "60px" }}
+        >
+          <nav className="flex flex-col items-start gap-1 text-4xl font-medium w-full pt-20 pointer-events-auto">
+            {navItems.map((item: any, index: number) => (
+              <div
+                key={item.href}
+                className="overflow-hidden"
               >
-                {item.label}
-              </Link>
-            </div>
-          ))}
-        </nav>
-        <div className="overflow-hidden mt-6 w-full pointer-events-auto">
-          <Link
-            href="/contact"
-            onClick={() => setMenuOpen(false)}
-            className={clsx(
-              "flex align-center gap-2 text-base font-medium opacity-0 hover:opacity-60",
-              menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
-            )}
-            style={{
-              animationDelay: menuOpen ? `${0.2 + navItems.length * 0.08}s` : "0s",
-              animationFillMode: "forwards",
-            }}
-          >
-            GET IN TOUCH
-            <ButtonWithHoverArrow />
-          </Link>
+                <Link
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={clsx(
+                    "block opacity-0 hover:opacity-60",
+                    menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
+                  )}
+                  style={{
+                    animationDelay: menuOpen ? `${0.2 + index * 0.08}s` : "0s",
+                    animationFillMode: "forwards",
+                  }}
+                >
+                  {item.label}
+                </Link>
+              </div>
+            ))}
+          </nav>
+          <div className="overflow-hidden mt-6 w-full pointer-events-auto">
+            <Link
+              href="/contact"
+              onClick={() => setMenuOpen(false)}
+              className={clsx(
+                "flex align-center gap-2 text-base font-medium opacity-0 hover:opacity-60",
+                menuOpen && "animate-[slideUp_0.4s_ease-out_forwards]"
+              )}
+              style={{
+                animationDelay: menuOpen ? `${0.2 + navItems.length * 0.08}s` : "0s",
+                animationFillMode: "forwards",
+              }}
+            >
+              GET IN TOUCH
+              <ButtonWithHoverArrow />
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
     </>
   );

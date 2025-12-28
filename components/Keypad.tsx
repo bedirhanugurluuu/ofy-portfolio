@@ -1,7 +1,11 @@
 "use client";
 import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
 
-export default function Keypad() {
+interface KeypadProps {
+  onKeyClick?: (keyText: string) => void;
+}
+
+export default function Keypad({ onKeyClick }: KeypadProps) {
   const clickAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -12,10 +16,13 @@ export default function Keypad() {
     }
   }, []);
 
-  const handleKeyClick = () => {
+  const handleKeyClick = (keyText: string) => {
     if (clickAudioRef.current) {
       clickAudioRef.current.currentTime = 0;
       clickAudioRef.current.play().catch(() => {});
+    }
+    if (onKeyClick) {
+      onKeyClick(keyText);
     }
   };
 
@@ -229,7 +236,7 @@ export default function Keypad() {
     },
     { 
       id: 'three', 
-      text: 'create.', 
+      text: 'send.', 
       type: 'double', 
       hue: 0, 
       saturate: 0, 
@@ -276,7 +283,7 @@ export default function Keypad() {
                   key={keyConfig.id}
                   id={keyConfig.id}
                   className={`key keypad__${keyConfig.type} ${keyConfig.left ? 'keypad__single--left' : ''}`}
-                  onClick={handleKeyClick}
+                  onClick={() => handleKeyClick(keyConfig.text)}
                   style={{
                     '--hue': String(keyConfig.hue),
                     '--saturate': String(keyConfig.saturate),

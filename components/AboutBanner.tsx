@@ -33,6 +33,20 @@ export default function AboutBanner() {
   return (
     <section className="relative w-full overflow-hidden px-4 mb-20">
         <div className="aspect-[0.6363636364/1] md:aspect-[2.32/1] " style={{ position: 'relative' }}>
+            {/* Mobile Image - sadece mobile_image varsa göster */}
+            {banner.mobile_image && (
+              <Image
+                  src={normalizeImageUrl(banner.mobile_image)}
+                  alt="About Banner Mobile"
+                  fill
+                  sizes="100vw"
+                  loading="lazy"
+                  unoptimized={isSupabaseImage(normalizeImageUrl(banner.mobile_image))}
+                  className="relative block md:hidden"
+                  style={{ objectFit: "cover" }}
+              />
+            )}
+            {/* Desktop Image - mobile_image varsa md'de göster, yoksa her zaman göster */}
             <Image
                 src={normalizeImageUrl(banner.image)}
                 alt="About Banner"
@@ -40,7 +54,7 @@ export default function AboutBanner() {
                 sizes="100vw"
                 loading="lazy"
                 unoptimized={isSupabaseImage(normalizeImageUrl(banner.image))}
-                className="relative"
+                className={`relative ${banner.mobile_image ? 'hidden md:block' : 'block'}`}
                 style={{ objectFit: "cover" }}
             />
 

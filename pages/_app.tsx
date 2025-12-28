@@ -3,8 +3,11 @@ import Layout from '@/components/Layout'
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
+import Router, { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
   useEffect(() => {
     // Scroll to top on page refresh/load
     if (typeof window !== 'undefined') {
@@ -31,6 +34,33 @@ export default function App({ Component, pageProps }: AppProps) {
         window.removeEventListener('load', handleLoad);
       };
     }
+  }, []);
+
+  useEffect(() => {
+    // Anasayfaya geri dönüldüğünde scroll pozisyonunu sıfırla
+    const handleRouteChangeStart = (url: string) => {
+      if (url === '/' || url === '') {
+        // Anasayfaya dönüleceğinde scroll'u hemen sıfırla
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }
+    };
+
+    const handleRouteChangeComplete = (url: string) => {
+      if (url === '/' || url === '') {
+        // Anasayfaya dönüldüğünde scroll'u tekrar sıfırla (güvence için)
+        setTimeout(() => {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }, 0);
+      }
+    };
+
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
   }, []);
 
   useEffect(() => {
@@ -77,8 +107,9 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   // Maintenance sayfası için Layout kullanma
-  if (Component.displayName === 'MaintenancePage' || 
-      (typeof window !== 'undefined' && window.location.pathname === '/maintenance')) {
+  const isMaintenancePage = Component.displayName === 'MaintenancePage' || router.pathname === '/maintenance';
+  
+  if (isMaintenancePage) {
     return <Component {...pageProps} />;
   }
 

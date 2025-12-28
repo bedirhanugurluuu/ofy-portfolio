@@ -11,6 +11,8 @@
     "analyze": "npm run build:analyze"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
     "@supabase/supabase-js": "^2.55.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@types/node-fetch": "^2.6.13",
@@ -26,7 +28,8 @@
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "split-type": "^0.3.4",
-    "splitting": "^1.1.0"
+    "splitting": "^1.1.0",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.1.6",
@@ -35,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "@types/three": "^0.182.0",
     "cross-env": "^7.0.3",
     "tailwindcss": "^4.1.11",
     "typescript": "^5"

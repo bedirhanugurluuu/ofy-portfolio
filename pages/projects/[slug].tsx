@@ -156,7 +156,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
           <div className="flex flex-col gap-1">
             {project.project_credits.map((credit, index) => (
               <div key={index} className="text-sm font-medium">
-                <span className="opacity-40 mr-2">{credit.role}:</span>{" "}
+                <span className="opacity-40 mr-1">{credit.role}:</span>{" "}
                 <span>{credit.name}</span>
               </div>
             ))}
@@ -175,7 +175,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                 if (i < galleryImages.length) {
                   const image = galleryImages[i];
                   const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
-                  
+
                   rows.push(
                     <div key={i} className="w-full relative aspect-[16/9]">
                       {isVideo ? (

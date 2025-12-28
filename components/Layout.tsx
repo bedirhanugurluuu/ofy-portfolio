@@ -2,8 +2,11 @@
 import Header from "./Header";
 import { ReactNode, useEffect } from "react";
 import Footer from "@/components/Footer";
+import { useRouter } from "next/router";
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const isGalleryPage = router.pathname === '/gallery';
   useEffect(() => {
     // Dynamic favicon based on system theme
     const updateFavicon = () => {
@@ -62,8 +65,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 bg-white z-2 rounded-bl-lg rounded-br-lg">{children}</main>
-      <Footer />
+      <main className={`flex-1 ${isGalleryPage ? 'bg-black' : 'bg-white z-2 rounded-bl-lg rounded-br-lg'}`}>{children}</main>
+      {!isGalleryPage && <Footer />}
     </div>
   );
 }

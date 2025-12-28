@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useImperativeHandle, forwardRef, useEffect } from "react";
 
 interface ContactFormData {
   name: string;
@@ -8,7 +8,11 @@ interface ContactFormData {
   message: string;
 }
 
-export default function ContactForm() {
+export interface ContactFormRef {
+  submit: () => Promise<void>;
+}
+
+const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -18,8 +22,16 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    // Form validasyonu - gerekli alanlar boşsa submit etme
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      return; // Boş form gönderilirse hiçbir şey yapma
+    }
+
     setIsSubmitting(true);
     setSubmitStatus(null);
 
@@ -39,12 +51,50 @@ export default function ContactForm() {
         setSubmitStatus("error");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      // Sadece gerçek hataları logla, 400 gibi beklenen hataları loglama
+      if (error instanceof Error && !error.message.includes('400')) {
+        console.error("Error submitting form:", error);
+      }
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+  }));
+
+  useEffect(() => {
+    // Autofill stillerini ekle
+    const styleId = 'contact-form-autofill-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        /* Autofill için arka plan ve text rengini koru */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+          -webkit-text-fill-color: white !important;
+          -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+          box-shadow: 0 0 0px 1000px transparent inset !important;
+          background-color: transparent !important;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      // Cleanup (optional, but good practice)
+      const style = document.getElementById(styleId);
+      if (style) {
+        style.remove();
+      }
+    };
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,7 +106,7 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 lg:max-w-md">
+    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-xl">
       <div>
         <input
           type="text"
@@ -100,13 +150,6 @@ export default function ContactForm() {
           className="w-full bg-transparent border-b border-white/30 text-white placeholder-white/40 focus:outline-none focus:border-white/60 transition-colors pb-2 text-sm resize-none"
         />
       </div>
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-white text-black py-3 px-6 font-medium text-sm hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? "Sending..." : "Send"}
-      </button>
       {submitStatus === "success" && (
         <p className="text-green-400 text-sm">Message sent successfully!</p>
       )}
@@ -115,5 +158,9 @@ export default function ContactForm() {
       )}
     </form>
   );
-}
+});
+
+ContactForm.displayName = "ContactForm";
+
+export default ContactForm;
 

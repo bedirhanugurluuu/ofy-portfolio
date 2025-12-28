@@ -118,6 +118,7 @@ export interface Service {
 export interface AboutBanner {
   id: string;
   image: string;
+  mobile_image?: string;
   title_desktop: string;
   title_mobile: string;
   button_text: string;
@@ -165,10 +166,6 @@ export interface WhatWeDoContent {
 export interface ContactContent {
   id: string;
   title: string;
-  phone: string;
-  email: string;
-  social_items: Array<{ name: string; link: string }>;
-  image_path?: string;
   created_at: string;
   updated_at: string;
 }

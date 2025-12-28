@@ -1,28 +1,22 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { ContactContent, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
+import React, { useEffect, useRef } from "react";
+import { ContactContent } from "@/lib/api";
 import AnimatedText from "./AnimatedText";
-import gsap from "gsap";
-import Image from "next/image";
 import Keypad from "./Keypad";
-import ContactForm from "./ContactForm";
+import ContactForm, { ContactFormRef } from "./ContactForm";
 
 interface ContactPageProps {
   content: ContactContent;
 }
 
 export default function ContactPage({ content }: ContactPageProps) {
-  const contactRef = useRef<HTMLDivElement>(null);
-  const socialsRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<ContactFormRef>(null);
 
-  useEffect(() => {
-    const tl = gsap.timeline();
-    
-    tl.fromTo([contactRef.current, socialsRef.current], 
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.2, ease: "power2.out" }
-    );
-  }, []);
+  const handleKeypadClick = (keyText: string) => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
 
   useEffect(() => {
     // Grid pattern'i sadece contact sayfasında ekle
@@ -72,113 +66,26 @@ export default function ContactPage({ content }: ContactPageProps) {
     <div className="bg-black text-white">
       <div className="pt-37">
         <div>
-          <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8 px-5">
-            <div>
-                {/* Title */}
-                <div className="mb-45 max-w-[420px]">
-                  <AnimatedText className="text-3xl md:text-4xl font-medium text-white max-w-4xl">
-                    {content.title || "Contact"}
-                  </AnimatedText>
-                </div>
+          {/* Title */}
+          <div className="mb-10 flex justify-center text-center px-5">
+            <AnimatedText className="text-3xl md:text-4xl font-medium text-white max-w-4xl">
+              {content.title || "Contact"}
+            </AnimatedText>
+          </div>
 
-                {/* Contact Info Grid */}
-                <div className="flex flex-wrap gap-4 mb-10">
-                  {/* Contact */}
-                  <div ref={contactRef} className="space-y-4 min-w-[240px]">
-                    <h3 className="text-xs font-medium uppercase tracking-wider mb-1 text-white">
-                      CONTACT
-                    </h3>
-                    <div className="space-y-2">
-                      <a
-                        href={`tel:${content.phone.replace(/\s+/g, '')}`}
-                        className="text-sm opacity-60 hover:opacity-100 font-medium mb-0 block transition-opacity text-white"
-                      >
-                        {content.phone}
-                      </a>
-                      <a
-                        href={`mailto:${content.email.replace(/\s+/g, '')}`}
-                        className="text-sm opacity-60 hover:opacity-100 font-medium mb-0 block transition-opacity text-white"
-                      >
-                        {content.email}
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Socials */}
-                  <div ref={socialsRef} className="space-y-4 min-w-[200px]">
-                    <h3 className="text-xs font-medium uppercase tracking-wider mb-1 text-white">
-                      SOCIALS
-                    </h3>
-                    <div className="space-y-2">
-                      {content.social_items?.map((item, index) => (
-                        <a
-                          key={index}
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity block mb-0 text-white"
-                        >
-                          {item.name}
-                        </a>
-                      )) || (
-                        <>
-                          <a
-                            href="#"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity block mb-0 text-white"
-                          >
-                            Instagram
-                          </a>
-                          <a
-                            href="#"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity block mb-0 text-white"
-                          >
-                            LinkedIn
-                          </a>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+          {/* Form and Keypad Container - Centered */}
+          <div className="flex flex-col gap-8 lg:items-center justify-center px-5">
+            {/* Contact Form */}
+            <div className="lg:mt-0 mt-6 w-full flex justify-center">
+              <ContactForm ref={formRef} />
             </div>
 
-            {/* Form and Keypad Container */}
-            <div className="flex flex-1 flex-col lg:flex-row gap-8 lg:items-center w-full lg:w-auto items-center justify-end">
-              {/* Contact Form */}
-              <div className="lg:mt-0 mt-6 w-full lg:w-[35%]">
-                <ContactForm />
-              </div>
-
-              {/* Keypad */}
-              <div className="lg:mt-0 mt-6 mb-10 lg:mb-0">
-                <Keypad />
-              </div>
+            {/* Keypad */}
+            <div className="lg:mt-0 mt-6 mb-10 lg:mb-0">
+              <Keypad onKeyClick={handleKeypadClick} />
             </div>
           </div>
 
-          {/* Full Width Image */}
-           <div className="relative w-full" style={{ aspectRatio: '3.076923076923077 / 1' }}>
-             {content.image_path ? (
-               <Image
-                 src={normalizeImageUrl(content.image_path)}
-                 alt="Contact"
-                 fill
-                 className="object-cover"
-                 sizes="100vw"
-                 loading="lazy"
-                 placeholder="blur"
-                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                 unoptimized={isSupabaseImage(normalizeImageUrl(content.image_path))}
-               />
-             ) : (
-               <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                 <span className="text-gray-500 text-lg">Contact Image Placeholder</span>
-               </div>
-             )}
-           </div>
         </div>
       </div>
     </div>

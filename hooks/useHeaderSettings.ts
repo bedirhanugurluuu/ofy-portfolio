@@ -15,8 +15,8 @@ const defaultHeaderSettings: HeaderSettings = {
 };
 
 export function useHeaderSettings() {
-  const [settings, setSettings] = useState<HeaderSettings | null>(defaultHeaderSettings);
-  const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState<HeaderSettings | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,8 +31,6 @@ export function useHeaderSettings() {
       } catch (err) {
         console.error('Error fetching header settings:', err);
         setError('Header ayarları yüklenirken bir hata oluştu');
-        // Hata durumunda varsayılan ayarları kullan
-        setSettings(defaultHeaderSettings);
       } finally {
         setLoading(false);
       }

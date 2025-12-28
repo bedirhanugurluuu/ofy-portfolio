@@ -163,16 +163,16 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
             {content.main_title && (
               <AnimatedText
                 as="h1"
-                className="text-3xl md:text-4xl lg:text-5xl font-medium max-w-xl mb-6"
-                delay={0}
+                className="text-3xl md:text-4xl lg:text-5xl font-medium mb-10"
+                delay={0.1}
               >
                 {content.main_title}
               </AnimatedText>
             )}
             <AnimatedText
               as="p"
-              className="text-2xl md:text-3xl font-medium max-w-xl"
-              delay={0.3}
+              className="text-xl md:text-2xl font-medium max-w-xl"
+              delay={0.8}
             >
               {content.main_text}
             </AnimatedText>
