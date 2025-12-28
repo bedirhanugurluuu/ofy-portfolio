@@ -188,7 +188,7 @@ function Scene({
   const [scrollRadius, setScrollRadius] = useState(baseRadius);
   const { gl } = useThree();
   
-  // Mouse wheel event handler
+  // Mouse wheel event handler (desktop)
   useEffect(() => {
     const canvas = gl.domElement;
     if (!canvas) return;
@@ -223,6 +223,72 @@ function Scene({
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, [baseRadius, gl]);
+
+  // Touch pinch-to-zoom handler (mobile) - iki parmakla zoom
+  useEffect(() => {
+    const canvas = gl.domElement;
+    if (!canvas) return;
+
+    let initialDistance = 0;
+    let initialRadius = baseRadius;
+    let isPinching = false;
+    const scrollRadiusRef = { current: scrollRadius };
+
+    // scrollRadius değiştiğinde ref'i güncelle
+    scrollRadiusRef.current = scrollRadius;
+
+    const getDistance = (touch1: Touch, touch2: Touch): number => {
+      const dx = touch2.clientX - touch1.clientX;
+      const dy = touch2.clientY - touch1.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        isPinching = true;
+        initialDistance = getDistance(e.touches[0], e.touches[1]);
+        initialRadius = scrollRadiusRef.current; // Mevcut radius'u başlangıç olarak al
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && isPinching) {
+        e.preventDefault();
+        const currentDistance = getDistance(e.touches[0], e.touches[1]);
+        
+        // Pinch mesafesi değişimini hesapla (zoom faktörü)
+        const scale = currentDistance / initialDistance;
+        
+        // Radius'u scale'e göre güncelle (initial radius'tan başla)
+        const newRadius = initialRadius * scale;
+        const clampedRadius = Math.max(
+          baseRadius, 
+          Math.min(baseRadius + 12, newRadius)
+        );
+        
+        setScrollRadius(clampedRadius);
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) {
+        isPinching = false;
+      }
+    };
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+    canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+      canvas.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, [baseRadius, gl]); // scrollRadius'u dependency'den çıkardık, ref kullanıyoruz
 
   // Fibonacci sphere algorithm
   const angles = useMemo(() => {
@@ -452,9 +518,9 @@ export default function GalleryPage({ images: initialImages = [] }: GalleryProps
 function isVideoFile(url: string): boolean {
   if (!url) return false;
   const lowerUrl = url.toLowerCase();
-  return lowerUrl.endsWith('.mp4') || 
-         lowerUrl.endsWith('.webm') || 
-         lowerUrl.endsWith('.mov') || 
+  return lowerUrl.endsWith('.mp4') ||
+         lowerUrl.endsWith('.webm') ||
+         lowerUrl.endsWith('.mov') ||
          lowerUrl.endsWith('.avi') ||
          lowerUrl.includes('.mp4') ||
          lowerUrl.includes('.webm');
@@ -501,9 +567,9 @@ export const getStaticProps: GetStaticProps = async () => {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
           
-          // İlk 2 görseli al (veya mevcut kadarsa)
+          // İlk 3 görseli al (veya mevcut kadarsa)
           const selectedImages = shuffled.slice(0, Math.min(3, shuffled.length));
-          
+
           for (const galleryImage of selectedImages) {
             allImages.push({
               id: `project-${project.id}-gallery-${imageIndex++}`,
@@ -515,7 +581,7 @@ export const getStaticProps: GetStaticProps = async () => {
         console.error(`Error fetching gallery for project ${project.id}:`, error);
       }
     }
-    
+
     return {
       props: {
         images: allImages.map(item => ({
