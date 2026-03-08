@@ -210,7 +210,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
                 preserveDisplay={true}
                 >
                   <div className="flex-important justify-between gap-2" style={{ display: 'flex !important' }}>
-                    <span className="opacity-50">{article.photos_label || 'PHOTOS'}</span> <span className="font-medium">{article.photographer}</span>
+                    <span className="opacity-50">{article.photos_label || 'Photos'}</span> <span className="font-medium">{article.photographer}</span>
                   </div>
                 </AnimatedText>
               </div>
