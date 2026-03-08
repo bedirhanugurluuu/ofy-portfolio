@@ -91,6 +91,7 @@ export interface News {
   category_text?: string;
   photographer?: string;
   published_at?: string;
+  photos_label?: string;
   slug: string;
   is_featured: boolean;
   featured_order?: number;

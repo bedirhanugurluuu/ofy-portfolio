@@ -22,6 +22,7 @@ interface News {
   is_featured?: boolean;
   featured_order?: number;
   published_at: string;
+  photos_label?: string;
   created_at: string;
   updated_at: string;
 }
@@ -209,7 +210,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
                 preserveDisplay={true}
                 >
                   <div className="flex-important justify-between gap-2" style={{ display: 'flex !important' }}>
-                    <span className="opacity-50">PHOTOS</span> <span className="font-medium">{article.photographer}</span>
+                    <span className="opacity-50">{article.photos_label || 'PHOTOS'}</span> <span className="font-medium">{article.photographer}</span>
                   </div>
                 </AnimatedText>
               </div>

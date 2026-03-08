@@ -18,6 +18,7 @@ interface News {
   is_featured?: boolean;
   featured_order?: number;
   published_at: string;
+  photos_label?: string;
   created_at: string;
   updated_at: string;
 }
