@@ -555,7 +555,9 @@ export const getStaticProps: GetStaticProps = async () => {
       // Gallery'den random 2 görsel seç
       try {
         const galleryImages = await fetchProjectGallery(project.id);
-        const imageGalleryImages = galleryImages.filter(img => img && isImageFile(img));
+        const imageGalleryImages = galleryImages
+          .map((img) => img.image_path)
+          .filter(img => img && isImageFile(img));
         
         if (imageGalleryImages.length > 0) {
           // Random shuffle (Fisher-Yates)

@@ -4,17 +4,29 @@ import AnimatedText from "@/components/AnimatedText";
 import ButtonWithHoverArrow from "@/components/ButtonWithHoverArrow";
 import Link from "next/link";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project, isSupabaseImage } from "@/lib/api";
+import { fetchProjectBySlugSSR, fetchProjectsSSR, fetchProjectGallery, normalizeImageUrl, Project, ProjectGalleryItem, isSupabaseImage } from "@/lib/api";
 import SEO from "@/components/SEO";
 
 interface ProjectDetailProps {
   project: Project | null;
   moreProjects: Project[];
-  galleryImages: string[];
+  galleryImages: ProjectGalleryItem[];
 }
+
+const getLayoutTypeFromPath = (path: string) => {
+  const normalized = (path || "").toLowerCase();
+  if (normalized.includes("project-gallery-horizontal-")) return "horizontal";
+  if (normalized.includes("project-gallery-vertical-")) return "vertical";
+  return "legacy";
+};
 
 export default function ProjectDetail({ project, moreProjects, galleryImages }: ProjectDetailProps) {
   if (!project) return <p>Project not found.</p>;
+  const hasTaggedLayoutImages = galleryImages.some((item) => {
+    const t = getLayoutTypeFromPath(item.image_path);
+    return t === "horizontal" || t === "vertical";
+  });
+  const shouldUseNewLayout = Boolean(project.use_new_gallery_layout) || hasTaggedLayoutImages;
 
   // Schema for project detail page
   const schema = {
@@ -169,11 +181,186 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
         <section className="px-5 pb-20">
           <div className="flex flex-col gap-5">
             {(() => {
+              if (shouldUseNewLayout) {
+                const taggedItems = [...galleryImages]
+                  .filter((item) => {
+                    const t = getLayoutTypeFromPath(item.image_path);
+                    return t === "horizontal" || t === "vertical";
+                  })
+                  .sort((a, b) => (a.sort || 0) - (b.sort || 0));
+                const rows = [];
+                const bySort = new Map<number, ProjectGalleryItem>();
+                taggedItems.forEach((item) => bySort.set(item.sort || 0, item));
+                const verticalPairStarts = Array.from(
+                  new Set(
+                    taggedItems
+                      .filter((item) => getLayoutTypeFromPath(item.image_path) === "vertical")
+                      .map((item) => {
+                        const sort = item.sort || 0;
+                        const pairStart = sort % 2 === 0 ? sort : sort - 1;
+                        return pairStart >= 2 ? pairStart : 2;
+                      })
+                  )
+                ).sort((a, b) => a - b);
+                const verticalPairStartSet = new Set(verticalPairStarts);
+                const maxTaggedSort = taggedItems.length ? Math.max(...taggedItems.map((item) => item.sort || 0)) : 0;
+
+                // Order 0: horizontal slot
+                if (bySort.has(0)) {
+                  const horizontalItem = bySort.get(0) as ProjectGalleryItem;
+                  const image = horizontalItem.image_path;
+                  const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
+                  rows.push(
+                    <div key={`h-0`} className="w-full relative aspect-[16/9]">
+                      {isVideo ? (
+                        <video
+                          src={normalizeImageUrl(image)}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls={false}
+                          className="w-full object-cover"
+                        />
+                      ) : (
+                        <Image
+                          src={normalizeImageUrl(image)}
+                          alt={`Gallery image 1`}
+                          fill
+                          className="object-cover"
+                          sizes="100vw"
+                          unoptimized={isSupabaseImage(normalizeImageUrl(image))}
+                        />
+                      )}
+                    </div>
+                  );
+                }
+
+                // Order-based flow: keep horizontal/vertical blocks in true sort order
+                for (let order = 1; order <= maxTaggedSort; order += 1) {
+                  const current = bySort.get(order);
+                  const currentType = current ? getLayoutTypeFromPath(current.image_path) : null;
+
+                  if (current && currentType === "horizontal") {
+                    const image = current.image_path;
+                    const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
+                    rows.push(
+                      <div key={`h-${order}`} className="w-full relative aspect-[16/9]">
+                        {isVideo ? (
+                          <video
+                            src={normalizeImageUrl(image)}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            controls={false}
+                            className="w-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={normalizeImageUrl(image)}
+                            alt={`Gallery image ${order + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="100vw"
+                            unoptimized={isSupabaseImage(normalizeImageUrl(image))}
+                          />
+                        )}
+                      </div>
+                    );
+                    continue;
+                  }
+
+                  if (order % 2 === 0 && verticalPairStartSet.has(order)) {
+                    const leftCandidate = bySort.get(order);
+                    const rightCandidate = bySort.get(order + 1);
+                    const leftItem =
+                      leftCandidate && getLayoutTypeFromPath(leftCandidate.image_path) === "vertical"
+                        ? leftCandidate
+                        : null;
+                    const rightItem =
+                      rightCandidate && getLayoutTypeFromPath(rightCandidate.image_path) === "vertical"
+                        ? rightCandidate
+                        : null;
+                    if (!leftItem && !rightItem) continue;
+
+                    const leftImage = leftItem?.image_path || "";
+                    const rightImage = rightItem?.image_path || "";
+                    const isLeftVideo = leftImage.toLowerCase().endsWith('.mp4') || leftImage.toLowerCase().endsWith('.webm');
+                    const isRightVideo = rightImage.toLowerCase().endsWith('.mp4') || rightImage.toLowerCase().endsWith('.webm');
+
+                    rows.push(
+                      <div key={`v-${order}`} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {leftItem ? (
+                          <div className="relative aspect-[3/4]">
+                            {isLeftVideo ? (
+                              <video
+                                src={normalizeImageUrl(leftImage)}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full object-cover h-full"
+                              />
+                            ) : (
+                              <Image
+                                src={normalizeImageUrl(leftImage)}
+                                alt={`Gallery image ${order + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                unoptimized={isSupabaseImage(normalizeImageUrl(leftImage))}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <div className="relative aspect-[3/4]" />
+                        )}
+
+                        {rightItem ? (
+                          <div className="relative aspect-[3/4]">
+                            {isRightVideo ? (
+                              <video
+                                src={normalizeImageUrl(rightImage)}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full object-cover h-full"
+                              />
+                            ) : (
+                              <Image
+                                src={normalizeImageUrl(rightImage)}
+                                alt={`Gallery image ${order + 2}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                unoptimized={isSupabaseImage(normalizeImageUrl(rightImage))}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <div className="relative aspect-[3/4]" />
+                        )}
+                      </div>
+                    );
+                  }
+                }
+
+                if (rows.length === 0) {
+                  return null;
+                }
+
+                return rows;
+              }
+
               const rows = [];
-              for (let i = 0; i < galleryImages.length; i += 3) {
-                // İlk resim (tek başına)
-                if (i < galleryImages.length) {
-                  const image = galleryImages[i];
+              const legacyImages = galleryImages
+                .filter((item) => getLayoutTypeFromPath(item.image_path) === "legacy")
+                .map((item) => item.image_path);
+              for (let i = 0; i < legacyImages.length; i += 3) {
+                if (i < legacyImages.length) {
+                  const image = legacyImages[i];
                   const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
 
                   rows.push(
@@ -201,14 +388,13 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                     </div>
                   );
                 }
-                
-                // Sonraki 2 resim (yan yana)
-                if (i + 1 < galleryImages.length) {
-                  const secondImage = galleryImages[i + 1];
-                  const thirdImage = galleryImages[i + 2];
+
+                if (i + 1 < legacyImages.length) {
+                  const secondImage = legacyImages[i + 1];
+                  const thirdImage = legacyImages[i + 2];
                   const isSecondVideo = secondImage.toLowerCase().endsWith('.mp4') || secondImage.toLowerCase().endsWith('.webm');
                   const isThirdVideo = thirdImage && (thirdImage.toLowerCase().endsWith('.mp4') || thirdImage.toLowerCase().endsWith('.webm'));
-                  
+
                   rows.push(
                     <div key={`${i}-pair`} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="relative aspect-[3/4]">

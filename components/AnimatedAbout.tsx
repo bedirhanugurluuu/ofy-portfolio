@@ -335,9 +335,6 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
          />
        )}
 
-       {/* About Gallery Section */}
-       <AboutGallery images={galleryImages} />
-
         {/* Clients & Industries Section */}
         {content.clients_title && (
           <ClientsIndustriesSection
@@ -348,8 +345,11 @@ export default function AnimatedAbout({ initialContent, sliderItems = [], whatWe
           />
         )}
 
-        {/* Slider Section */}
-        <SliderSection sliderItems={sliderItems} />
+        {/* About Gallery Section */}
+        <AboutGallery images={galleryImages} />
+
+        {/* Slider Section
+        <SliderSection sliderItems={sliderItems} /> */}
 
         {/* What We Do Section */}
         {whatWeDoContent && (

@@ -21,8 +21,14 @@ export interface Project {
   subtitle_color?: string; // Subtitle rengi
   hide_subtitle?: boolean; // Subtitle'ı gizle (opacity-0)
   project_credits?: Array<{ role: string; name: string }>; // Projede ismi geçen kişiler
+  use_new_gallery_layout?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProjectGalleryItem {
+  image_path: string;
+  sort: number | null;
 }
 
 export interface IntroBanner {
@@ -266,15 +272,15 @@ export async function fetchProjectBySlug(slug: string): Promise<Project | null> 
   return data as Project;
 }
 
-export async function fetchProjectGallery(projectId: string): Promise<string[]> {
+export async function fetchProjectGallery(projectId: string): Promise<ProjectGalleryItem[]> {
   const { data, error } = await supabase
     .from('project_gallery')
-    .select('image_path')
+    .select('image_path, sort')
     .eq('project_id', projectId)
     .order('sort', { ascending: true });
 
   if (error) throw error;
-  return data?.map(item => item.image_path) || [];
+  return data || [];
 }
 
 export async function fetchIntroBanners(): Promise<IntroBanner[]> {

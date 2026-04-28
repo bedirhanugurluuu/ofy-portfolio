@@ -68,7 +68,7 @@ export default function ContactPage({ content }: ContactPageProps) {
         <div>
           {/* Title */}
           <div className="mb-10 flex justify-center text-center px-5">
-            <AnimatedText className="text-3xl md:text-4xl font-medium text-white max-w-4xl">
+            <AnimatedText className="text-3xl md:text-4xl font-medium text-white max-w-lg">
               {content.title || "Contact"}
             </AnimatedText>
           </div>
