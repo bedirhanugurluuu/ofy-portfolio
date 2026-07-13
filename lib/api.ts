@@ -29,6 +29,7 @@ export interface Project {
 export interface ProjectGalleryItem {
   image_path: string;
   sort: number | null;
+  is_fullpage?: boolean;
 }
 
 export interface IntroBanner {
@@ -275,7 +276,7 @@ export async function fetchProjectBySlug(slug: string): Promise<Project | null> 
 export async function fetchProjectGallery(projectId: string): Promise<ProjectGalleryItem[]> {
   const { data, error } = await supabase
     .from('project_gallery')
-    .select('image_path, sort')
+    .select('image_path, sort, is_fullpage')
     .eq('project_id', projectId)
     .order('sort', { ascending: true });
 

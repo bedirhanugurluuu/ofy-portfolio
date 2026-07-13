@@ -357,14 +357,16 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
               const rows = [];
               const legacyImages = galleryImages
                 .filter((item) => getLayoutTypeFromPath(item.image_path) === "legacy")
-                .map((item) => item.image_path);
+                .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
               for (let i = 0; i < legacyImages.length; i += 3) {
                 if (i < legacyImages.length) {
-                  const image = legacyImages[i];
+                  const firstItem = legacyImages[i];
+                  const image = firstItem.image_path;
+                  const isFullpage = Boolean(firstItem.is_fullpage);
                   const isVideo = image.toLowerCase().endsWith('.mp4') || image.toLowerCase().endsWith('.webm');
 
                   rows.push(
-                    <div key={i} className="w-full relative aspect-[16/9]">
+                    <div key={i} className={`w-full relative${isFullpage ? "" : " aspect-[16/9]"}`}>
                       {isVideo ? (
                         <video
                           src={normalizeImageUrl(image)}
@@ -373,8 +375,19 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                           muted
                           playsInline
                           controls={false}
-                          className="w-full object-cover"
+                          className={isFullpage ? "w-full h-auto" : "w-full object-cover"}
                         />
+                        ) : isFullpage ? (
+                          // Native img: Next/Image width=0 height=0 can decode at low resolution
+                          <img
+                            src={normalizeImageUrl(image)}
+                            alt={`Gallery image ${i + 1}`}
+                            className="block w-full h-auto max-w-none"
+                            loading={i === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            fetchPriority={i === 0 ? "high" : "auto"}
+                            style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
+                          />
                         ) : (
                           <Image
                             src={normalizeImageUrl(image)}
@@ -390,8 +403,8 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                 }
 
                 if (i + 1 < legacyImages.length) {
-                  const secondImage = legacyImages[i + 1];
-                  const thirdImage = legacyImages[i + 2];
+                  const secondImage = legacyImages[i + 1].image_path;
+                  const thirdImage = legacyImages[i + 2]?.image_path;
                   const isSecondVideo = secondImage.toLowerCase().endsWith('.mp4') || secondImage.toLowerCase().endsWith('.webm');
                   const isThirdVideo = thirdImage && (thirdImage.toLowerCase().endsWith('.mp4') || thirdImage.toLowerCase().endsWith('.webm'));
 
