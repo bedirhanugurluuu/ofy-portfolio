@@ -113,8 +113,13 @@ export default function App({ Component, pageProps }: AppProps) {
     return <Component {...pageProps} />;
   }
 
+  const pageFlags = Component as typeof Component & {
+    darkMain?: boolean;
+    hideFooter?: boolean;
+  };
+
   return (
-    <Layout>
+    <Layout darkMain={Boolean(pageFlags.darkMain)} hideFooter={Boolean(pageFlags.hideFooter)}>
       <Component {...pageProps} />
     </Layout>
   );

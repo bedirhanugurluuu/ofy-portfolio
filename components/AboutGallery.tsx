@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoScroll from "embla-carousel-auto-scroll";
 import { AboutGalleryImage, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
 
 interface AboutGalleryProps {
@@ -8,62 +10,52 @@ interface AboutGalleryProps {
 }
 
 export default function AboutGallery({ images }: AboutGalleryProps) {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const animationRef = useRef<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (images.length === 0) return;
-
-         const animate = () => {
-       setScrollPosition((prev) => {
-         const newPosition = prev + 0.5; // 0.5px at a time for slower movement
-         const maxScroll = images.length * 470; // Total width of all images
-         return newPosition >= maxScroll ? 0 : newPosition;
-       });
-       animationRef.current = requestAnimationFrame(animate);
-     };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [images.length]);
+  const [emblaRef] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      watchDrag: false,
+      containScroll: false,
+    },
+    [
+      AutoScroll({
+        speed: 0.6,
+        startDelay: 0,
+        stopOnInteraction: false,
+        stopOnMouseEnter: false,
+        stopOnFocusIn: false,
+      }),
+    ]
+  );
 
   if (images.length === 0) return null;
 
+  // Loop'un her zaman dolu görünmesi için yeterli slide oluştur (panel verisi değişmez)
+  const slides =
+    images.length >= 8
+      ? images
+      : Array.from({ length: Math.ceil(8 / images.length) }, () => images).flat();
+
   return (
     <section className="w-full py-10 md:py-20">
-      <div>
-        <div className="flex justify-center">
-          <div className="relative overflow-hidden">
+      <div className="overflow-hidden select-none pointer-events-none" ref={emblaRef}>
+        <div className="flex">
+          {slides.map((image, index) => (
             <div
-              className="flex"
-              style={{
-                transform: `translateX(-${scrollPosition}px)`,
-                gap: '10px'
-              }}
+              key={`${image.id}-${index}`}
+              className="relative w-[280px] md:w-[450px] h-[324px] md:h-[520px] flex-shrink-0 min-w-0 mr-[10px]"
             >
-              {/* Duplicate images for seamless loop */}
-              {[...images, ...images].map((image, index) => (
-                <div
-                  key={`${image.id}-${index}`}
-                  className="relative w-[280px] md:w-[450px] h-[324px] md:h-[520px] flex-shrink-0"
-                >
-                  <Image
-                    src={normalizeImageUrl(image.image_path)}
-                    alt={`Gallery image ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="450px"
-                    unoptimized={isSupabaseImage(normalizeImageUrl(image.image_path))}
-                  />
-                </div>
-              ))}
+              <Image
+                src={normalizeImageUrl(image.image_path)}
+                alt={`Gallery image ${(index % images.length) + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 280px, 450px"
+                draggable={false}
+                unoptimized={isSupabaseImage(normalizeImageUrl(image.image_path))}
+              />
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

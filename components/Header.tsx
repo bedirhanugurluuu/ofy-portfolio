@@ -69,7 +69,7 @@ export default function Header() {
     <>
       <header
         className={clsx(
-          "fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300",
+          "fixed top-0 left-0 w-full z-50 px-5 py-4 flex justify-between items-center transition-all duration-300",
           isContactPage
             ? "bg-transparent text-white"
             : scrolled || menuOpen || isDarkText

@@ -314,7 +314,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                             )}
                           </div>
                         ) : (
-                          <div className="relative aspect-[3/4]" />
+                          <div className="relative aspect-[3/4] hidden md:block" aria-hidden />
                         )}
 
                         {rightItem ? (
@@ -340,7 +340,7 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
                             )}
                           </div>
                         ) : (
-                          <div className="relative aspect-[3/4]" />
+                          <div className="relative aspect-[3/4] hidden md:block" aria-hidden />
                         )}
                       </div>
                     );

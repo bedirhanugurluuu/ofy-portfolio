@@ -443,7 +443,7 @@ function GalleryLoader() {
   );
 }
 
-export default function GalleryPage({ images: initialImages = [] }: GalleryProps) {
+function GalleryPage({ images: initialImages = [] }: GalleryProps) {
   const [images, setImages] = useState<GalleryImageItem[]>(initialImages);
   const [canShowCanvas, setCanShowCanvas] = useState(false);
 
@@ -511,6 +511,11 @@ export default function GalleryPage({ images: initialImages = [] }: GalleryProps
     </>
   );
 }
+
+GalleryPage.darkMain = true;
+GalleryPage.hideFooter = true;
+
+export default GalleryPage;
 
 // Helper functions (same as before)
 function isVideoFile(url: string): boolean {

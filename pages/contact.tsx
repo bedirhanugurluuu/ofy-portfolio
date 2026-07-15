@@ -8,7 +8,7 @@ interface ContactPageProps {
   contactContent: ContactContent;
 }
 
-export default function Contact({ contactContent }: ContactPageProps) {
+function Contact({ contactContent }: ContactPageProps) {
   // Schema for contact page
   const schema = {
     "@context": "https://schema.org",
@@ -30,6 +30,10 @@ export default function Contact({ contactContent }: ContactPageProps) {
     </>
   );
 }
+
+Contact.darkMain = true;
+
+export default Contact;
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
