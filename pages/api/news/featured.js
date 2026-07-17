@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     try {
       const { data, error } = await supabase
         .from('news')
-        .select('*')
+        .select('*, news_images(*)')
         .eq('featured', true)
         .order('created_at', { ascending: false });
 

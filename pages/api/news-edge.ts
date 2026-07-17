@@ -29,7 +29,7 @@ export default async function handler(req: Request) {
     try {
       const { data, error } = await supabase
         .from('news')
-        .select('*')
+        .select('*, news_images(*)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;

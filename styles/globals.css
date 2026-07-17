@@ -140,9 +140,15 @@ nav a, nav span {
 
 .blog-content p {
   margin-top: 20px;
-  font-size: 1.063rem;
-  line-height: 19px;
+  font-size: 16px;
+  line-height: 22px;
   color: #000;
+  text-align: left;
+}
+
+.blog-content .blog-align-right {
+  display: block;
+  text-align: right;
 }
 
 .blog-content ul {

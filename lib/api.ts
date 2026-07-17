@@ -91,17 +91,20 @@ export interface AboutContent {
 export interface News {
   id: string;
   title: string;
-  subtitle: string;
   content: string;
-  image_path?: string;
-  aspect_ratio?: string;
-  category_text?: string;
-  photographer?: string;
-  published_at?: string;
-  photos_label?: string;
   slug: string;
-  is_featured: boolean;
-  featured_order?: number;
+  aspect_ratio: string;
+  featured: boolean;
+  news_images: NewsImage[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NewsImage {
+  id: string;
+  news_id: string;
+  image_path: string;
+  order_index: number;
   created_at: string;
   updated_at: string;
 }
@@ -326,11 +329,11 @@ export async function fetchAboutGallery(): Promise<AboutGalleryImage[]> {
 export async function fetchNews(): Promise<News[]> {
   const { data, error } = await supabase
     .from('news')
-    .select('*')
+    .select('*, news_images(*)')
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return sortNewsImages(data || []);
 }
 
 export async function fetchServices(): Promise<Service[]> {
@@ -408,23 +411,32 @@ export async function updateFooter(footer: Partial<Footer>): Promise<Footer | nu
 export async function fetchFeaturedNews(): Promise<News[]> {
   const { data, error } = await supabase
     .from('news')
-    .select('*')
+    .select('*, news_images(*)')
     .eq('featured', true)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return sortNewsImages(data || []);
 }
 
 export async function fetchNewsBySlug(slug: string): Promise<News | null> {
   const { data, error } = await supabase
     .from('news')
-    .select('*')
+    .select('*, news_images(*)')
     .eq('slug', slug)
     .single();
 
   if (error) throw error;
-  return data;
+  return sortNewsImages([data])[0] || null;
+}
+
+function sortNewsImages(news: News[]): News[] {
+  return news.map((article) => ({
+    ...article,
+    news_images: [...(article.news_images || [])].sort(
+      (a, b) => a.order_index - b.order_index
+    ),
+  }));
 }
 
 export async function fetchSlider(): Promise<SliderItem[]> {

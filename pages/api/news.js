@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     try {
       const { data, error } = await supabase
         .from('news')
-        .select('*')
+        .select('*, news_images(*)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -32,9 +32,10 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
+      const { title, content = '', slug, aspect_ratio = 'aspect-square', featured = false } = req.body;
       const { data, error } = await supabase
         .from('news')
-        .insert([req.body])
+        .insert([{ title, content, slug, aspect_ratio, featured }])
         .select()
         .single();
 
@@ -47,10 +48,14 @@ export default async function handler(req, res) {
   } else if (req.method === 'PUT') {
     try {
       const { id } = req.query;
+      const allowedFields = ['title', 'content', 'slug', 'aspect_ratio', 'featured'];
+      const updates = Object.fromEntries(
+        Object.entries(req.body).filter(([key]) => allowedFields.includes(key))
+      );
       const { data, error } = await supabase
         .from('news')
         .update({
-          ...req.body,
+          ...updates,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)

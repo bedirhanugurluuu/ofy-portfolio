@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     try {
       const { data, error } = await supabase
         .from('news')
-        .select('*')
+        .select('*, news_images(*)')
         .eq('slug', slug)
         .single();
 
