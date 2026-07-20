@@ -42,10 +42,16 @@ export default function Document() {
         <link rel="prefetch" href="/about" />
         <link rel="prefetch" href="/projects" />
         
-        {/* Favicon - will be updated dynamically by JavaScript */}
-        <link id="favicon" rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link id="favicon-png" rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
-        <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
+        {/* Favicon (actual file is 32x32) */}
+        <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+
+        {/* Google Search Console */}
+        <meta
+          name="google-site-verification"
+          content="8pOnNrCZirtFwBibOHILE1rlpC4DvkxpahapQHa-zfE"
+        />
         
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />

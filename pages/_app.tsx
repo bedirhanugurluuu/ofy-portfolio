@@ -4,6 +4,16 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import Router, { useRouter } from 'next/router'
+import Script from 'next/script'
+
+const GA_MEASUREMENT_ID = 'G-HT5RMQVJJS'
+
+declare global {
+  interface Window {
+    dataLayer: unknown[]
+    gtag: (...args: unknown[]) => void
+  }
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -52,6 +62,12 @@ export default function App({ Component, pageProps }: AppProps) {
           window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         }, 0);
       }
+
+      if (typeof window.gtag === 'function') {
+        window.gtag('config', GA_MEASUREMENT_ID, {
+          page_path: url,
+        });
+      }
     };
 
     Router.events.on('routeChangeStart', handleRouteChangeStart);
@@ -92,8 +108,22 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <Layout darkMain={Boolean(pageFlags.darkMain)} hideFooter={Boolean(pageFlags.hideFooter)}>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_MEASUREMENT_ID}');
+        `}
+      </Script>
+      <Layout darkMain={Boolean(pageFlags.darkMain)} hideFooter={Boolean(pageFlags.hideFooter)}>
+        <Component {...pageProps} />
+      </Layout>
+    </>
   );
 }

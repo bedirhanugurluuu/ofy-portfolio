@@ -14,13 +14,26 @@ export function getClientIp(req: NextApiRequest): string {
   return req.socket.remoteAddress || 'unknown';
 }
 
-export function setCorsHeaders(req: NextApiRequest, res: NextApiResponse) {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
+export function getAllowedOrigins(): string[] {
+  const extra = (process.env.ADMIN_PANEL_ORIGINS || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  return [
     SITE_URL,
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://ofy-admin.vercel.app',
+    ...extra,
   ];
+}
+
+export function setCorsHeaders(req: NextApiRequest, res: NextApiResponse) {
+  const origin = req.headers.origin;
+  const allowedOrigins = getAllowedOrigins();
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
