@@ -1,31 +1,62 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../lib/supabase';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import {
+  handleOptions,
+  rateLimit,
+  setCorsHeaders,
+  verifyAdminSecret,
+} from '../../lib/api-security';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  setCorsHeaders(req, res);
+  if (handleOptions(req, res)) return;
+
   if (req.method === 'GET') {
-    // IP listesini getir
     try {
       const { data, error } = await supabase
         .from('allowed_ips')
-        .select('*')
+        .select('ip_address')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      res.status(200).json({ success: true, data });
+      res.status(200).json({
+        success: true,
+        data: data.map((item) => ({ ip_address: item.ip_address })),
+      });
     } catch (error) {
       console.error('Error fetching IPs:', error);
       res.status(500).json({ success: false, error: 'Failed to fetch IPs' });
     }
-  } 
-  else if (req.method === 'POST') {
-    // Yeni IP ekle
+    return;
+  }
+
+  if (!verifyAdminSecret(req)) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  if (
+    rateLimit(req, res, {
+      key: 'ip-whitelist-admin',
+      limit: 20,
+      windowMs: 60 * 1000,
+    })
+  ) {
+    return;
+  }
+
+  if (req.method === 'POST') {
     try {
       const { ip_address, description } = req.body;
 
       if (!ip_address) {
-        return res.status(400).json({ success: false, error: 'IP address is required' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'IP address is required' });
       }
 
       const { data, error } = await supabase
@@ -41,20 +72,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error adding IP:', error);
       res.status(500).json({ success: false, error: 'Failed to add IP' });
     }
+    return;
   }
-  else if (req.method === 'DELETE') {
-    // IP sil
+
+  if (req.method === 'DELETE') {
     try {
       const { id } = req.query;
 
       if (!id) {
-        return res.status(400).json({ success: false, error: 'IP ID is required' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'IP ID is required' });
       }
 
-      const { error } = await supabase
-        .from('allowed_ips')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('allowed_ips').delete().eq('id', id);
 
       if (error) throw error;
 
@@ -63,9 +94,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error deleting IP:', error);
       res.status(500).json({ success: false, error: 'Failed to delete IP' });
     }
+    return;
   }
-  else {
-    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-    res.status(405).json({ success: false, error: 'Method not allowed' });
-  }
+
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+  res.status(405).json({ success: false, error: 'Method not allowed' });
 }

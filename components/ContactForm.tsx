@@ -12,6 +12,17 @@ export interface ContactFormRef {
   submit: () => Promise<void>;
 }
 
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (callback: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
+  }
+}
+
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
 const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -22,26 +33,56 @@ const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
 
+  useEffect(() => {
+    if (!RECAPTCHA_SITE_KEY || document.getElementById("recaptcha-script")) {
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "recaptcha-script";
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
+  const getRecaptchaToken = async (): Promise<string | undefined> => {
+    if (!RECAPTCHA_SITE_KEY || !window.grecaptcha) {
+      return undefined;
+    }
+
+    await new Promise<void>((resolve) => {
+      window.grecaptcha!.ready(resolve);
+    });
+
+    return window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+      action: "contact_form",
+    });
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault();
     }
 
-    // Form validasyonu - gerekli alanlar boşsa submit etme
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      return; // Boş form gönderilirse hiçbir şey yapma
+      return;
     }
 
     setIsSubmitting(true);
     setSubmitStatus(null);
 
     try {
+      const recaptchaToken = await getRecaptchaToken();
+
       const response = await fetch("/api/contact-form", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
       });
 
       if (response.ok) {
@@ -51,8 +92,7 @@ const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
         setSubmitStatus("error");
       }
     } catch (error) {
-      // Sadece gerçek hataları logla, 400 gibi beklenen hataları loglama
-      if (error instanceof Error && !error.message.includes('400')) {
+      if (error instanceof Error && !error.message.includes("400")) {
         console.error("Error submitting form:", error);
       }
       setSubmitStatus("error");
@@ -66,13 +106,11 @@ const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
   }));
 
   useEffect(() => {
-    // Autofill stillerini ekle
-    const styleId = 'contact-form-autofill-styles';
+    const styleId = "contact-form-autofill-styles";
     if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.id = styleId;
       style.textContent = `
-        /* Autofill için arka plan ve text rengini koru */
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
@@ -88,7 +126,6 @@ const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
     }
 
     return () => {
-      // Cleanup (optional, but good practice)
       const style = document.getElementById(styleId);
       if (style) {
         style.remove();
@@ -163,4 +200,3 @@ const ContactForm = forwardRef<ContactFormRef>((props, ref) => {
 ContactForm.displayName = "ContactForm";
 
 export default ContactForm;
-

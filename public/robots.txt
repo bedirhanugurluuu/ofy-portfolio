@@ -1,23 +1,9 @@
 User-agent: *
 Allow: /
 
-# Sitemap
 Sitemap: https://farukyilmaz.com/sitemap.xml
 
-# Crawl-delay
-Crawl-delay: 1
-
-# Disallow admin panel
 Disallow: /admin/
 Disallow: /admin-panel/
-
-# Allow important pages
-Allow: /about
-Allow: /projects
-Allow: /blog
-Allow: /contact
-
-# Allow API endpoints for SEO
-Allow: /api/projects
-Allow: /api/news
-Allow: /api/about
+Disallow: /api/
+Disallow: /maintenance

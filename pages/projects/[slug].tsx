@@ -21,7 +21,7 @@ const getLayoutTypeFromPath = (path: string) => {
 };
 
 export default function ProjectDetail({ project, moreProjects, galleryImages }: ProjectDetailProps) {
-  if (!project) return <p>Project not found.</p>;
+  if (!project) return null;
   const hasTaggedLayoutImages = galleryImages.some((item) => {
     const t = getLayoutTypeFromPath(item.image_path);
     return t === "horizontal" || t === "vertical";
@@ -34,7 +34,9 @@ export default function ProjectDetail({ project, moreProjects, galleryImages }: 
     "@type": "CreativeWork",
     "name": project.title,
     "description": project.subtitle,
-    "image": project.banner_media ? normalizeImageUrl(project.banner_media) : null,
+    ...(project.banner_media
+      ? { image: normalizeImageUrl(project.banner_media) }
+      : {}),
     "creator": {
       "@type": "Organization",
       "name": "OFY"
@@ -577,6 +579,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
     
     // Gallery images'ı parallel fetch et
     const galleryImages = project ? await fetchProjectGallery(project.id) : [];
+
+    if (!project) {
+      return { notFound: true };
+    }
 
     return {
       props: {

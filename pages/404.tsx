@@ -15,10 +15,10 @@ export default function Custom404() {
   return (
     <>
       <SEO 
-        title="404 - Page Not Found | OFY Portfolio"
+        title="404 - Page Not Found | Faruk Yılmaz"
         description="The page you're looking for doesn't exist. Return to our portfolio."
-        image="https://farukyilmaz.com/images/og-image.jpg"
         schema={schema}
+        noindex
       />
       
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-5">

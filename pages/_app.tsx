@@ -69,42 +69,15 @@ export default function App({ Component, pageProps }: AppProps) {
       window.addEventListener('load', () => {
         navigator.serviceWorker
           .register('/sw.js')
-          .then((registration) => {
+          .then(() => {
             // Service Worker registered successfully
           })
-          .catch((error) => {
+          .catch(() => {
             // Service Worker registration failed
           });
       });
     }
-
-    // Preload critical data immediately for first visit
-    if (typeof window !== 'undefined') {
-      // Start preloading immediately, no waiting
-      preloadCriticalData();
-    }
   }, []);
-
-  const preloadCriticalData = async () => {
-    try {
-      // Preload most visited pages' data
-      const preloadPromises = [
-        fetch('/api/projects').then(r => r.json()),
-        fetch('/api/intro-banners').then(r => r.json()),
-        fetch('/api/about').then(r => r.json()),
-        fetch('/api/news/featured').then(r => r.json()),
-      ];
-
-      // Don't wait for all, just start the requests
-      Promise.all(preloadPromises).catch(() => {
-        // Ignore preload errors
-      });
-
-      // Critical data preloading started
-    } catch (error) {
-      // Ignore preload errors
-    }
-  };
 
   // Maintenance sayfası için Layout kullanma
   const isMaintenancePage = Component.displayName === 'MaintenancePage' || router.pathname === '/maintenance';

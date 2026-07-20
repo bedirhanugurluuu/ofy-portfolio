@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchProjects, fetchNews } from '@/lib/api';
-
-const SITE_URL = 'https://farukyilmaz.com';
+import { SITE_URL } from '@/lib/site-config';
 
 function generateSiteMap(pages: string[], projects: any[], news: any[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>
    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-     <!-- Static pages -->
      ${pages
        .map((page) => {
          return `
@@ -14,13 +12,11 @@ function generateSiteMap(pages: string[], projects: any[], news: any[]) {
            <loc>${`${SITE_URL}${page}`}</loc>
            <lastmod>${new Date().toISOString()}</lastmod>
            <changefreq>weekly</changefreq>
-           <priority>0.8</priority>
+           <priority>${page === '' ? '1.0' : '0.8'}</priority>
        </url>
      `;
        })
        .join('')}
-     
-     <!-- Project pages -->
      ${projects
        .map((project) => {
          return `
@@ -33,8 +29,6 @@ function generateSiteMap(pages: string[], projects: any[], news: any[]) {
      `;
        })
        .join('')}
-     
-     <!-- News pages -->
      ${news
        .map((article) => {
          return `
@@ -52,38 +46,33 @@ function generateSiteMap(pages: string[], projects: any[], news: any[]) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const staticPages = ['', '/about', '/projects', '/blog', '/contact', '/gallery'];
+
   try {
-    // Fetch dynamic data
     const [projects, news] = await Promise.all([
       fetchProjects(),
-      fetchNews()
+      fetchNews(),
     ]);
 
-    // Static pages
-    const pages = [
-      '',
-      '/about',
-      '/projects',
-      '/blog',
-      '/contact'
-    ];
-
-    // Generate the XML sitemap
-    const sitemap = generateSiteMap(pages, projects, news);
+    const sitemap = generateSiteMap(staticPages, projects, news);
 
     res.setHeader('Content-Type', 'text/xml');
-    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate');
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=86400, stale-while-revalidate'
+    );
     res.write(sitemap);
     res.end();
   } catch (error) {
     console.error('Sitemap generation error:', error);
-    
-    // Fallback sitemap with static pages only
-    const pages = ['', '/about', '/projects', '/blog', '/contact'];
-    const sitemap = generateSiteMap(pages, [], []);
-    
+
+    const sitemap = generateSiteMap(staticPages, [], []);
+
     res.setHeader('Content-Type', 'text/xml');
-    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate');
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=86400, stale-while-revalidate'
+    );
     res.write(sitemap);
     res.end();
   }
