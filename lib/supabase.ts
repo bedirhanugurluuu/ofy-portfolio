@@ -72,7 +72,10 @@ export async function uploadLogoImage(file: File, isLight = false): Promise<stri
     
     const { data, error } = await supabase.storage
       .from('uploads')
-      .upload(fileName, file)
+      .upload(fileName, file, {
+        cacheControl: '31536000',
+        upsert: false,
+      })
 
     if (error) {
       console.error('Error uploading logo:', error)

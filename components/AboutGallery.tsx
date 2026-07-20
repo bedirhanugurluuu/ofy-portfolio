@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import AutoScroll from "embla-carousel-auto-scroll";
-import { AboutGalleryImage, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
+import { AboutGalleryImage, normalizeImageUrl, isSupabaseImage, shouldUnoptimizeImage } from "@/lib/api";
 
 interface AboutGalleryProps {
   images: AboutGalleryImage[];
@@ -52,7 +52,7 @@ export default function AboutGallery({ images }: AboutGalleryProps) {
                 className="object-cover"
                 sizes="(max-width: 768px) 280px, 450px"
                 draggable={false}
-                unoptimized={isSupabaseImage(normalizeImageUrl(image.image_path))}
+                unoptimized={shouldUnoptimizeImage(normalizeImageUrl(image.image_path))}
               />
             </div>
           ))}

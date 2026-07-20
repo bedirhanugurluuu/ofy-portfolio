@@ -2,7 +2,7 @@
 
 import {
   fetchFeaturedNews,
-  isSupabaseImage,
+  isSupabaseImage, shouldUnoptimizeImage,
   News,
   normalizeImageUrl,
 } from "@/lib/api";
@@ -66,8 +66,9 @@ export default function FromTheJournal() {
                         alt={article.title}
                         fill
                         loading="lazy"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                        unoptimized={isSupabaseImage(src)}
+                        unoptimized={shouldUnoptimizeImage(src)}
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-sm text-gray-500">

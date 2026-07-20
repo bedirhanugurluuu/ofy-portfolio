@@ -1,7 +1,7 @@
 import SEO from "@/components/SEO";
 import {
   fetchNews,
-  isSupabaseImage,
+  isSupabaseImage, shouldUnoptimizeImage,
   News,
   normalizeImageUrl,
 } from "@/lib/api";
@@ -76,7 +76,7 @@ export default function BlogPage({ news }: Props) {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                         loading="lazy"
-                        unoptimized={isSupabaseImage(src)}
+                        unoptimized={shouldUnoptimizeImage(src)}
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-sm text-gray-500">

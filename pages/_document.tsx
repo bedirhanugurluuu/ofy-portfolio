@@ -27,20 +27,13 @@ export default function Document() {
           crossOrigin=""
         />
         
-        {/* DNS Prefetch for External Resources */}
+        {/* DNS Prefetch / Preconnect for Supabase images (LCP) */}
         <link rel="dns-prefetch" href="//lsxafginsylkeuyzuiau.supabase.co" />
-        
-        {/* Preconnect to Critical Origins */}
-        <link rel="preconnect" href="https://lsxafginsylkeuyzuiau.supabase.co" />
-        
-        {/* Prefetch Critical API Endpoints */}
-        <link rel="prefetch" href="/api/projects/featured" as="fetch" crossOrigin="anonymous" />
-        <link rel="prefetch" href="/api/intro-banners" as="fetch" crossOrigin="anonymous" />
-        <link rel="prefetch" href="/api/about" as="fetch" crossOrigin="anonymous" />
-        
-        {/* Preload Critical Pages */}
-        <link rel="prefetch" href="/about" />
-        <link rel="prefetch" href="/projects" />
+        <link
+          rel="preconnect"
+          href="https://lsxafginsylkeuyzuiau.supabase.co"
+          crossOrigin=""
+        />
         
         {/* Favicon (actual file is 32x32) */}
         <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon.ico" />

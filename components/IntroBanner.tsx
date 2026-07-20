@@ -3,36 +3,46 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchIntroBanners, normalizeImageUrl, fetchProjects, Project, isSupabaseImage } from "@/lib/api";
+import {
+  fetchIntroBanners,
+  normalizeImageUrl,
+  fetchProjects,
+  Project,
+  shouldUnoptimizeImage,
+} from "@/lib/api";
 
 import { IntroBanner as IntroBannerType } from "@/lib/api";
 
 interface IntroBannerProps {
   initialBanners?: IntroBannerType[];
+  initialProjects?: Project[];
 }
 
-export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
+export default function IntroBanner({
+  initialBanners = [],
+  initialProjects = [],
+}: IntroBannerProps) {
   const [banners, setBanners] = useState<IntroBannerType[]>(initialBanners);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
   const [overlayGone, setOverlayGone] = useState(false);
   const [readyToStart, setReadyToStart] = useState(false);
 
-  // Eğer initialBanners boşsa, client-side'da fetch et
   useEffect(() => {
     if (initialBanners.length === 0) {
       fetchIntroBanners()
         .then((data) => setBanners(data))
         .catch(() => setBanners([]));
     }
-    
-    // Projeleri fetch et
-    fetchProjects()
-      .then((data) => setProjects(data))
-      .catch(() => setProjects([]));
-  }, [initialBanners.length]);
+
+    if (initialProjects.length === 0) {
+      fetchProjects()
+        .then((data) => setProjects(data))
+        .catch(() => setProjects([]));
+    }
+  }, [initialBanners.length, initialProjects.length]);
 
   useEffect(() => {
     if (index === 0) {
@@ -79,10 +89,15 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
     return <div className="relative w-full min-h-screen overflow-hidden" />;
 
   const currentBanner = banners[index];
-  
-  // Bağlantılı projeyi bul
-  const relatedProject = currentBanner.project_id 
-    ? projects.find(p => p.id === currentBanner.project_id) 
+  const desktopSrc = normalizeImageUrl(currentBanner.image || "");
+  const mobileSrc = normalizeImageUrl(
+    currentBanner.order_index === 3 && currentBanner.image_mobile
+      ? currentBanner.image_mobile
+      : currentBanner.image || ""
+  );
+
+  const relatedProject = currentBanner.project_id
+    ? projects.find((p) => p.id === currentBanner.project_id)
     : null;
 
   return (
@@ -107,35 +122,27 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
           transitionTimingFunction: "ease-out",
         }}
       >
-        {/* Desktop görsel - her zaman image kullan */}
         <Image
-          src={normalizeImageUrl(currentBanner.image || '')}
+          src={desktopSrc}
           alt="banner"
           fill
           priority
           fetchPriority="high"
+          sizes="100vw"
           className="object-cover hidden md:block"
           onLoadingComplete={() => setFirstImageLoaded(true)}
-          unoptimized={isSupabaseImage(normalizeImageUrl(currentBanner.image || ''))}
+          unoptimized={shouldUnoptimizeImage(desktopSrc)}
         />
-        {/* Mobile görsel - 3. banner için image_mobile varsa onu, yoksa image kullan */}
         <Image
-          src={normalizeImageUrl(
-            (currentBanner.order_index === 3 && currentBanner.image_mobile) 
-              ? currentBanner.image_mobile 
-              : currentBanner.image || ''
-          )}
+          src={mobileSrc}
           alt="banner mobile"
           fill
           priority
           fetchPriority="high"
+          sizes="100vw"
           className="object-cover block md:hidden"
           onLoadingComplete={() => setFirstImageLoaded(true)}
-          unoptimized={isSupabaseImage(normalizeImageUrl(
-            (currentBanner.order_index === 3 && currentBanner.image_mobile) 
-              ? currentBanner.image_mobile 
-              : currentBanner.image || ''
-          ))}
+          unoptimized={shouldUnoptimizeImage(mobileSrc)}
         />
         {index === 0 && !overlayGone && (
           <div
@@ -150,7 +157,6 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
       </div>
       {expanded && (
         <>
-          {/* Ana içerik */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white text-left px-4 z-30 space-y-2">
             {currentBanner.title_line1 && (
               <div className="overflow-hidden banner-title">
@@ -179,18 +185,16 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
             )}
           </div>
 
-          {/* Alt köşe - Scroll ve Project Info */}
           <div className="absolute bottom-8 left-4 md:left-8 right-4 md:right-8 z-30 animate-[slideUp_0.8s_ease-out_forwards] [animation-delay:0.45s] opacity-0">
             <div className="flex justify-between items-end">
-              {/* Sol taraf - Scroll to view more */}
               {currentBanner.scroll_text && (
                 <button
                   onClick={() => {
-                    const element = document.getElementById('featured-projects');
+                    const element = document.getElementById("featured-projects");
                     if (element) {
-                      element.scrollIntoView({ 
-                        behavior: 'smooth',
-                        block: 'start'
+                      element.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
                       });
                     }
                   }}
@@ -200,21 +204,37 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
                 </button>
               )}
 
-              {/* Sağ taraf - Project Info */}
               {relatedProject && (
                 <Link href={`/projects/${relatedProject.slug}`} className="contents">
-                  <div className="relative flex group w-[320px] h-[100px] gap-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '5px' }}>
-                    {/* Project Thumbnail */}
-                    <div className="absolute group top-2 right-2" style={{ rotate: '-45deg' }}>
+                  <div
+                    className="relative flex group w-[320px] h-[100px] gap-3"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.9)",
+                      padding: "5px",
+                    }}
+                  >
+                    <div
+                      className="absolute group top-2 right-2"
+                      style={{ rotate: "-45deg" }}
+                    >
                       <ButtonWithHoverArrow />
                     </div>
                     <div className="flex-shrink-0">
-                      <div className="w-[90px] h-[90px] relative overflow-hidden" style={{ aspectRatio: '1 / 1' }}>
+                      <div
+                        className="w-[90px] h-[90px] relative overflow-hidden"
+                        style={{ aspectRatio: "1 / 1" }}
+                      >
                         {relatedProject.thumbnail_media ? (
-                          relatedProject.thumbnail_media.toLowerCase().endsWith('.mp4') || 
-                          relatedProject.thumbnail_media.toLowerCase().endsWith('.webm') ? (
+                          relatedProject.thumbnail_media
+                            .toLowerCase()
+                            .endsWith(".mp4") ||
+                          relatedProject.thumbnail_media
+                            .toLowerCase()
+                            .endsWith(".webm") ? (
                             <video
-                              src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                              src={normalizeImageUrl(
+                                relatedProject.thumbnail_media
+                              )}
                               className="w-full h-full object-cover"
                               muted
                               loop
@@ -222,22 +242,30 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
                             />
                           ) : (
                             <Image
-                              src={normalizeImageUrl(relatedProject.thumbnail_media)}
+                              src={normalizeImageUrl(
+                                relatedProject.thumbnail_media
+                              )}
                               alt={relatedProject.title}
                               fill
+                              sizes="90px"
                               className="object-cover"
-                              unoptimized={isSupabaseImage(normalizeImageUrl(relatedProject.thumbnail_media))}
+                              unoptimized={shouldUnoptimizeImage(
+                                normalizeImageUrl(
+                                  relatedProject.thumbnail_media
+                                )
+                              )}
                             />
                           )
                         ) : (
                           <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                            <span className="text-gray-500 text-xs">No image</span>
+                            <span className="text-gray-500 text-xs">
+                              No image
+                            </span>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Project Info */}
                     <div className="min-w-0 flex flex-col justify-between">
                       <p className="text-xs uppercase tracking-wide mb-1 font-medium">
                         Latest Case Studies
@@ -247,7 +275,9 @@ export default function IntroBanner({ initialBanners = [] }: IntroBannerProps) {
                           {relatedProject.title}
                         </h4>
                         {relatedProject.role && (
-                          <p className="text-xs opacity-40 font-medium">{relatedProject.role}</p>
+                          <p className="text-xs opacity-40 font-medium">
+                            {relatedProject.role}
+                          </p>
                         )}
                       </div>
                     </div>

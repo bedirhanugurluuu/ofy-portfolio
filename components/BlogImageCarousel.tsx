@@ -2,7 +2,7 @@ import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState } from "react";
-import { isSupabaseImage, NewsImage, normalizeImageUrl } from "@/lib/api";
+import { isSupabaseImage, shouldUnoptimizeImage, NewsImage, normalizeImageUrl } from "@/lib/api";
 
 type Props = {
   images: NewsImage[];
@@ -25,7 +25,7 @@ type ImageProps = {
 
 function CarouselImage({ src, alt, aspectRatio, priority = false }: ImageProps) {
   const ratio = aspectRatios[aspectRatio] || "1 / 1";
-  const unoptimized = isSupabaseImage(src);
+  const unoptimized = shouldUnoptimizeImage(src);
 
   return (
     <>

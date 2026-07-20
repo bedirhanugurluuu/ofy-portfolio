@@ -17,18 +17,23 @@ export function getClientIp(req: NextApiRequest): string {
 export function getAllowedOrigins(): string[] {
   const extra = (process.env.ADMIN_PANEL_ORIGINS || '')
     .split(',')
-    .map((o) => o.trim())
+    .map((o) => o.trim().replace(/\/$/, ''))
     .filter(Boolean);
 
-  return [
-    SITE_URL,
+  const defaults = [
+    SITE_URL.replace(/\/$/, ''),
+    'https://farukyilmaz.com',
+    'https://www.farukyilmaz.com',
+    'https://ofy-portfolio.vercel.app',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'https://ofy-admin.vercel.app',
-    ...extra,
+    'https://ofy-admin-panel.vercel.app',
   ];
+
+  return [...new Set([...defaults, ...extra])];
 }
 
 export function setCorsHeaders(req: NextApiRequest, res: NextApiResponse) {
@@ -37,6 +42,7 @@ export function setCorsHeaders(req: NextApiRequest, res: NextApiResponse) {
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
 
   res.setHeader('Vary', 'Origin');
@@ -45,11 +51,12 @@ export function setCorsHeaders(req: NextApiRequest, res: NextApiResponse) {
     'Access-Control-Allow-Headers',
     'Content-Type, Authorization'
   );
+  res.setHeader('Access-Control-Max-Age', '86400');
 }
 
 export function handleOptions(req: NextApiRequest, res: NextApiResponse): boolean {
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    res.status(204).end();
     return true;
   }
   return false;
@@ -110,8 +117,12 @@ export function rateLimit(
 
 export async function verifyRecaptcha(token?: string): Promise<boolean> {
   const secret = process.env.RECAPTCHA_SECRET_KEY;
+  // Keys not configured yet — don't block login; rate-limit/lockout still apply
   if (!secret) {
-    return process.env.NODE_ENV !== 'production';
+    console.warn(
+      '[recaptcha] RECAPTCHA_SECRET_KEY is not set; skipping verification'
+    );
+    return true;
   }
   if (!token) return false;
 

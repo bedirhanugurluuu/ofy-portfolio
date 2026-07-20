@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchAboutBanner, normalizeImageUrl, isSupabaseImage } from "@/lib/api";
+import { fetchAboutBanner, normalizeImageUrl, isSupabaseImage, shouldUnoptimizeImage } from "@/lib/api";
 import type { AboutBanner } from "@/lib/api";
 
 export default function AboutBanner() {
@@ -41,7 +41,7 @@ export default function AboutBanner() {
                   fill
                   sizes="100vw"
                   loading="lazy"
-                  unoptimized={isSupabaseImage(normalizeImageUrl(banner.mobile_image))}
+                  unoptimized={shouldUnoptimizeImage(normalizeImageUrl(banner.mobile_image))}
                   className="relative block md:hidden"
                   style={{ objectFit: "cover" }}
               />
@@ -53,7 +53,7 @@ export default function AboutBanner() {
                 fill
                 sizes="100vw"
                 loading="lazy"
-                unoptimized={isSupabaseImage(normalizeImageUrl(banner.image))}
+                unoptimized={shouldUnoptimizeImage(normalizeImageUrl(banner.image))}
                 className={`relative ${banner.mobile_image ? 'hidden md:block' : 'block'}`}
                 style={{ objectFit: "cover" }}
             />

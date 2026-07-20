@@ -4,8 +4,15 @@ import ServicesSlider from '@/components/ServicesSlider';
 import AboutBanner from '@/components/AboutBanner';
 import FromTheJournal from '@/components/FromTheJournal';
 import SEO from '@/components/SEO';
+import Head from 'next/head';
 import { GetStaticProps } from 'next';
-import { fetchProjectsSSR, fetchIntroBannersSSR, Project, IntroBanner as IntroBannerType } from '@/lib/api';
+import {
+  fetchProjectsSSR,
+  fetchIntroBannersSSR,
+  normalizeImageUrl,
+  Project,
+  IntroBanner as IntroBannerType,
+} from '@/lib/api';
 
 interface HomeProps {
   featuredProjects: Project[];
@@ -13,7 +20,18 @@ interface HomeProps {
 }
 
 export default function Home({ featuredProjects, introBanners }: HomeProps) {
-  // Schema for homepage
+  const firstBanner = introBanners[0];
+  const lcpDesktop = firstBanner?.image
+    ? normalizeImageUrl(firstBanner.image)
+    : '';
+  const lcpMobile = firstBanner
+    ? normalizeImageUrl(
+        firstBanner.order_index === 3 && firstBanner.image_mobile
+          ? firstBanner.image_mobile
+          : firstBanner.image || ''
+      )
+    : '';
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -30,13 +48,34 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
       "name": "OFY",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://farukyilmaz.com/images/logo.png"
+        "url": "https://farukyilmaz.com/images/og-image.jpg"
       }
     }
   };
 
   return (
     <>
+      <Head>
+        {/* LCP: discover banner images before JS/hydration */}
+        {lcpMobile && (
+          <link
+            rel="preload"
+            as="image"
+            href={lcpMobile}
+            fetchPriority="high"
+            media="(max-width: 767px)"
+          />
+        )}
+        {lcpDesktop && (
+          <link
+            rel="preload"
+            as="image"
+            href={lcpDesktop}
+            fetchPriority="high"
+            media="(min-width: 768px)"
+          />
+        )}
+      </Head>
       <SEO 
         title="Faruk Yılmaz Design Studio"
         description="OFY is a creative design studio specializing in brand strategy, visual design, and digital experiences. We create compelling stories that leave lasting impressions."
@@ -44,7 +83,10 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
         schema={schema}
       />
       <div>
-        <IntroBanner initialBanners={introBanners} />
+        <IntroBanner
+          initialBanners={introBanners}
+          initialProjects={featuredProjects}
+        />
         <FeaturedProjects initialProjects={featuredProjects} />
         <ServicesSlider />
         <AboutBanner />
@@ -56,13 +98,11 @@ export default function Home({ featuredProjects, introBanners }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    // Paralel olarak verileri çek
     const [allProjects, introBanners] = await Promise.all([
       fetchProjectsSSR(),
       fetchIntroBannersSSR()
     ]);
 
-    // Featured projeleri filtrele (yeni Supabase schema'sına göre)
     const featuredProjects = allProjects
       .filter((project: Project) => project.is_featured)
       .sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
@@ -73,7 +113,7 @@ export const getStaticProps: GetStaticProps = async () => {
         featuredProjects,
         introBanners
       },
-      revalidate: 60 // 1 dakikada bir yenile
+      revalidate: 60
     };
   } catch (error) {
     console.error('Static props error:', error);

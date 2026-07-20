@@ -2,11 +2,22 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "localhost", 
-      "lsxafginsylkeuyzuiau.supabase.co", // Supabase Storage domain
-      "farukyilmaz.com" // Production domain
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lsxafginsylkeuyzuiau.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'farukyilmaz.com',
+        pathname: '/**',
+      },
     ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 2678400,
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,

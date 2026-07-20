@@ -217,11 +217,27 @@ export const normalizeImageUrl = (imagePath: string): string => {
   return p;
 };
 
-// Supabase görseli olup olmadığını kontrol eden helper fonksiyon
-// Supabase görselleri için Next.js Image Optimization kullanılmamalı (Vercel limiti için)
+// Supabase public storage URL mu?
 export const isSupabaseImage = (url: string): boolean => {
   if (!url) return false;
   return url.includes("supabase.co/storage/v1/object/public/");
+};
+
+/**
+ * Next.js Image Optimization'ı atlanması gereken formatlar.
+ * JPG/PNG/WebP Supabase URL'leri optimize EDİLMELİ (WebP/AVIF + resize).
+ * GIF/SVG/video optimize edilemez veya bozulur.
+ */
+export const shouldUnoptimizeImage = (url: string): boolean => {
+  if (!url) return false;
+  const lower = url.toLowerCase().split('?')[0];
+  return (
+    lower.endsWith('.gif') ||
+    lower.endsWith('.svg') ||
+    lower.endsWith('.mp4') ||
+    lower.endsWith('.webm') ||
+    lower.endsWith('.mov')
+  );
 };
 
 // Client-side API functions

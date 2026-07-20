@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
 import { useHeaderSettings } from "../hooks/useHeaderSettings";
 import Image from "next/image";
+import { shouldUnoptimizeImage } from "@/lib/api";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,6 +66,12 @@ export default function Header() {
   // Veritabanından gelen menü öğeleri
   const navItems = headerSettings?.menu_items?.sort((a: any, b: any) => a.order - b.order) || [];
 
+  const useLightLogo =
+    isContactPage || (!scrolled && !menuOpen && !isDarkText);
+  const logoSrc = useLightLogo
+    ? headerSettings?.logo_image_url_light
+    : headerSettings?.logo_image_url;
+
   return (
     <>
       <header
@@ -82,29 +89,24 @@ export default function Header() {
           className="flex items-center space-x-1 z-[60]"
           onClick={() => setMenuOpen(false)}
         >
-          {(isContactPage || (!scrolled && !menuOpen && !isDarkText)) ? (
-            // Contact sayfası veya şeffaf arka plan için açık logo
-            headerSettings?.logo_image_url_light && (
-              <div className="relative w-20 h-8">
-                <img
-                  src={headerSettings.logo_image_url_light}
-                  alt="Logo"
-                  className="object-contain h-8"
-                />
-              </div>
-            )
-          ) : (
-            // Beyaz arka plan için koyu logo
-            headerSettings?.logo_image_url && (
-              <div className="relative w-20 h-8">
-                <img
-                  src={headerSettings.logo_image_url}
-                  alt="Logo"
-                  className="object-contain h-8"
-                />
-              </div>
-            )
-          )}
+          <div
+            className="relative shrink-0 overflow-hidden"
+            style={{ width: 32, height: 32 }}
+          >
+            {logoSrc ? (
+              <Image
+                src={logoSrc}
+                alt="Logo"
+                width={32}
+                height={32}
+                sizes="32px"
+                priority
+                className="object-contain"
+                style={{ width: 32, height: 32 }}
+                unoptimized={shouldUnoptimizeImage(logoSrc)}
+              />
+            ) : null}
+          </div>
         </Link>
 
         {/* Desktop Nav */}
