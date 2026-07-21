@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import Router, { useRouter } from 'next/router'
 import Script from 'next/script'
 
-const GA_MEASUREMENT_ID = 'G-HT5RMQVJJS'
+const GA_MEASUREMENT_ID = 'G-N443NDE4H4'
 
 declare global {
   interface Window {
