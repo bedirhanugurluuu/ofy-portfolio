@@ -29,7 +29,7 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
   if (router.isFallback) {
     return (
       <div className="min-h-screen px-5 pb-10 pt-35 md:pt-50">
-        <div className="grid animate-pulse gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,7fr)]">
+        <div className="grid animate-pulse gap-8 lg:grid-cols-[minmax(0,450px)_minmax(0,1fr)] min-[1920px]:grid-cols-[minmax(0,600px)_minmax(0,1fr)]">
           <div className="space-y-5">
             <div className="h-12 w-4/5 rounded bg-gray-200" />
             <div className="h-4 w-full rounded bg-gray-200" />
@@ -83,9 +83,9 @@ export default function BlogDetailPage({ article, relatedArticles }: Props) {
 
       <main className="min-h-screen px-5 pb-24 pt-15 md:pt-20">
         <div>
-          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,7fr)] lg:gap-5">
-            <article className="lg:pr-8">
-              <h1 className="mb-8 text-3xl font-medium leading-tight md:text-xl max-w-[300px] block">
+          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,450px)_minmax(0,1fr)] min-[1920px]:grid-cols-[minmax(0,600px)_minmax(0,1fr)] lg:gap-5">
+            <article className="w-full lg:pr-8">
+              <h1 className="mb-8 block text-3xl font-medium leading-tight md:text-xl">
                 {article.title}
               </h1>
               <div

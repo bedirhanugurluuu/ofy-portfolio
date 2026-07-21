@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import ButtonWithHoverArrow from "../components/ButtonWithHoverArrow";
-import { fetchAboutBanner, normalizeImageUrl, isSupabaseImage, shouldUnoptimizeImage } from "@/lib/api";
+import { fetchAboutBanner, normalizeImageUrl } from "@/lib/api";
 import type { AboutBanner } from "@/lib/api";
 
 export default function AboutBanner() {
@@ -25,7 +24,6 @@ export default function AboutBanner() {
       });
   }, []);
 
-  // Loading durumunda hiçbir şey gösterme
   if (loading || !banner) {
     return null;
   }
@@ -33,29 +31,21 @@ export default function AboutBanner() {
   return (
     <section className="relative w-full overflow-hidden px-4 mb-20">
         <div className="aspect-[0.6363636364/1] md:aspect-[2.32/1] " style={{ position: 'relative' }}>
-            {/* Mobile Image - sadece mobile_image varsa göster */}
             {banner.mobile_image && (
-              <Image
+              <img
                   src={normalizeImageUrl(banner.mobile_image)}
                   alt="About Banner Mobile"
-                  fill
-                  sizes="100vw"
                   loading="lazy"
-                  unoptimized={shouldUnoptimizeImage(normalizeImageUrl(banner.mobile_image))}
-                  className="relative block md:hidden"
-                  style={{ objectFit: "cover" }}
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover block md:hidden"
               />
             )}
-            {/* Desktop Image - mobile_image varsa md'de göster, yoksa her zaman göster */}
-            <Image
+            <img
                 src={normalizeImageUrl(banner.image)}
                 alt="About Banner"
-                fill
-                sizes="100vw"
                 loading="lazy"
-                unoptimized={shouldUnoptimizeImage(normalizeImageUrl(banner.image))}
-                className={`relative ${banner.mobile_image ? 'hidden md:block' : 'block'}`}
-                style={{ objectFit: "cover" }}
+                decoding="async"
+                className={`absolute inset-0 h-full w-full object-cover ${banner.mobile_image ? 'hidden md:block' : 'block'}`}
             />
 
             <div className="absolute inset-0 flex items-start">
